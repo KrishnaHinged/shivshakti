@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-dark: #120e0b;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d4c5b9;
+  --color-accent: #eae1d8;
+  --color-accent-dark: #3a2c20;
+  --color-border-glass: rgba(255, 255, 255, 0.12);
+  --color-bg-glass: rgba(58, 44, 32, 0.45);
+  
+  /* Light Theme Variables for About & Catalog */
+  --color-bg-light: #fdfbf9;
+  --color-text-light-primary: #1c1511;
+  --color-text-light-secondary: #5a4b41;
+  --color-border-light: rgba(90, 75, 65, 0.12);
+  --color-card-bg: #ffffff;
+  
+  --font-main: var(--font-outfit), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  width: 100%;
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-primary);
+  font-family: var(--font-main);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --brand-blue: #1E3A8A;
+  --brand-blue-light: #3B5FBB;
+  --brand-blue-pale: rgba(30, 58, 138, 0.08);
+  --brand-orange: #F97316;
+  --brand-orange-light: #FB923C;
+  --brand-orange-pale: rgba(249, 115, 22, 0.10);
+}
+
+.text-brand-blue { color: #1E3A8A; }
+.text-brand-orange { color: #F97316; }
+.bg-brand-blue { background: #1E3A8A; }
+.bg-brand-orange { background: #F97316; }
+.border-brand-blue { border-color: #1E3A8A; }
+.border-brand-orange { border-color: #F97316; }
+.bg-brand-blue-pale { background: rgba(30, 58, 138, 0.08); }
+.bg-brand-orange-pale { background: rgba(249, 115, 22, 0.10); }
+
+/* Custom scrollbar styling for sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+

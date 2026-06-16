@@ -1,0 +1,447 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare, PhoneCall } from "lucide-react";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
+import ProductImage from "@/components/ui/ProductImage";
+import ProductInquiryForm from "@/components/sections/ProductInquiryForm";
+
+export default function ProductDetailClient({ product, similarProducts, settings, allActiveProducts }) {
+  // Gallery active image state
+  const galleryList = [product.featuredImage, ...(product.galleryImages || product.images || [])].filter(Boolean);
+  const [activeImage, setActiveImage] = useState(galleryList[0] || product.featuredImage);
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+
+  // Track product view in localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("shivshakti-recent-products");
+      let list = stored ? JSON.parse(stored) : [];
+      if (!Array.isArray(list)) list = [];
+
+      // Remove current product and prepend it to the top
+      list = list.filter((item) => item._id !== product._id);
+      list.unshift({
+        _id: product._id,
+        title: product.title,
+        slug: product.slug,
+        featuredImage: product.featuredImage,
+      });
+
+      // Maintain a maximum of 6 elements
+      list = list.slice(0, 6);
+      localStorage.setItem("shivshakti-recent-products", JSON.stringify(list));
+
+      // Display recently viewed items excluding the current one
+      setRecentlyViewed(list.filter((item) => item._id !== product._id));
+    } catch (e) {
+      console.error("Local storage error:", e);
+    }
+  }, [product]);
+
+  // Zoom magnifier states
+  const [zoomStyle, setZoomStyle] = useState({});
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomStyle({
+      transformOrigin: `${x}% ${y}%`,
+      transform: "scale(1.8)",
+    });
+  };
+  const handleMouseLeave = () => {
+    setZoomStyle({});
+  };
+
+  const handleScrollToForm = (e) => {
+    e.preventDefault();
+    document.getElementById("inquiry-form-section")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const specsMap = product.specifications?.size 
+    ? Object.fromEntries(product.specifications) 
+    : (product.specs instanceof Map ? Object.fromEntries(product.specs) : product.specs || {});
+
+  const categoryLabels = {
+    "in-house": "In-House Production",
+    trading: "Trading Component",
+    authorized: "Authorized Dealer",
+  };
+
+  return (
+    <div className="min-h-screen bg-white text-slate-800 font-sans selection:bg-brand-orange selection:text-white">
+      {/* Navigation Header */}
+      <Header logoUrl={settings.logoUrl} />
+      
+      {/* Back link wrapper with top padding to clear fixed header */}
+      <div className=" px-6 pb-6 pt-24 lg:px-16 lg:pt-28 border-b border-slate-100">
+        <div className="max-w-[1300px] mx-auto flex flex-col gap-6">
+          <div className="pt-2">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 text-slate-500 hover:text-slate-800 transition duration-300 text-[0.9rem] font-medium group"
+            >
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1 text-slate-400 group-hover:text-slate-800" />
+              Back to Products
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Container */}
+      <div className="px-4 lg:px-6 py-12 bg-white">
+        <div className="bg-bg-light text-text-light-primary rounded-[48px] overflow-hidden max-w-[1300px] mx-auto shadow-[0_4px_30px_rgba(0,0,0,0.03)] border border-slate-100">
+          
+          {/* Section 1: Breadcrumb */}
+          <div className="px-8 lg:px-16 pt-10 pb-2 border-b border-slate-100/30">
+            <nav className="text-xs lg:text-sm font-semibold tracking-wide text-text-light-secondary flex flex-wrap items-center gap-2">
+              <Link href="/" className="hover:text-brand-orange transition duration-200">
+                Home
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-text-light-secondary/40" />
+              <Link href="/products" className="hover:text-brand-orange transition duration-200">
+                Products
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-text-light-secondary/40" />
+              <span className="text-brand-blue truncate max-w-[15rem]">{product.title}</span>
+            </nav>
+          </div>
+
+          {/* Section 2: Product Hero Section */}
+          <div className="p-8 lg:p-16 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start border-b border-border-light">
+            
+            {/* Left: Image & Media Gallery Preview */}
+            <div className="flex flex-col gap-5 w-full">
+              {/* Zoom Magnifier Box */}
+              <div 
+                className="relative aspect-[4/3] rounded-[24px] overflow-hidden border border-border-light bg-slate-50 flex items-center justify-center shadow-sm cursor-zoom-in"
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+              >
+                <div 
+                  className="w-full h-full transition-transform duration-200 ease-out"
+                  style={zoomStyle}
+                >
+                  <ProductImage
+                    src={activeImage}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                {product.badge && (
+                  <span
+                    className={`absolute top-5 right-5 text-white px-4 py-2 rounded-xl text-[0.8rem] font-bold shadow-md z-10 ${
+                      product.badgeColor === "brand-orange" ? "bg-brand-orange/90" : "bg-brand-blue/90"
+                    }`}
+                  >
+                    {product.badge}
+                  </span>
+                )}
+              </div>
+
+              {/* Secondary Images List */}
+              {galleryList.length > 1 && (
+                <div className="grid grid-cols-4 gap-3">
+                  {galleryList.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setActiveImage(img)}
+                      className={`aspect-square rounded-xl overflow-hidden border bg-slate-50 flex items-center justify-center cursor-pointer transition duration-300 ${
+                        activeImage === img 
+                          ? "border-brand-orange ring-2 ring-brand-orange/30 shadow-sm" 
+                          : "border-border-light hover:border-brand-blue/40"
+                      }`}
+                    >
+                      <img src={img} alt={`${product.title} gallery thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right: Text Information Details */}
+            <div className="flex flex-col gap-6 w-full">
+              <div className="flex flex-col gap-2">
+                <span className="text-brand-blue text-[0.82rem] font-bold uppercase tracking-[0.2em] block">
+                  {categoryLabels[product.category] || product.category}
+                </span>
+                <h1 className="text-4xl lg:text-[2.6rem] font-extrabold text-text-light-primary tracking-tight leading-tight">
+                  {product.title}
+                </h1>
+              </div>
+
+              {/* Short Description */}
+              <p className="text-[0.98rem] text-text-light-secondary leading-[1.6]">
+                {product.shortDescription}
+              </p>
+
+              {/* Highlights Bullet List */}
+              {product.highlights && product.highlights.length > 0 && (
+                <div className="flex flex-col gap-3 border-t border-border-light pt-4 my-2">
+                  <h4 className="text-xs font-bold text-text-light-primary uppercase tracking-wider">Key Highlights</h4>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {product.highlights.map((highlight, index) => (
+                      <li key={index} className="flex items-start gap-2.5 text-sm text-text-light-secondary">
+                        <CheckCircle2 className="w-4 h-4 text-brand-orange shrink-0 mt-0.5" />
+                        <span>{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Quick Specs preview list */}
+              {Object.keys(specsMap).length > 0 && (
+                <div className="bg-bg-light border border-border-light rounded-2xl p-4 flex flex-col gap-2">
+                  <span className="text-[0.72rem] font-bold text-text-light-secondary uppercase tracking-wider">Quick Specifications</span>
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-text-light-primary">
+                    {Object.entries(specsMap).slice(0, 4).map(([key, val]) => (
+                      <div key={key} className="flex justify-between py-1 border-b border-dashed border-border-light last:border-none">
+                        <span className="text-text-light-secondary capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                        <span className="font-bold">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Document Downloads */}
+              {(product.brochureUrl || product.techSpecsUrl || product.installGuideUrl) && (
+                <div className="flex flex-col gap-3 border-t border-border-light pt-5 my-1">
+                  <span className="text-[0.72rem] font-bold text-text-light-secondary uppercase tracking-wider">Document Downloads</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {product.brochureUrl && (
+                      <a
+                        href={product.brochureUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-slate-50 border border-slate-200 hover:border-brand-orange hover:bg-brand-orange-pale/10 hover:text-brand-orange transition duration-300 text-xs font-bold px-4 py-3 rounded-xl justify-center text-slate-600 cursor-pointer"
+                      >
+                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Brochure PDF
+                      </a>
+                    )}
+                    {product.techSpecsUrl && (
+                      <a
+                        href={product.techSpecsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-slate-50 border border-slate-200 hover:border-brand-orange hover:bg-brand-orange-pale/10 hover:text-brand-orange transition duration-300 text-xs font-bold px-4 py-3 rounded-xl justify-center text-slate-600 cursor-pointer"
+                      >
+                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Technical Specs
+                      </a>
+                    )}
+                    {product.installGuideUrl && (
+                      <a
+                        href={product.installGuideUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 bg-slate-50 border border-slate-200 hover:border-brand-orange hover:bg-brand-orange-pale/10 hover:text-brand-orange transition duration-300 text-xs font-bold px-4 py-3 rounded-xl justify-center text-slate-600 cursor-pointer"
+                      >
+                        <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Install Guide
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Inquiry CTA */}
+              <div className="flex flex-wrap gap-4 pt-2">
+                <button
+                  onClick={handleScrollToForm}
+                  className="flex-1 bg-brand-orange text-white py-4 px-6 rounded-full text-[0.9rem] font-bold text-center transition-all duration-300 hover:bg-brand-orange-light hover:-translate-y-0.5 active:translate-y-0 shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <MessageSquare className="w-4 h-4 shrink-0" /> Inquire & Request Price
+                </button>
+                {settings.whatsapp && (
+                  <a
+                    href={`https://api.whatsapp.com/send/?phone=${settings.whatsapp.replace(/[^0-9]/g, "")}&text=Hello%2C%20I%20am%20interested%20in%20inquiring%20about%20${encodeURIComponent(product.title)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 border border-border-light bg-bg-light text-text-light-primary py-4 px-6 rounded-full text-[0.9rem] font-bold text-center transition-all duration-300 hover:bg-green-500 hover:text-white hover:border-green-500 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
+                  >
+                    <PhoneCall className="w-4 h-4 shrink-0" /> WhatsApp Support
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Detailed Description */}
+          {(product.fullDescription || product.description) && (
+            <div className="p-8 lg:p-16 border-b border-border-light">
+              <h3 className="text-[1.5rem] font-bold text-text-light-primary mb-6">Detailed Description</h3>
+              <div 
+                className="prose max-w-none text-text-light-secondary leading-relaxed text-[0.96rem] space-y-4 prose-headings:font-bold prose-headings:text-text-light-primary prose-ul:list-disc prose-ul:pl-5 prose-ol:list-decimal prose-ol:pl-5 prose-table:w-full prose-table:border-collapse prose-table:text-sm prose-td:border prose-td:border-border-light prose-td:p-2.5 prose-th:border prose-th:border-border-light prose-th:p-2.5 prose-th:bg-slate-50"
+                dangerouslySetInnerHTML={{ __html: product.fullDescription || product.description }}
+              />
+            </div>
+          )}
+
+          {/* Section 4: Technical Specifications */}
+          {Object.keys(specsMap).length > 0 && (
+            <div className="p-8 lg:p-16 border-b border-border-light flex flex-col gap-6">
+              <h3 className="text-[1.5rem] font-bold text-text-light-primary">Technical Specifications</h3>
+              <div className="border border-border-light rounded-2xl overflow-hidden shadow-sm bg-white">
+                <table className="w-full text-left border-collapse text-sm">
+                  <tbody>
+                    {Object.entries(specsMap).map(([key, val], index) => (
+                      <tr
+                        key={key}
+                        className={`border-b border-border-light last:border-none ${
+                          index % 2 === 0 ? "bg-slate-50/50" : "bg-white"
+                        }`}
+                      >
+                        <td className="py-4.5 px-6 font-semibold text-text-light-secondary capitalize w-[40%]">
+                          {key.replace(/([A-Z])/g, " $1")}
+                        </td>
+                        <td className="py-4.5 px-6 font-bold text-text-light-primary">
+                          {val}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Section 5: Why Choose Shivshakti */}
+          <div className="p-8 lg:p-16 border-b border-border-light bg-slate-50/30 flex flex-col gap-8">
+            <div className="text-center max-w-xl mx-auto">
+              <span className="text-brand-blue text-[0.72rem] font-bold uppercase tracking-[0.2em] block mb-1">Our Standard</span>
+              <h3 className="text-[1.5rem] font-bold text-text-light-primary">Why Choose Shivshakti Elevator</h3>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+              <div className="bg-white border border-border-light rounded-[1.25rem] p-6 flex flex-col gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <div className="text-brand-orange text-2xl font-bold font-mono">40,000+</div>
+                <h4 className="font-bold text-text-light-primary text-sm">Sq Ft Factory</h4>
+                <p className="text-xs text-text-light-secondary leading-[1.5]">Advanced heavy industrial elevator manufacturing plant in Surat.</p>
+              </div>
+              <div className="bg-white border border-border-light rounded-[1.25rem] p-6 flex flex-col gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <div className="text-brand-orange text-2xl font-bold font-mono">In-House</div>
+                <h4 className="font-bold text-text-light-primary text-sm">Manufacturing</h4>
+                <p className="text-xs text-text-light-secondary leading-[1.5]">Custom specifications control and direct sheet-metal fabrications.</p>
+              </div>
+              <div className="bg-white border border-border-light rounded-[1.25rem] p-6 flex flex-col gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <div className="text-brand-orange text-2xl font-bold font-mono">Pan India</div>
+                <h4 className="font-bold text-text-light-primary text-sm">Delivery</h4>
+                <p className="text-xs text-text-light-secondary leading-[1.5]">Logistics dispatch setup supporting networks in Gujarat, MP, and UP.</p>
+              </div>
+              <div className="bg-white border border-border-light rounded-[1.25rem] p-6 flex flex-col gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <div className="text-brand-orange text-2xl font-bold font-mono">Honesty</div>
+                <h4 className="font-bold text-text-light-primary text-sm">Our Guarantee</h4>
+                <p className="text-xs text-text-light-secondary leading-[1.5]">Transparent commercial dealings and reliable steel certifications.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 6: Product Inquiry Form */}
+          <div id="inquiry-form-section" className="p-8 lg:p-16 border-b border-border-light scroll-mt-6 max-w-3xl mx-auto w-full">
+            <ProductInquiryForm 
+              productId={product._id.toString()} 
+              productTitle={product.title} 
+              productSlug={product.slug} 
+            />
+          </div>
+
+          {/* Section 7: Related Products */}
+          {similarProducts.length > 0 && (
+            <div className="p-8 lg:p-16 flex flex-col gap-10 bg-slate-50/20">
+              <div>
+                <span className="text-brand-blue text-[0.82rem] font-bold uppercase tracking-[0.2em] block mb-1">Recommendations</span>
+                <h2 className="text-3xl font-extrabold text-text-light-primary">Similar Products</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {similarProducts.map((p) => {
+                  return (
+                    <Link
+                      key={p._id}
+                      href={`/products/${p.slug}`}
+                      className="bg-card-bg border border-border-light rounded-[1.25rem] overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:-translate-y-1.5 hover:shadow-md hover:border-brand-blue/25 group text-text-light-primary"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-slate-50 flex items-center justify-center">
+                        <ProductImage
+                          src={p.featuredImage}
+                          alt={p.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        {p.badge && (
+                          <span
+                            className={`absolute top-4 right-4 text-white px-2.5 py-1 rounded-lg text-[0.72rem] font-bold shadow-sm z-10 ${
+                              p.badgeColor === "brand-orange" ? "bg-brand-orange/85" : "bg-brand-blue/85"
+                            }`}
+                          >
+                            {p.badge}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-5 text-center border-t border-border-light">
+                        <h4 className="font-bold text-text-light-primary group-hover:text-brand-blue transition-colors duration-300 text-[1.1rem] truncate">
+                          {p.title}
+                        </h4>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Section 8: Recently Viewed Products */}
+          {recentlyViewed.length > 0 && (
+            <div className="p-8 lg:p-16 flex flex-col gap-10 bg-slate-50/10 border-t border-border-light">
+              <div>
+                <span className="text-brand-orange text-[0.82rem] font-bold uppercase tracking-[0.2em] block mb-1">Browse History</span>
+                <h2 className="text-3xl font-extrabold text-text-light-primary">Recently Viewed Components</h2>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-6">
+                {recentlyViewed.slice(0, 5).map((p) => {
+                  return (
+                    <Link
+                      key={p._id}
+                      href={`/products/${p.slug}`}
+                      className="bg-card-bg border border-border-light rounded-2xl overflow-hidden flex flex-col transition-all duration-300 shadow-sm hover:-translate-y-1 hover:shadow-md hover:border-brand-orange/25 group text-text-light-primary"
+                    >
+                      <div className="relative aspect-video overflow-hidden bg-slate-50 flex items-center justify-center">
+                        <ProductImage
+                          src={p.featuredImage}
+                          alt={p.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="p-3.5 text-center border-t border-border-light">
+                        <h4 className="font-bold text-text-light-primary group-hover:text-brand-orange transition-colors duration-300 text-xs truncate">
+                          {p.title}
+                        </h4>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* Footer component */}
+      <Footer products={allActiveProducts} settings={settings} />
+    </div>
+  );
+}
