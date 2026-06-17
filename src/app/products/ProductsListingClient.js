@@ -12,6 +12,47 @@ export default function ProductsListingClient({ products, categories, settings }
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
 
+  // Elevator exit transition states
+  const [showExitOverlay, setShowExitOverlay] = useState(false);
+  const [exitOverlayOpacity, setExitOverlayOpacity] = useState(1);
+
+  useEffect(() => {
+    const active = sessionStorage.getItem("elevator-transition-active") === "true";
+    const consuming = sessionStorage.getItem("elevator-transition-consuming") === "true";
+
+    if (active || consuming) {
+      setShowExitOverlay(true);
+      setExitOverlayOpacity(1);
+
+      if (active) {
+        sessionStorage.removeItem("elevator-transition-active");
+        sessionStorage.setItem("elevator-transition-consuming", "true");
+      }
+
+      let rafId1;
+      let rafId2;
+      let removeTimer;
+
+      rafId1 = requestAnimationFrame(() => {
+        rafId2 = requestAnimationFrame(() => {
+          setExitOverlayOpacity(0);
+        });
+      });
+
+      // Clear the overlay and reset session storage after transition completes (800ms)
+      removeTimer = setTimeout(() => {
+        setShowExitOverlay(false);
+        sessionStorage.removeItem("elevator-transition-consuming");
+      }, 1000); // 1.0s safety timeout to ensure the transition finishes
+
+      return () => {
+        if (rafId1) cancelAnimationFrame(rafId1);
+        if (rafId2) cancelAnimationFrame(rafId2);
+        clearTimeout(removeTimer);
+      };
+    }
+  }, []);
+
   // Debounce scroll search query inputs (200ms delay)
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -238,6 +279,60 @@ export default function ProductsListingClient({ products, categories, settings }
 
       {/* Footer component */}
       <Footer products={products} settings={settings} />
+
+      {/* Cinematic Elevator Transit Exit Overlay — Loading Screen Theme */}
+      {showExitOverlay && (
+        <div
+          className="fixed inset-0 z-[100000] pointer-events-none flex flex-col items-center justify-center"
+          style={{
+            background: "radial-gradient(circle at 15% 20%, rgba(30,58,138,0.25) 0%, transparent 50%), radial-gradient(circle at 85% 80%, rgba(249,115,22,0.15) 0%, transparent 45%), #0A0A0A",
+            opacity: exitOverlayOpacity,
+            transition: "opacity 0.8s ease-out",
+          }}
+        >
+          {/* Mini loading screen SVG */}
+          <div style={{
+            opacity: exitOverlayOpacity,
+            transform: exitOverlayOpacity === 1 ? "scale(1)" : "scale(0.9)",
+            transition: "all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          }}>
+            <svg
+              width="120"
+              height="170"
+              viewBox="0 0 180 260"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="overflow-hidden"
+            >
+              <rect x="10" y="10" width="160" height="240" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" fill="none" />
+              <line x1="25" y1="10" x2="25" y2="250" stroke="#1E3A8A" strokeWidth="3" />
+              <line x1="155" y1="10" x2="155" y2="250" stroke="#1E3A8A" strokeWidth="3" />
+              <g>
+                <line x1="70" y1="10" x2="70" y2="82" stroke="rgba(255,255,255,0.6)" strokeWidth="1" />
+                <line x1="90" y1="10" x2="90" y2="82" stroke="rgba(255,255,255,0.6)" strokeWidth="1" />
+                <line x1="110" y1="10" x2="110" y2="82" stroke="rgba(255,255,255,0.6)" strokeWidth="1" />
+                <rect x="30" y="80" width="120" height="140" stroke="#FFFFFF" strokeWidth="2.5" fill="rgba(255,255,255,0.03)" />
+                <line x1="70" y1="85" x2="70" y2="215" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                <line x1="110" y1="85" x2="110" y2="215" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                <line x1="90" y1="85" x2="90" y2="215" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                <line x1="20" y1="82" x2="160" y2="82" stroke="#F97316" strokeWidth="3" />
+                <line x1="20" y1="218" x2="160" y2="218" stroke="#F97316" strokeWidth="3" />
+                <rect x="70" y="65" width="40" height="14" fill="rgba(30,58,138,0.3)" stroke="#1E3A8A" strokeWidth="1" rx="3" />
+              </g>
+            </svg>
+            <div style={{
+              fontSize: "10px",
+              color: "rgba(255,255,255,0.4)",
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              textAlign: "center",
+              marginTop: "12px",
+            }}>
+              Loading products...
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

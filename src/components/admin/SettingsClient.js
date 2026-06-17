@@ -13,6 +13,17 @@ export default function SettingsClient({ settings }) {
   const [iec, setIec] = useState(settings.iec || "");
   const [banker, setBanker] = useState(settings.banker || "");
   const [googleMapsEmbed, setGoogleMapsEmbed] = useState(settings.googleMapsEmbed || "");
+
+  const handleMapUrlChange = (val) => {
+    let cleanUrl = val.trim();
+    if (cleanUrl.startsWith("<iframe") && cleanUrl.includes("src=")) {
+      const match = cleanUrl.match(/src=["']([^"']+)["']/);
+      if (match && match[1]) {
+        cleanUrl = match[1];
+      }
+    }
+    setGoogleMapsEmbed(cleanUrl);
+  };
   const [logoUrl, setLogoUrl] = useState(settings.logoUrl || "");
   const [faviconUrl, setFaviconUrl] = useState(settings.faviconUrl || "");
   const [footerDescription, setFooterDescription] = useState(settings.footerDescription || "");
@@ -307,7 +318,8 @@ export default function SettingsClient({ settings }) {
                 <input
                   type="text"
                   value={googleMapsEmbed}
-                  onChange={(e) => setGoogleMapsEmbed(e.target.value)}
+                  onChange={(e) => handleMapUrlChange(e.target.value)}
+                  placeholder="https://www.google.com/maps/embed?pb=... or paste iframe code"
                   className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
                 />
               </div>

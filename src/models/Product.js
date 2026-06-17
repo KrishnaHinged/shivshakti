@@ -37,6 +37,17 @@ const ProductSchema = new mongoose.Schema(
     brochureUrl: { type: String, default: "" },
     techSpecsUrl: { type: String, default: "" },
     installGuideUrl: { type: String, default: "" },
+
+    // 360° Interior Cabin View
+    has360View: { type: Boolean, default: false },
+    view360: {
+      front: { type: String, default: "" },
+      back: { type: String, default: "" },
+      left: { type: String, default: "" },
+      right: { type: String, default: "" },
+      ceiling: { type: String, default: "" },
+      floor: { type: String, default: "" },
+    },
   },
   { timestamps: true }
 );

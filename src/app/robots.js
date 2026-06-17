@@ -1,5 +1,5 @@
 export default function robots() {
-  const baseUrl = "https://www.shivshaktielevator.com";
+  const baseUrl = "https://www.shivshaktielevatorcomponents.com";
 
   return {
     rules: [

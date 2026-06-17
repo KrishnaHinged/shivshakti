@@ -8,7 +8,8 @@ import {
   duplicateProductAction,
   archiveProductAction,
 } from "@/actions/products";
-import { Plus, AlertTriangle, Archive, Copy, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, AlertTriangle, Archive, Copy, Edit, Trash2, Eye, Upload } from "lucide-react";
+import View360Uploader from "@/components/admin/View360Uploader";
 
 export default function ProductsClient({ products: initialProducts, categories }) {
   const [products, setProducts] = useState(initialProducts);
@@ -40,10 +41,86 @@ export default function ProductsClient({ products: initialProducts, categories }
   const [techSpecsUrl, setTechSpecsUrl] = useState("");
   const [installGuideUrl, setInstallGuideUrl] = useState("");
   
+  // 360° View States
+  const [has360View, setHas360View] = useState(false);
+  const [view360, setView360] = useState({ front: "", back: "", left: "", right: "", ceiling: "", floor: "" });
+  const [view360Errors, setView360Errors] = useState({});
+  
   // Specs Editor States
   const [specs, setSpecs] = useState({});
   const [specKey, setSpecKey] = useState("");
   const [specVal, setSpecVal] = useState("");
+
+  // Upload States
+  const [uploadingFeatured, setUploadingFeatured] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
+
+  const handleUploadFeaturedImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploadingFeatured(true);
+    setError("");
+    
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "products");
+
+      const res = await fetch("/api/media", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setFeaturedImage(data.data.url);
+      } else {
+        setError(data.error || "Featured image upload failed.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error during featured image upload.");
+    } finally {
+      setUploadingFeatured(false);
+    }
+  };
+
+  const handleUploadGalleryImages = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    
+    setUploadingGallery(true);
+    setError("");
+    
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "products");
+
+        const res = await fetch("/api/media", { method: "POST", body: formData });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          uploadedUrls.push(data.data.url);
+        } else {
+          console.error(`Failed to upload ${file.name}:`, data.error);
+        }
+      }
+      
+      if (uploadedUrls.length > 0) {
+        const currentList = images
+          ? images.split(",").map(i => i.trim()).filter(Boolean)
+          : [];
+        const newList = [...currentList, ...uploadedUrls];
+        setImages(newList.join(", "));
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error during gallery upload.");
+    } finally {
+      setUploadingGallery(false);
+    }
+  };
 
   const handleTitleChange = (val) => {
     setTitle(val);
@@ -87,6 +164,9 @@ export default function ProductsClient({ products: initialProducts, categories }
     setBrochureUrl("");
     setTechSpecsUrl("");
     setInstallGuideUrl("");
+    setHas360View(false);
+    setView360({ front: "", back: "", left: "", right: "", ceiling: "", floor: "" });
+    setView360Errors({});
     setEditingProduct(null);
     setError("");
     setActiveTab("general");
@@ -112,6 +192,9 @@ export default function ProductsClient({ products: initialProducts, categories }
     setBrochureUrl(p.brochureUrl || "");
     setTechSpecsUrl(p.techSpecsUrl || "");
     setInstallGuideUrl(p.installGuideUrl || "");
+    setHas360View(p.has360View || false);
+    setView360(p.view360 || { front: "", back: "", left: "", right: "", ceiling: "", floor: "" });
+    setView360Errors({});
     
     // Parse specs safely
     const originalSpecs = p.specifications || p.specs || {};
@@ -126,6 +209,18 @@ export default function ProductsClient({ products: initialProducts, categories }
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Client-side 360° validation before submitting
+    if (has360View) {
+      const view360Fields = ["front", "back", "left", "right", "ceiling", "floor"];
+      const missing = view360Fields.filter((f) => !view360[f]);
+      if (missing.length > 0) {
+        setError(`Please upload all 6 view 360° images. Missing: ${missing.join(", ")}`);
+        setLoading(false);
+        setActiveTab("360");
+        return;
+      }
+    }
 
     const formData = new FormData();
     formData.append("title", title);
@@ -147,6 +242,8 @@ export default function ProductsClient({ products: initialProducts, categories }
     formData.append("brochureUrl", brochureUrl);
     formData.append("techSpecsUrl", techSpecsUrl);
     formData.append("installGuideUrl", installGuideUrl);
+    formData.append("has360View", has360View ? "true" : "false");
+    formData.append("view360", JSON.stringify(view360));
 
     let res;
     if (editingProduct) {
@@ -207,6 +304,7 @@ export default function ProductsClient({ products: initialProducts, categories }
     { id: "general", label: "General" },
     { id: "specs", label: "Specifications" },
     { id: "gallery", label: "Gallery" },
+    { id: "360", label: "360° View" },
     { id: "downloads", label: "Downloads" },
     { id: "seo", label: "SEO" },
     { id: "publish", label: "Publish" },
@@ -440,7 +538,20 @@ export default function ProductsClient({ products: initialProducts, categories }
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Primary Featured Image URL</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Primary Featured Image URL</label>
+                      <label className="text-xs font-bold text-[#F97316] hover:text-[#EA580C] uppercase tracking-wider cursor-pointer flex items-center gap-1 select-none">
+                        <Upload className="w-3.5 h-3.5" />
+                        {uploadingFeatured ? "Uploading..." : "Upload from Device"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleUploadFeaturedImage}
+                          disabled={uploadingFeatured}
+                        />
+                      </label>
+                    </div>
                     <input
                       type="text"
                       value={featuredImage}
@@ -451,15 +562,36 @@ export default function ProductsClient({ products: initialProducts, categories }
                     />
                   </div>
                   {featuredImage && (
-                    <div className="border border-slate-100 rounded-xl p-3 bg-slate-50 flex items-center justify-center h-48 overflow-hidden">
+                    <div className="border border-slate-100 rounded-xl p-3 bg-slate-50 flex items-center justify-center h-48 overflow-hidden relative group">
                       <img src={featuredImage} alt="Featured Preview" className="h-full object-contain" />
+                      <button
+                        type="button"
+                        onClick={() => setFeaturedImage("")}
+                        className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition cursor-pointer shadow-sm"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-500 uppercase">Gallery Images (Comma-separated URLs)</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-slate-500 uppercase">Gallery Images (Comma-separated URLs)</label>
+                      <label className="text-xs font-bold text-[#F97316] hover:text-[#EA580C] uppercase tracking-wider cursor-pointer flex items-center gap-1 select-none">
+                        <Upload className="w-3.5 h-3.5" />
+                        {uploadingGallery ? "Uploading..." : "Upload from Device"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          className="hidden"
+                          onChange={handleUploadGalleryImages}
+                          disabled={uploadingGallery}
+                        />
+                      </label>
+                    </div>
                     <textarea
                       rows="3"
                       value={images}
@@ -474,8 +606,22 @@ export default function ProductsClient({ products: initialProducts, categories }
                         const trimmed = i.trim();
                         if (!trimmed) return null;
                         return (
-                          <div key={idx} className="border border-slate-100 rounded-lg p-1 bg-slate-50 flex items-center justify-center aspect-square overflow-hidden">
+                          <div key={idx} className="border border-slate-100 rounded-lg p-1 bg-slate-50 flex items-center justify-center aspect-square overflow-hidden relative group">
                             <img src={trimmed} alt="Thumb Preview" className="h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentList = images
+                                  .split(",")
+                                  .map(item => item.trim())
+                                  .filter(Boolean);
+                                currentList.splice(idx, 1);
+                                setImages(currentList.join(", "));
+                              }}
+                              className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition cursor-pointer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         );
                       })}
@@ -483,6 +629,19 @@ export default function ProductsClient({ products: initialProducts, categories }
                   )}
                 </div>
               </div>
+            )}
+
+            {/* TAB: 360° Interior View */}
+            {activeTab === "360" && (
+              <View360Uploader
+                has360View={has360View}
+                setHas360View={setHas360View}
+                view360={view360}
+                setView360={setView360}
+                view360Errors={view360Errors}
+                setView360Errors={setView360Errors}
+                productName={title}
+              />
             )}
 
             {/* TAB 4: Search Engine Optimization */}

@@ -31,7 +31,7 @@ export const Footer = ({ products, settings }) => {
   return (
     <footer id="footer" className="bg-[#0a1128] text-white px-6 py-20 lg:px-16 pb-10 border-t border-white/10">
       <div className="max-w-[1300px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1.5fr] gap-16 mb-16">
-        
+
         {/* Column 1: Brand details */}
         <div className="flex flex-col gap-6">
           <a href="#home" className="inline-block hover:scale-105 transition-transform duration-300">
@@ -44,7 +44,7 @@ export const Footer = ({ products, settings }) => {
           <p className="text-[0.95rem] text-text-secondary leading-[1.6] max-w-[20rem]">
             {settings.footerDescription || "Manufacturer of premium elevator cabins, automatic doors, car frames and components."}
           </p>
-          
+
           <div className="flex gap-4 mt-2">
             {settings.socialLinks?.facebook && (
               <a
@@ -122,7 +122,7 @@ export const Footer = ({ products, settings }) => {
           <p className="text-[0.9rem] text-text-secondary leading-[1.5] mb-5">
             Receive exclusive design guides, architecture tips, and collection updates.
           </p>
-          
+
           {newsletterMsg && (
             <div className="bg-green-500/10 border border-green-500/20 text-green-300 text-xs px-3.5 py-2 rounded-xl mb-4 leading-normal">
               {newsletterMsg}

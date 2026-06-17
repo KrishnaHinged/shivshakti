@@ -44,6 +44,16 @@ export async function createProductAction(formData) {
     const techSpecsUrl = formData.get("techSpecsUrl")?.toString().trim() || "";
     const installGuideUrl = formData.get("installGuideUrl")?.toString().trim() || "";
 
+    // Parse 360° view fields
+    const has360View = formData.get("has360View") === "true";
+    const view360Str = formData.get("view360")?.toString() || "{}";
+    let view360 = { front: "", back: "", left: "", right: "", ceiling: "", floor: "" };
+    try {
+      view360 = { ...view360, ...JSON.parse(view360Str) };
+    } catch (e) {
+      // Keep defaults
+    }
+
     const highlights = highlightsStr ? highlightsStr.split("\n").map(h => h.trim()).filter(Boolean) : [];
 
     // Parse specs JSON
@@ -57,6 +67,15 @@ export async function createProductAction(formData) {
 
     if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
       return { success: false, error: "Missing required fields." };
+    }
+
+    // Validate 360° view: all 6 images required when enabled
+    if (has360View) {
+      const view360Fields = ["front", "back", "left", "right", "ceiling", "floor"];
+      const missing = view360Fields.filter((f) => !view360[f]);
+      if (missing.length > 0) {
+        return { success: false, error: `360° View is enabled but missing images: ${missing.join(", ")}. Please upload all 6 images or disable the 360° toggle.` };
+      }
     }
 
     const exists = await Product.findOne({ slug });
@@ -90,7 +109,9 @@ export async function createProductAction(formData) {
       publishedAt,
       brochureUrl,
       techSpecsUrl,
-      installGuideUrl
+      installGuideUrl,
+      has360View,
+      view360
     });
 
     await ActivityLog.create({
@@ -137,6 +158,16 @@ export async function editProductAction(productId, formData) {
     const techSpecsUrl = formData.get("techSpecsUrl")?.toString().trim() || "";
     const installGuideUrl = formData.get("installGuideUrl")?.toString().trim() || "";
 
+    // Parse 360° view fields
+    const has360View = formData.get("has360View") === "true";
+    const view360Str = formData.get("view360")?.toString() || "{}";
+    let view360 = { front: "", back: "", left: "", right: "", ceiling: "", floor: "" };
+    try {
+      view360 = { ...view360, ...JSON.parse(view360Str) };
+    } catch (e) {
+      // Keep defaults
+    }
+
     const highlights = highlightsStr ? highlightsStr.split("\n").map(h => h.trim()).filter(Boolean) : [];
 
     // Parse specs JSON
@@ -150,6 +181,15 @@ export async function editProductAction(productId, formData) {
 
     if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
       return { success: false, error: "Missing required fields." };
+    }
+
+    // Validate 360° view: all 6 images required when enabled
+    if (has360View) {
+      const view360Fields = ["front", "back", "left", "right", "ceiling", "floor"];
+      const missing = view360Fields.filter((f) => !view360[f]);
+      if (missing.length > 0) {
+        return { success: false, error: `360° View is enabled but missing images: ${missing.join(", ")}. Please upload all 6 images or disable the 360° toggle.` };
+      }
     }
 
     // Check slug uniqueness
@@ -192,7 +232,9 @@ export async function editProductAction(productId, formData) {
         publishedAt,
         brochureUrl,
         techSpecsUrl,
-        installGuideUrl
+        installGuideUrl,
+        has360View,
+        view360
       },
       { new: true }
     );
@@ -264,6 +306,8 @@ export async function duplicateProductAction(productId) {
       featured: false,
       seoTitle: original.seoTitle,
       seoDescription: original.seoDescription,
+      has360View: original.has360View || false,
+      view360: original.view360 || { front: "", back: "", left: "", right: "", ceiling: "", floor: "" },
     });
 
     await ActivityLog.create({

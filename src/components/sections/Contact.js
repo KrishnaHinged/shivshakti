@@ -68,12 +68,12 @@ export const Contact = ({ settings }) => {
   const primaryEmail = settings.emails?.[0] || "sales.shivshakti22@gmail.com";
 
   return (
-    <section className="w-full px-4 lg:px-8 py-8 bg-transparent">
+    <section className="w-full px-4 lg:px-8 py-15 bg-transparent">
       {/* Highly Rounded Dark Container Block */}
-      <div id="contact" className="mx-auto max-w-[1300px] rounded-[2.5rem] lg:rounded-[3.5rem] bg-[#0d0d0d] text-white p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
-        
+      <div id="contact" className="mx-auto max-w-[1300px] rounded-[2.5rem] lg:rounded-[3.5rem] bg-[#0a1128] text-white p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          
+
           {/* Left Column: Inquiry Form */}
           <div className="flex flex-col gap-6">
             <div>
@@ -123,7 +123,7 @@ export const Contact = ({ settings }) => {
                     className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <input
                     type="tel"
@@ -142,40 +142,40 @@ export const Contact = ({ settings }) => {
                     className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <select
                     name="elevatorType"
                     required
                     suppressHydrationWarning
-                    className="bg-[#120e0b] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
+                    className="bg-[0a1128] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
                     defaultValue=""
                   >
-                    <option value="" disabled>Elevator Type</option>
-                    <option value="passenger">Passenger Elevator</option>
-                    <option value="capsule">Home / Capsule Lift</option>
-                    <option value="freight">Goods / Freight Lift</option>
-                    <option value="stretcher">Stretcher Elevator</option>
-                    <option value="dumbwaiter">Dumbwaiter / Small Lift</option>
+                    <option value="" disabled className="bg-[#120e0b] text-slate-400">Elevator Type</option>
+                    <option value="passenger" className="bg-[#120e0b] text-white">Passenger Elevator</option>
+                    <option value="capsule" className="bg-[#120e0b] text-white">Home / Capsule Lift</option>
+                    <option value="freight" className="bg-[#120e0b] text-white">Goods / Freight Lift</option>
+                    <option value="stretcher" className="bg-[#120e0b] text-white">Stretcher Elevator</option>
+                    <option value="dumbwaiter" className="bg-[#120e0b] text-white">Dumbwaiter / Small Lift</option>
                   </select>
 
                   <select
                     name="componentNeeded"
                     required
                     suppressHydrationWarning
-                    className="bg-[#120e0b] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
+                    className="bg-[#0a1128] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
                     defaultValue=""
                   >
-                    <option value="" disabled>Component Needed</option>
-                    <option value="manual-door">Manual Door</option>
-                    <option value="automatic-door">Automatic Door</option>
-                    <option value="ss-ms-cabin">SS / MS Cabin</option>
-                    <option value="car-frame">Elevator Car Frame</option>
-                    <option value="geared-gearless">Geared / Gearless Machine</option>
-                    <option value="lop-cop">LOP / COP Panels</option>
-                    <option value="t-guide-rail">T-Guide Rail & Bracket</option>
-                    <option value="usha-martin">Usha Martin Wire Rope</option>
-                    <option value="other">Other Components</option>
+                    <option value="" disabled className="bg-[#120e0b] text-slate-400">Component Needed</option>
+                    <option value="manual-door" className="bg-[#120e0b] text-white">Manual Door</option>
+                    <option value="automatic-door" className="bg-[#120e0b] text-white">Automatic Door</option>
+                    <option value="ss-ms-cabin" className="bg-[#120e0b] text-white">SS / MS Cabin</option>
+                    <option value="car-frame" className="bg-[#120e0b] text-white">Elevator Car Frame</option>
+                    <option value="geared-gearless" className="bg-[#120e0b] text-white">Geared / Gearless Machine</option>
+                    <option value="lop-cop" className="bg-[#120e0b] text-white">LOP / COP Panels</option>
+                    <option value="t-guide-rail" className="bg-[#120e0b] text-white">T-Guide Rail & Bracket</option>
+                    <option value="usha-martin" className="bg-[#120e0b] text-white">Usha Martin Wire Rope</option>
+                    <option value="other" className="bg-[#120e0b] text-white">Other Components</option>
                   </select>
                 </div>
 
@@ -267,7 +267,7 @@ export const Contact = ({ settings }) => {
                   rel="noopener noreferrer"
                   className="text-[0.78rem] text-text-secondary hover:text-white transition duration-300 flex items-center gap-1.5 mt-1"
                 >
-                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
                   View on Google Maps ↗
                 </a>
               </>

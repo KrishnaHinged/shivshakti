@@ -2,17 +2,31 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare, PhoneCall } from "lucide-react";
+import dynamic from "next/dynamic";
+import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare, PhoneCall, Eye } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductImage from "@/components/ui/ProductImage";
 import ProductInquiryForm from "@/components/sections/ProductInquiryForm";
+
+const Cabin360Viewer = dynamic(() => import("@/components/Cabin360Viewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full aspect-[16/10] max-sm:aspect-square bg-slate-100 rounded-[24px] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-8 h-8 border-3 border-[#F97316] border-t-transparent rounded-full animate-spin" />
+        <p className="text-slate-400 text-sm font-medium">Loading 360° Viewer...</p>
+      </div>
+    </div>
+  ),
+});
 
 export default function ProductDetailClient({ product, similarProducts, settings, allActiveProducts }) {
   // Gallery active image state
   const galleryList = [product.featuredImage, ...(product.galleryImages || product.images || [])].filter(Boolean);
   const [activeImage, setActiveImage] = useState(galleryList[0] || product.featuredImage);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [viewMode, setViewMode] = useState("photos"); // "photos" or "360"
 
   // Track product view in localStorage
   useEffect(() => {
@@ -115,51 +129,105 @@ export default function ProductDetailClient({ product, similarProducts, settings
             
             {/* Left: Image & Media Gallery Preview */}
             <div className="flex flex-col gap-5 w-full">
-              {/* Zoom Magnifier Box */}
-              <div 
-                className="relative aspect-[4/3] rounded-[24px] overflow-hidden border border-border-light bg-slate-50 flex items-center justify-center shadow-sm cursor-zoom-in"
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div 
-                  className="w-full h-full transition-transform duration-200 ease-out"
-                  style={zoomStyle}
-                >
-                  <ProductImage
-                    src={activeImage}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                {product.badge && (
-                  <span
-                    className={`absolute top-5 right-5 text-white px-4 py-2 rounded-xl text-[0.8rem] font-bold shadow-md z-10 ${
-                      product.badgeColor === "brand-orange" ? "bg-brand-orange/90" : "bg-brand-blue/90"
+
+              {/* Tab toggle — only if has360View */}
+              {product.has360View && (
+                <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl w-fit">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("photos")}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                      viewMode === "photos"
+                        ? "bg-[#F97316] text-white shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
                     }`}
                   >
-                    {product.badge}
-                  </span>
-                )}
-              </div>
-
-              {/* Secondary Images List */}
-              {galleryList.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {galleryList.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setActiveImage(img)}
-                      className={`aspect-square rounded-xl overflow-hidden border bg-slate-50 flex items-center justify-center cursor-pointer transition duration-300 ${
-                        activeImage === img 
-                          ? "border-brand-orange ring-2 ring-brand-orange/30 shadow-sm" 
-                          : "border-border-light hover:border-brand-blue/40"
-                      }`}
-                    >
-                      <img src={img} alt={`${product.title} gallery thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+                    Photos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode("360")}
+                    className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                      viewMode === "360"
+                        ? "bg-[#F97316] text-white shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    360° View
+                  </button>
                 </div>
+              )}
+
+              {/* Photos View */}
+              {viewMode === "photos" && (
+                <>
+                  {/* Zoom Magnifier Box */}
+                  <div 
+                    className="relative aspect-[4/3] rounded-[24px] overflow-hidden border border-border-light bg-slate-50 flex items-center justify-center shadow-sm cursor-zoom-in"
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <div 
+                      className="w-full h-full transition-transform duration-200 ease-out"
+                      style={zoomStyle}
+                    >
+                      <ProductImage
+                        src={activeImage}
+                        alt={product.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    
+                    {product.badge && (
+                      <span
+                        className={`absolute top-5 right-5 text-white px-4 py-2 rounded-xl text-[0.8rem] font-bold shadow-md z-10 ${
+                          product.badgeColor === "brand-orange" ? "bg-brand-orange/90" : "bg-brand-blue/90"
+                        }`}
+                      >
+                        {product.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Quick access 360 button */}
+                  {product.has360View && (
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("360")}
+                      className="self-start flex items-center gap-2 bg-[rgba(249,115,22,0.10)] text-[#F97316] border border-[rgba(249,115,22,0.2)] px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 hover:bg-[rgba(249,115,22,0.18)] hover:-translate-y-0.5 cursor-pointer"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      View in 360° →
+                    </button>
+                  )}
+
+                  {/* Secondary Images List */}
+                  {galleryList.length > 1 && (
+                    <div className="grid grid-cols-4 gap-3">
+                      {galleryList.map((img, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveImage(img)}
+                          className={`aspect-square rounded-xl overflow-hidden border bg-slate-50 flex items-center justify-center cursor-pointer transition duration-300 ${
+                            activeImage === img 
+                              ? "border-brand-orange ring-2 ring-brand-orange/30 shadow-sm" 
+                              : "border-border-light hover:border-brand-blue/40"
+                          }`}
+                        >
+                          <img src={img} alt={`${product.title} gallery thumbnail ${idx + 1}`} className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* 360° View */}
+              {viewMode === "360" && product.has360View && product.view360 && (
+                <Cabin360Viewer
+                  view360={product.view360}
+                  productName={product.title}
+                />
               )}
             </div>
 

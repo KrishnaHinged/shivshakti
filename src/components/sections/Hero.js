@@ -20,7 +20,7 @@ export const Hero = ({ settings }) => {
           </span>
 
           <h1 className="text-4xl lg:text-[4.2rem] font-extrabold leading-[1.12] tracking-tight text-white max-w-4xl font-sans">
-            Work with Honesty <span className="italic text-brand-orange font-medium font-serif">Shivshakti</span>
+            Work with Honesty <span className="italic text-brand-blue font-medium  font-serif">SHIV</span><span className="italic text-brand-orange font-medium font-serif">SHAKTI</span>
           </h1>
 
           <p className="text-[1rem] lg:text-[1.2rem] font-normal text-text-secondary max-w-[36rem] leading-[1.6] opacity-90">

@@ -1,10 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ProductImage from "@/components/ui/ProductImage";
 
 export const Products = ({ products }) => {
+  const router = useRouter();
+
+  // Pre-fetch route for elevator transit smooth loading
+  useEffect(() => {
+    router.prefetch("/products");
+  }, [router]);
+
+  const handleViewAllClick = (e) => {
+    e.preventDefault();
+    window.dispatchEvent(
+      new CustomEvent("trigger-elevator-transition", {
+        detail: { targetUrl: "/products" },
+      })
+    );
+  };
+
   return (
     <section id="catalog" className="bg-transparent text-text-light-primary px-6 pb-10 lg:px-20 pt-6">
 
@@ -63,7 +80,8 @@ export const Products = ({ products }) => {
       <div className="flex justify-center mt-16">
         <Link
           href="/products"
-          className="bg-slate-950 text-white hover:bg-black px-8 py-4 rounded-full text-[1rem] font-bold transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 shadow-md hover:shadow-lg flex items-center gap-2 group cursor-pointer"
+          onClick={handleViewAllClick}
+          className="bg-[#0a1128] text-white hover:bg-black px-8 py-4 rounded-full text-[1rem] font-bold transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 shadow-md hover:shadow-lg flex items-center gap-2 group cursor-pointer"
         >
           View All Products
           <svg
