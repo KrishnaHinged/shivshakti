@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { createInquiryAction } from "@/actions/inquiries";
 import { AlertTriangle } from "lucide-react";
 
-export const ProductInquiryForm = ({ productId, productTitle, productSlug }) => {
+export const ProductInquiryForm = ({ productId, productTitle, productSlug, customizationColor, customizationFinish }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [inquiryError, setInquiryError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,6 +26,10 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug }) => 
       setInquiryError(res.error || "Submission failed.");
     }
   };
+
+  const defaultMessage = customizationColor && customizationFinish
+    ? `Hello, I am interested in inquiring about specifications, lead times, and pricing details for the ${productTitle} (Color: ${customizationColor}, Finish: ${customizationFinish} Finish). Please share the brochure and catalog.`
+    : `Hello, I am interested in inquiring about specifications, lead times, and pricing details for the ${productTitle}. Please share the brochure and catalog.`;
 
   return (
     <div className="bg-bg-light border border-border-light rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-6 shadow-sm">
@@ -61,6 +65,8 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug }) => 
           <input type="hidden" name="productSlug" value={productSlug || ""} />
           <input type="hidden" name="productTitle" value={productTitle || ""} />
           <input type="hidden" name="productInterest" value={productSlug || ""} />
+          <input type="hidden" name="customizationColor" value={customizationColor || ""} />
+          <input type="hidden" name="customizationFinish" value={customizationFinish || ""} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input
               type="text"
@@ -108,12 +114,13 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug }) => 
           />
 
           <textarea
+            key={customizationColor && customizationFinish ? `${customizationColor}-${customizationFinish}` : "default"}
             name="message"
             placeholder="Your Message"
             rows="3"
             required
             suppressHydrationWarning
-            defaultValue={`Hello, I am interested in inquiring about specifications, lead times, and pricing details for the ${productTitle}. Please share the brochure and catalog.`}
+            defaultValue={defaultMessage}
             className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
           />
 

@@ -68,4 +68,11 @@ body {
   background: rgba(255, 255, 255, 0.25);
 }
 
-
+/* Hide default browser scrollbars globally for all scrollable elements, while preserving scroll functionality */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

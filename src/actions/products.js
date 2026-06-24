@@ -39,6 +39,12 @@ export async function createProductAction(formData) {
     const displayOrder = Number(formData.get("displayOrder")) || 0;
     const highlightsStr = formData.get("highlights")?.toString().trim() || "";
     
+    // Redesign Fields
+    const productType = formData.get("productType")?.toString().trim() || "our-product";
+    const brand = formData.get("brand")?.toString().trim() || "";
+    const subCategory = formData.get("subCategory")?.toString().trim() || "";
+    const inquiryEnabled = formData.get("inquiryEnabled") !== "false"; // default true
+
     // Parse PDF download links
     const brochureUrl = formData.get("brochureUrl")?.toString().trim() || "";
     const techSpecsUrl = formData.get("techSpecsUrl")?.toString().trim() || "";
@@ -54,6 +60,24 @@ export async function createProductAction(formData) {
       // Keep defaults
     }
 
+    // Parse customization configuration fields
+    const availableColorsStr = formData.get("availableColors")?.toString() || "[]";
+    const availableFinishesStr = formData.get("availableFinishes")?.toString() || "[]";
+    const customizationVariantsStr = formData.get("customizationVariants")?.toString() || "[]";
+    const view360VariantsStr = formData.get("view360Variants")?.toString() || "[]";
+    const defaultColor = formData.get("defaultColor")?.toString() || "";
+    const defaultFinish = formData.get("defaultFinish")?.toString() || "";
+
+    let availableColors = [];
+    let availableFinishes = [];
+    let customizationVariants = [];
+    let view360Variants = [];
+
+    try { availableColors = JSON.parse(availableColorsStr); } catch (e) { console.error("Parse availableColors failed:", e.message); }
+    try { availableFinishes = JSON.parse(availableFinishesStr); } catch (e) { console.error("Parse availableFinishes failed:", e.message); }
+    try { customizationVariants = JSON.parse(customizationVariantsStr); } catch (e) { console.error("Parse customizationVariants failed:", e.message); }
+    try { view360Variants = JSON.parse(view360VariantsStr); } catch (e) { console.error("Parse view360Variants failed:", e.message); }
+
     const highlights = highlightsStr ? highlightsStr.split("\n").map(h => h.trim()).filter(Boolean) : [];
 
     // Parse specs JSON
@@ -65,8 +89,15 @@ export async function createProductAction(formData) {
       return { success: false, error: "Invalid specifications JSON formatting." };
     }
 
-    if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
-      return { success: false, error: "Missing required fields." };
+    // Validation depends on productType
+    if (productType === "elevator-kit") {
+      if (!title || !slug || !shortDescription || !imagesStr) {
+        return { success: false, error: "Missing required fields for elevator kit: Product Name, Gallery Images, and Short Description." };
+      }
+    } else {
+      if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
+        return { success: false, error: "Missing required fields." };
+      }
     }
 
     // Validate 360° view: all 6 images required when enabled
@@ -84,16 +115,21 @@ export async function createProductAction(formData) {
     }
 
     const images = imagesStr ? imagesStr.split(",").map(i => i.trim()).filter(Boolean) : [];
+    const firstImage = images[0] || "";
+    const finalFeaturedImage = productType === "elevator-kit" ? (featuredImage || firstImage) : featuredImage;
+    const finalCategory = productType === "elevator-kit" ? "elevator-kit" : category;
+    const finalDescription = productType === "elevator-kit" ? (description || shortDescription) : description;
+
     const publishedAt = status === "published" ? new Date() : null;
 
     const product = await Product.create({
       title,
       slug,
-      category,
+      category: finalCategory,
       shortDescription,
-      description,
-      fullDescription: description,
-      featuredImage,
+      description: finalDescription,
+      fullDescription: finalDescription,
+      featuredImage: finalFeaturedImage,
       images,
       galleryImages: images,
       badge,
@@ -111,7 +147,17 @@ export async function createProductAction(formData) {
       techSpecsUrl,
       installGuideUrl,
       has360View,
-      view360
+      view360,
+      productType,
+      brand,
+      subCategory,
+      inquiryEnabled,
+      availableColors,
+      availableFinishes,
+      defaultColor,
+      defaultFinish,
+      customizationVariants,
+      view360Variants
     });
 
     await ActivityLog.create({
@@ -153,6 +199,12 @@ export async function editProductAction(productId, formData) {
     const displayOrder = Number(formData.get("displayOrder")) || 0;
     const highlightsStr = formData.get("highlights")?.toString().trim() || "";
     
+    // Redesign Fields
+    const productType = formData.get("productType")?.toString().trim() || "our-product";
+    const brand = formData.get("brand")?.toString().trim() || "";
+    const subCategory = formData.get("subCategory")?.toString().trim() || "";
+    const inquiryEnabled = formData.get("inquiryEnabled") !== "false"; // default true
+
     // Parse PDF download links
     const brochureUrl = formData.get("brochureUrl")?.toString().trim() || "";
     const techSpecsUrl = formData.get("techSpecsUrl")?.toString().trim() || "";
@@ -168,6 +220,26 @@ export async function editProductAction(productId, formData) {
       // Keep defaults
     }
 
+    // Parse customization configuration fields
+    const availableColorsStr = formData.get("availableColors")?.toString() || "[]";
+    const availableFinishesStr = formData.get("availableFinishes")?.toString() || "[]";
+    const customizationVariantsStr = formData.get("customizationVariants")?.toString() || "[]";
+    const view360VariantsStr = formData.get("view360Variants")?.toString() || "[]";
+    const defaultColor = formData.get("defaultColor")?.toString() || "";
+    const defaultFinish = formData.get("defaultFinish")?.toString() || "";
+
+    let availableColors = [];
+    let availableFinishes = [];
+    let customizationVariants = [];
+    let view360Variants = [];
+
+    try { availableColors = JSON.parse(availableColorsStr); } catch (e) { console.error("Parse availableColors failed:", e.message); }
+    try { availableFinishes = JSON.parse(availableFinishesStr); } catch (e) { console.error("Parse availableFinishes failed:", e.message); }
+    try { customizationVariants = JSON.parse(customizationVariantsStr); } catch (e) { console.error("Parse customizationVariants failed:", e.message); }
+    try { view360Variants = JSON.parse(view360VariantsStr); } catch (e) { console.error("Parse view360Variants failed:", e.message); }
+
+    console.log("[editProductAction] customizationVariants count:", customizationVariants.length, "| view360Variants count:", view360Variants.length);
+
     const highlights = highlightsStr ? highlightsStr.split("\n").map(h => h.trim()).filter(Boolean) : [];
 
     // Parse specs JSON
@@ -179,8 +251,15 @@ export async function editProductAction(productId, formData) {
       return { success: false, error: "Invalid specifications JSON formatting." };
     }
 
-    if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
-      return { success: false, error: "Missing required fields." };
+    // Validation depends on productType
+    if (productType === "elevator-kit") {
+      if (!title || !slug || !shortDescription || !imagesStr) {
+        return { success: false, error: "Missing required fields for elevator kit: Product Name, Gallery Images, and Short Description." };
+      }
+    } else {
+      if (!title || !slug || !category || !shortDescription || !description || !featuredImage) {
+        return { success: false, error: "Missing required fields." };
+      }
     }
 
     // Validate 360° view: all 6 images required when enabled
@@ -199,6 +278,10 @@ export async function editProductAction(productId, formData) {
     }
 
     const images = imagesStr ? imagesStr.split(",").map(i => i.trim()).filter(Boolean) : [];
+    const firstImage = images[0] || "";
+    const finalFeaturedImage = productType === "elevator-kit" ? (featuredImage || firstImage) : featuredImage;
+    const finalCategory = productType === "elevator-kit" ? "elevator-kit" : category;
+    const finalDescription = productType === "elevator-kit" ? (description || shortDescription) : description;
 
     // Check if publishedAt needs to be set
     const existingProduct = await Product.findById(productId);
@@ -212,11 +295,11 @@ export async function editProductAction(productId, formData) {
       {
         title,
         slug,
-        category,
+        category: finalCategory,
         shortDescription,
-        description,
-        fullDescription: description,
-        featuredImage,
+        description: finalDescription,
+        fullDescription: finalDescription,
+        featuredImage: finalFeaturedImage,
         images,
         galleryImages: images,
         badge,
@@ -234,9 +317,19 @@ export async function editProductAction(productId, formData) {
         techSpecsUrl,
         installGuideUrl,
         has360View,
-        view360
+        view360,
+        productType,
+        brand,
+        subCategory,
+        inquiryEnabled,
+        availableColors,
+        availableFinishes,
+        defaultColor,
+        defaultFinish,
+        customizationVariants,
+        view360Variants
       },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     await ActivityLog.create({
@@ -246,6 +339,7 @@ export async function editProductAction(productId, formData) {
 
     revalidatePath("/");
     revalidatePath("/admin/products");
+    revalidatePath(`/products/${slug}`);
     return { success: true, data: JSON.parse(JSON.stringify(product)) };
   } catch (error) {
     console.error("Edit product action error:", error);
@@ -291,23 +385,68 @@ export async function duplicateProductAction(productId) {
     const title = `${original.title} (Copy)`;
     const slug = `${original.slug}-copy-${Date.now()}`;
 
+    // Safely copy maps and arrays to avoid shared references
+    const specsMap = original.specs ? (original.specs instanceof Map ? Object.fromEntries(original.specs) : original.specs) : {};
+    const specificationsMap = original.specifications ? (original.specifications instanceof Map ? Object.fromEntries(original.specifications) : original.specifications) : {};
+    const imagesArr = original.images ? [...original.images] : [];
+    const galleryImagesArr = original.galleryImages ? [...original.galleryImages] : [];
+    const highlightsArr = original.highlights ? [...original.highlights] : [];
+    const view360Obj = original.view360 ? {
+      front: original.view360.front || "",
+      back: original.view360.back || "",
+      left: original.view360.left || "",
+      right: original.view360.right || "",
+      ceiling: original.view360.ceiling || "",
+      floor: original.view360.floor || "",
+    } : { front: "", back: "", left: "", right: "", ceiling: "", floor: "" };
+
     const duplicate = await Product.create({
       title,
       slug,
       category: original.category,
       shortDescription: original.shortDescription,
       description: original.description,
+      fullDescription: original.fullDescription || original.description || "",
       featuredImage: original.featuredImage,
-      images: original.images,
+      images: imagesArr,
+      galleryImages: galleryImagesArr,
       badge: original.badge,
       badgeColor: original.badgeColor,
-      specs: original.specs,
-      status: "active",
+      specs: specsMap,
+      specifications: specificationsMap,
+      status: "draft", // Start duplicated product as draft
       featured: false,
       seoTitle: original.seoTitle,
       seoDescription: original.seoDescription,
+      highlights: highlightsArr,
+      displayOrder: original.displayOrder || 0,
+      brochureUrl: original.brochureUrl || "",
+      techSpecsUrl: original.techSpecsUrl || "",
+      installGuideUrl: original.installGuideUrl || "",
       has360View: original.has360View || false,
-      view360: original.view360 || { front: "", back: "", left: "", right: "", ceiling: "", floor: "" },
+      view360: view360Obj,
+      productType: original.productType || "our-product",
+      brand: original.brand || "",
+      subCategory: original.subCategory || "",
+      inquiryEnabled: original.inquiryEnabled !== false,
+      availableColors: original.availableColors ? original.availableColors.map(c => ({ name: c.name, code: c.code, enabled: c.enabled })) : [],
+      availableFinishes: original.availableFinishes ? original.availableFinishes.map(f => ({ name: f.name, code: f.code, enabled: f.enabled })) : [],
+      defaultColor: original.defaultColor || "",
+      defaultFinish: original.defaultFinish || "",
+      customizationVariants: original.customizationVariants ? original.customizationVariants.map(v => ({ color: v.color, finish: v.finish, image: v.image, enabled: v.enabled })) : [],
+      view360Variants: original.view360Variants ? original.view360Variants.map(v => ({
+        color: v.color,
+        finish: v.finish,
+        view360: {
+          front: v.view360?.front || "",
+          back: v.view360?.back || "",
+          left: v.view360?.left || "",
+          right: v.view360?.right || "",
+          ceiling: v.view360?.ceiling || "",
+          floor: v.view360?.floor || "",
+        },
+        enabled: v.enabled
+      })) : []
     });
 
     await ActivityLog.create({
@@ -316,6 +455,7 @@ export async function duplicateProductAction(productId) {
     });
 
     revalidatePath("/");
+    revalidatePath("/products");
     revalidatePath("/admin/products");
     return { success: true, data: JSON.parse(JSON.stringify(duplicate)) };
   } catch (error) {
@@ -332,7 +472,7 @@ export async function archiveProductAction(productId, archive = true) {
     await dbConnect();
 
     const status = archive ? "archived" : "active";
-    const product = await Product.findByIdAndUpdate(productId, { status }, { new: true });
+    const product = await Product.findByIdAndUpdate(productId, { status }, { returnDocument: 'after' });
     if (!product) return { success: false, error: "Product not found." };
 
     await ActivityLog.create({

@@ -6,7 +6,6 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ShowcaseGallery from "@/components/sections/Gallery";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
 export const revalidate = 0; // Prevent caching from serving stale data
 
@@ -51,42 +50,49 @@ export default async function GalleryPage() {
   const serializedSettings = JSON.parse(JSON.stringify(fallbackSettings));
 
   return (
-    <div className="min-h-screen bg-bg-dark text-white font-sans selection:bg-brand-orange selection:text-white">
+    <div className="min-h-screen bg-[#F9F9FB] text-slate-800 font-sans selection:bg-brand-orange selection:text-white flex flex-col">
       {/* Navigation Header */}
       <Header logoUrl={serializedSettings.logoUrl} />
 
-      {/* Hero Header Section */}
-      <section className="bg-bg-light text-text-light-primary border-b border-border-light pb-20 pt-32 lg:pb-28 lg:pt-40 px-6 lg:px-16">
-        <div className="max-w-[1300px] mx-auto flex flex-col gap-6">
-          {/* Breadcrumb */}
-          <nav className="text-xs lg:text-sm font-semibold tracking-wide text-text-light-secondary flex items-center gap-2">
-            <Link href="/" className="hover:text-brand-orange transition duration-200">
-              Home
-            </Link>
-            <ChevronRight className="w-3.5 h-3.5 text-text-light-secondary/40" />
-            <span className="text-brand-blue">Gallery</span>
-          </nav>
+      <main className="flex-grow">
+        {/* Premium Hero Header Section */}
+        <section className="w-full px-4 lg:px-8 pt-24 lg:pt-28 pb-4 bg-transparent">
+          <div className="relative w-full rounded-[2.5rem] lg:rounded-[3.5rem] overflow-hidden bg-neutral-950 flex flex-col justify-center p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+            {/* Background Image & Radial Glow Overlay */}
+            <div className="absolute inset-0 bg-[url('/images/hero.jpeg')] bg-cover bg-center bg-no-repeat opacity-30 z-0" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(10,17,40,0.4)_0%,rgba(10,17,40,0.92)_100%)] z-10" />
 
-          <div className="max-w-3xl flex flex-col gap-4">
-            <span className="text-brand-blue text-[0.85rem] font-bold uppercase tracking-[0.2em] block">
-              Showcase
-            </span>
-            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-text-light-primary">
-              Our Landmark Projects
-            </h1>
-            <p className="text-[1.05rem] text-text-light-secondary leading-[1.7] mt-1">
-              Shivshakti premium components deployed in outstanding residential, commercial, and hospitality projects across India.
-            </p>
+            {/* Content Details */}
+            <div className="relative z-20 max-w-[1300px] flex flex-col gap-6">
+              {/* Breadcrumb */}
+              <nav className="text-xs lg:text-sm font-semibold tracking-wide text-slate-400 flex items-center gap-2">
+                <Link href="/" className="hover:text-brand-orange transition duration-200">
+                  Home
+                </Link>
+                <span className="text-white/20 font-mono">/</span>
+                <span className="text-brand-blue font-semibold">Gallery</span>
+              </nav>
+
+              <div className="max-w-3xl flex flex-col gap-4">
+                <span className="text-brand-orange text-[0.82rem] font-bold uppercase tracking-[0.2em] bg-brand-orange-pale px-4 py-1.5 rounded-full border border-brand-orange/20 select-none w-fit">
+                  Showcase
+                </span>
+                <h1 className="text-4xl lg:text-[3.2rem] font-extrabold tracking-tight leading-[1.15] text-white font-sans mt-2">
+                  Our <span className="italic text-brand-blue font-medium font-serif">Landmark</span> Projects
+                </h1>
+                <p className="text-[1rem] lg:text-[1.1rem] text-text-secondary leading-[1.6] mt-1 opacity-90 max-w-2xl">
+                  Shivshakti premium components deployed in outstanding residential, commercial, and hospitality projects across India.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Gallery Showcase Content Grid Wrapper */}
-      <div className="bg-bg-dark px-4 lg:px-6 py-12">
-        <div className="bg-bg-light rounded-[48px] overflow-hidden max-w-[1300px] mx-auto shadow-[0_10px_40px_rgba(0,0,0,0.4)]">
-          <ShowcaseGallery gallery={JSON.parse(JSON.stringify(gallery))} />
+        {/* Gallery Showcase Content Grid Wrapper */}
+        <div className="max-w-[1300px] mx-auto px-4 lg:px-8 py-12">
+          <ShowcaseGallery gallery={JSON.parse(JSON.stringify(gallery))} hideHeader={true} />
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer products={JSON.parse(JSON.stringify(allActiveProducts))} settings={serializedSettings} />

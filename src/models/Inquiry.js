@@ -42,6 +42,8 @@ const InquirySchema = new mongoose.Schema(
     productId: { type: String, default: "" },
     productSlug: { type: String, default: "" },
     productTitle: { type: String, default: "" },
+    customizationColor: { type: String, default: "" },
+    customizationFinish: { type: String, default: "" },
   },
   { timestamps: true }
 );

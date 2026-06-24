@@ -29,10 +29,10 @@ export function validate360File(file) {
  *
  * Ratios (width:height):
  *   Front:         3:5  (portrait, doors face)
- *   Back:          2:3  (portrait)
- *   Side Walls:    2:3  (same image for left & right)
+ *   Back:          3:5  (portrait)
+ *   Side Walls:    3:5  (same image for left & right)
  *   Ceiling:       1:1  (square)
- *   Floor:         2:3  (portrait)
+ *   Floor:         1:1  (square)
  *
  * `key`     – primary field in the view360 object
  * `syncKey` – if set, this field also gets the same URL (left↔right sync)
@@ -41,27 +41,27 @@ export const VIEW_360_SLOTS = [
   {
     key: "front",
     label: "Front Wall (Doors)",
-    caption: "Looking at the elevator doors • Ratio 2:3",
-    aspect: 2 / 3,
-    aspectLabel: "2:3",
-    recommended: "800 × 1200 px",
+    caption: "Looking at the elevator doors • Ratio 3:5",
+    aspect: 3 / 5,
+    aspectLabel: "3:5",
+    recommended: "900 × 1500 px",
   },
   {
     key: "back",
     label: "Back Wall",
-    caption: "Looking at the rear wall • Ratio 2:3",
-    aspect: 2 / 3,
-    aspectLabel: "2:3",
-    recommended: "800 × 1200 px",
+    caption: "Looking at the rear wall • Ratio 3:5",
+    aspect: 3 / 5,
+    aspectLabel: "3:5",
+    recommended: "900 × 1500 px",
   },
   {
     key: "left",
     syncKey: "right",
     label: "Side Walls (Left & Right)",
-    caption: "Same image used for both side walls • Ratio 2:3",
-    aspect: 2 / 3,
-    aspectLabel: "2:3",
-    recommended: "800 × 1200 px",
+    caption: "Same image used for both side walls • Ratio 3:5",
+    aspect: 3 / 5,
+    aspectLabel: "3:5",
+    recommended: "900 × 1500 px",
   },
   {
     key: "ceiling",

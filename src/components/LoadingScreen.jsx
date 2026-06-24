@@ -38,7 +38,7 @@ export default function LoadingScreen() {
         transition: "opacity 0.5s ease-out",
         background: "radial-gradient(circle at 15% 20%, rgba(30,58,138,0.25) 0%, transparent 50%), radial-gradient(circle at 85% 80%, rgba(249,115,22,0.15) 0%, transparent 45%), #0A0A0A"
       }}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-[100000] flex flex-col items-center justify-center"
     >
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes draw-shaft { to { stroke-dashoffset: 0; } }

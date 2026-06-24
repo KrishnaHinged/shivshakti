@@ -82,6 +82,8 @@ export async function createInquiryAction(formData) {
       // Product page inquiry (legacy/quick style)
       const city = formData.get("city")?.toString().trim() || "N/A";
       const productInterest = formData.get("productInterest")?.toString().trim() || productTitle || "Product Inquiry";
+      const customizationColor = formData.get("customizationColor")?.toString().trim() || "";
+      const customizationFinish = formData.get("customizationFinish")?.toString().trim() || "";
 
       if (!name || !phone || !email || !message) {
         return { success: false, error: "Please fill in name, phone, email, and message." };
@@ -98,6 +100,8 @@ export async function createInquiryAction(formData) {
         productId,
         productSlug,
         productTitle,
+        customizationColor,
+        customizationFinish,
         status: "New",
       });
 

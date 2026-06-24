@@ -20,7 +20,12 @@ const ProductSchema = new mongoose.Schema(
     featured: { type: Boolean, default: false },
     seoTitle: { type: String, default: "" },
     seoDescription: { type: String, default: "" },
-    
+    // Redesign Catalog Fields
+    productType: { type: String, enum: ["our-product", "dealer-product", "elevator-kit"], default: "our-product" },
+    brand: { type: String, default: "" },
+    subCategory: { type: String, default: "" },
+    inquiryEnabled: { type: Boolean, default: true },
+
     // Dynamic System Extended Fields
     galleryImages: { type: [String], default: [] },
     highlights: { type: [String], default: [] },
@@ -47,6 +52,52 @@ const ProductSchema = new mongoose.Schema(
       right: { type: String, default: "" },
       ceiling: { type: String, default: "" },
       floor: { type: String, default: "" },
+    },
+
+    // Layout Cabin Customization Fields
+    availableColors: {
+      type: [{
+        name: { type: String, required: true },
+        code: { type: String, required: true },
+        enabled: { type: Boolean, default: true }
+      }],
+      default: []
+    },
+    availableFinishes: {
+      type: [{
+        name: { type: String, required: true },
+        code: { type: String, required: true },
+        enabled: { type: Boolean, default: true }
+      }],
+      default: []
+    },
+    defaultColor: { type: String, default: "" },
+    defaultFinish: { type: String, default: "" },
+    customizationVariants: {
+      type: [{
+        color: { type: String, required: true },
+        finish: { type: String, required: true },
+        image: { type: String, default: "" },
+        enabled: { type: Boolean, default: true }
+      }],
+      default: []
+    },
+    // 360° View Variants — per color+finish combination
+    view360Variants: {
+      type: [{
+        color: { type: String, required: true },
+        finish: { type: String, required: true },
+        view360: {
+          front: { type: String, default: "" },
+          back: { type: String, default: "" },
+          left: { type: String, default: "" },
+          right: { type: String, default: "" },
+          ceiling: { type: String, default: "" },
+          floor: { type: String, default: "" },
+        },
+        enabled: { type: Boolean, default: true }
+      }],
+      default: []
     },
   },
   { timestamps: true }

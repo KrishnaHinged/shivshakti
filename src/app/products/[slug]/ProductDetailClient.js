@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ArrowLeft, CheckCircle2, ChevronRight, MessageSquare, PhoneCall, Eye } from "lucide-react";
@@ -22,9 +23,115 @@ const Cabin360Viewer = dynamic(() => import("@/components/Cabin360Viewer"), {
 });
 
 export default function ProductDetailClient({ product, similarProducts, settings, allActiveProducts }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isLayoutCabin = product.category === "layout-cabin";
+
+  // Safe extraction of query params or fallback defaults
+  const [selectedColor, setSelectedColor] = useState(product.defaultColor || "Dark Grey");
+  const [selectedFinish, setSelectedFinish] = useState(product.defaultFinish || "Mirror");
+
+  // Sync state from query parameters on mount to avoid hydration mismatch
+  useEffect(() => {
+    const colorParam = searchParams.get("color");
+    const finishParam = searchParams.get("finish");
+    let changed = false;
+    let initialColor = product.defaultColor || "Dark Grey";
+    let initialFinish = product.defaultFinish || "Mirror";
+
+    if (colorParam && colorParam !== initialColor) {
+      setSelectedColor(colorParam);
+      initialColor = colorParam;
+      changed = true;
+    }
+    if (finishParam && finishParam !== initialFinish) {
+      setSelectedFinish(finishParam);
+      initialFinish = finishParam;
+      changed = true;
+    }
+
+    if (changed && isLayoutCabin) {
+      const match = product.customizationVariants?.find(
+        (v) => v.color === initialColor && v.finish === initialFinish && v.enabled !== false
+      );
+      const targetImage = (match && match.image) ? match.image : product.featuredImage;
+      setActiveImage(targetImage);
+    }
+  }, [searchParams, product.defaultColor, product.defaultFinish, product.customizationVariants, isLayoutCabin, product.featuredImage]);
+
+  // Track previous state for Apple-style crossfade preview
+  const [prevColor, setPrevColor] = useState(null);
+  const [prevFinish, setPrevFinish] = useState(null);
+  const [prevImage, setPrevImage] = useState(null);
+  const [isCrossfading, setIsCrossfading] = useState(false);
+
+  // Sync to URL state in real-time
+  useEffect(() => {
+    if (isLayoutCabin) {
+      const params = new URLSearchParams(window.location.search);
+      params.set("color", selectedColor);
+      params.set("finish", selectedFinish);
+      window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
+    }
+  }, [selectedColor, selectedFinish, isLayoutCabin, pathname]);
+
   // Gallery active image state
   const galleryList = [product.featuredImage, ...(product.galleryImages || product.images || [])].filter(Boolean);
   const [activeImage, setActiveImage] = useState(galleryList[0] || product.featuredImage);
+
+  // Effect to handle selection changes and trigger the crossfade transition
+  useEffect(() => {
+    if (isLayoutCabin) {
+      const match = product.customizationVariants?.find(
+        (v) => v.color === selectedColor && v.finish === selectedFinish && v.enabled !== false
+      );
+      const targetImage = (match && match.image) ? match.image : product.featuredImage;
+
+      if (targetImage !== activeImage) {
+        setPrevImage(activeImage);
+        setPrevColor(selectedColor);
+        setPrevFinish(selectedFinish);
+        
+        setActiveImage(targetImage);
+        setIsCrossfading(true);
+        
+        const timer = setTimeout(() => {
+          setIsCrossfading(false);
+          setPrevImage(null);
+        }, 400); // 400ms crossfade
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [selectedColor, selectedFinish, isLayoutCabin, product.customizationVariants, activeImage]);
+
+  // Helper functions for dynamic styling
+  const getDynamicColorOverlay = (color) => {
+    if (color === "Gold") {
+      return "radial-gradient(circle at center, rgba(212, 175, 55, 0.18) 0%, rgba(212, 175, 55, 0.35) 100%)";
+    }
+    if (color === "Rose Gold") {
+      return "radial-gradient(circle at center, rgba(183, 110, 121, 0.22) 0%, rgba(183, 110, 121, 0.42) 100%)";
+    }
+    if (color === "Dark Grey") {
+      return "radial-gradient(circle at center, rgba(75, 85, 99, 0.1) 0%, rgba(75, 85, 99, 0.25) 100%)";
+    }
+    return "transparent";
+  };
+
+  const getDynamicFilter = (color) => {
+    if (color === "Gold") {
+      return "sepia(0.35) saturate(1.9) hue-rotate(5deg) brightness(0.92) contrast(1.05)";
+    }
+    if (color === "Rose Gold") {
+      return "sepia(0.25) saturate(1.7) hue-rotate(320deg) brightness(0.88) contrast(1.1)";
+    }
+    if (color === "Dark Grey") {
+      return "brightness(0.9) contrast(1.05) grayscale(0.1)";
+    }
+    return "none";
+  };
   const [recentlyViewed, setRecentlyViewed] = useState([]);
   const [viewMode, setViewMode] = useState("photos"); // "photos" or "360"
 
@@ -136,6 +243,7 @@ export default function ProductDetailClient({ product, similarProducts, settings
                   <button
                     type="button"
                     onClick={() => setViewMode("photos")}
+                    suppressHydrationWarning
                     className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                       viewMode === "photos"
                         ? "bg-[#F97316] text-white shadow-sm"
@@ -147,6 +255,7 @@ export default function ProductDetailClient({ product, similarProducts, settings
                   <button
                     type="button"
                     onClick={() => setViewMode("360")}
+                    suppressHydrationWarning
                     className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
                       viewMode === "360"
                         ? "bg-[#F97316] text-white shadow-sm"
@@ -168,14 +277,79 @@ export default function ProductDetailClient({ product, similarProducts, settings
                     onMouseLeave={handleMouseLeave}
                   >
                     <div 
-                      className="w-full h-full transition-transform duration-200 ease-out"
+                      className="w-full h-full transition-transform duration-200 ease-out relative"
                       style={zoomStyle}
                     >
+                      {/* Apple-style Configurator Crossfade Transition - Fade out previous layer */}
+                      {isLayoutCabin && prevImage && (
+                        <div className="absolute inset-0 z-10 animate-fade-out pointer-events-none">
+                          <ProductImage
+                            src={prevImage}
+                            alt={product.title}
+                            className="w-full h-full object-cover"
+                            style={{
+                              filter: !product.customizationVariants?.some(v => v.color === prevColor && v.finish === prevFinish && v.image && v.image !== product.featuredImage && v.enabled !== false)
+                                ? getDynamicFilter(prevColor)
+                                : "none"
+                            }}
+                          />
+                          {/* Color overlay */}
+                          {!product.customizationVariants?.some(v => v.color === prevColor && v.finish === prevFinish && v.image && v.image !== product.featuredImage && v.enabled !== false) && (
+                            <div
+                              className="absolute inset-0 mix-blend-color pointer-events-none"
+                              style={{ background: getDynamicColorOverlay(prevColor) }}
+                            />
+                          )}
+                          {/* Finish: Mirror shine */}
+                          {prevFinish === "Mirror" && (
+                            <div className="absolute inset-0 pointer-events-none mirror-shine-effect" />
+                          )}
+                          {/* Finish: Hairline grain */}
+                          {prevFinish === "Hairline" && (
+                            <div
+                              className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay"
+                              style={{
+                                backgroundImage: "repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px)"
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {/* Active Preview Layer */}
                       <ProductImage
                         src={activeImage}
                         alt={product.title}
-                        className="w-full h-full object-cover"
+                        className={`w-full h-full object-cover ${isLayoutCabin && isCrossfading ? 'animate-fade-in' : ''}`}
+                        style={{
+                          filter: isLayoutCabin && !product.customizationVariants?.some(v => v.color === selectedColor && v.finish === selectedFinish && v.image && v.image !== product.featuredImage && v.enabled !== false)
+                            ? getDynamicFilter(selectedColor)
+                            : "none"
+                        }}
                       />
+
+                      {/* Color overlay for active */}
+                      {isLayoutCabin && !product.customizationVariants?.some(v => v.color === selectedColor && v.finish === selectedFinish && v.image && v.image !== product.featuredImage && v.enabled !== false) && (
+                        <div
+                          className="absolute inset-0 mix-blend-color pointer-events-none transition-all duration-300"
+                          style={{ background: getDynamicColorOverlay(selectedColor) }}
+                        />
+                      )}
+
+                      {/* Finish: Mirror shine for active */}
+                      {isLayoutCabin && selectedFinish === "Mirror" && (
+                        <div className="absolute inset-0 pointer-events-none mirror-shine-effect" />
+                      )}
+
+                      {/* Finish: Hairline grain for active */}
+                      {isLayoutCabin && selectedFinish === "Hairline" && (
+                        <div
+                          className="absolute inset-0 pointer-events-none opacity-20 mix-blend-overlay"
+                          style={{
+                            backgroundImage: "repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 1px, transparent 1px, transparent 3px)"
+                          }}
+                        />
+                      )}
                     </div>
                     
                     {product.badge && (
@@ -194,6 +368,7 @@ export default function ProductDetailClient({ product, similarProducts, settings
                     <button
                       type="button"
                       onClick={() => setViewMode("360")}
+                      suppressHydrationWarning
                       className="self-start flex items-center gap-2 bg-[rgba(249,115,22,0.10)] text-[#F97316] border border-[rgba(249,115,22,0.2)] px-4 py-2 rounded-full text-xs font-bold transition-all duration-200 hover:bg-[rgba(249,115,22,0.18)] hover:-translate-y-0.5 cursor-pointer"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -208,6 +383,7 @@ export default function ProductDetailClient({ product, similarProducts, settings
                         <button
                           key={idx}
                           onClick={() => setActiveImage(img)}
+                          suppressHydrationWarning
                           className={`aspect-square rounded-xl overflow-hidden border bg-slate-50 flex items-center justify-center cursor-pointer transition duration-300 ${
                             activeImage === img 
                               ? "border-brand-orange ring-2 ring-brand-orange/30 shadow-sm" 
@@ -223,12 +399,38 @@ export default function ProductDetailClient({ product, similarProducts, settings
               )}
 
               {/* 360° View */}
-              {viewMode === "360" && product.has360View && product.view360 && (
-                <Cabin360Viewer
-                  view360={product.view360}
-                  productName={product.title}
-                />
-              )}
+              {viewMode === "360" && product.has360View && product.view360 && (() => {
+                // For layout cabins, resolve variant-specific 360° images
+                let resolved360 = product.view360;
+                let view360Key = "default";
+
+                if (isLayoutCabin && product.view360Variants?.length > 0) {
+                  const variantMatch = product.view360Variants.find(
+                    (v) =>
+                      v.color === selectedColor &&
+                      v.finish === selectedFinish &&
+                      v.enabled !== false &&
+                      v.view360?.front &&
+                      v.view360?.back &&
+                      v.view360?.left &&
+                      v.view360?.right &&
+                      v.view360?.ceiling &&
+                      v.view360?.floor
+                  );
+                  if (variantMatch) {
+                    resolved360 = variantMatch.view360;
+                    view360Key = `${selectedColor}-${selectedFinish}`;
+                  }
+                }
+
+                return (
+                  <Cabin360Viewer
+                    key={view360Key}
+                    view360={resolved360}
+                    productName={product.title}
+                  />
+                );
+              })()}
             </div>
 
             {/* Right: Text Information Details */}
@@ -246,6 +448,126 @@ export default function ProductDetailClient({ product, similarProducts, settings
               <p className="text-[0.98rem] text-text-light-secondary leading-[1.6]">
                 {product.shortDescription}
               </p>
+
+              {/* Apple-style Customization Stylesheet */}
+              {isLayoutCabin && (
+                <style dangerouslySetInnerHTML={{ __html: `
+                  @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                  }
+                  @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                  }
+                  @keyframes mirrorShine {
+                    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+                    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+                  }
+                  .animate-fade-in {
+                    animation: fadeIn 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+                  }
+                  .animate-fade-out {
+                    animation: fadeOut 0.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+                  }
+                  .mirror-shine-effect {
+                    position: relative;
+                    overflow: hidden;
+                  }
+                  .mirror-shine-effect::after {
+                    content: '';
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: linear-gradient(
+                      45deg,
+                      rgba(255, 255, 255, 0) 35%,
+                      rgba(255, 255, 255, 0.25) 50%,
+                      rgba(255, 255, 255, 0) 65%
+                    );
+                    transform: rotate(45deg);
+                    animation: mirrorShine 3s ease-in-out infinite;
+                    pointer-events: none;
+                    z-index: 5;
+                  }
+                `}} />
+              )}
+
+              {/* Real-time Customization Panel for Layout Cabins */}
+              {isLayoutCabin && (
+                <div className="bg-slate-50 border border-slate-200/60 rounded-[2rem] p-6 lg:p-8 flex flex-col gap-6 shadow-sm my-4 text-left">
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                      <span className="w-1.5 h-6 bg-brand-orange rounded-full" />
+                      Personalize Cabin Aesthetics
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Configure colors and finishes to preview in real-time before requesting a quote.
+                    </p>
+                  </div>
+
+                  {/* Color Selection */}
+                  <div className="flex flex-col gap-3">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      1. Select Color: <span className="text-slate-800 font-extrabold capitalize">{selectedColor}</span>
+                    </span>
+                    <div className="flex flex-wrap gap-3">
+                      {product.availableColors?.filter(c => c.enabled).map((color) => {
+                        const isSelected = selectedColor === color.name;
+                        return (
+                          <button
+                            key={color.name}
+                            onClick={() => setSelectedColor(color.name)}
+                            suppressHydrationWarning
+                            className={`flex items-center gap-2 px-4.5 py-2.5 rounded-full border text-xs font-bold transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
+                              isSelected
+                                ? "border-slate-900 bg-slate-900 text-white shadow-md scale-105"
+                                : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+                            }`}
+                          >
+                            <span
+                              className="w-3.5 h-3.5 rounded-full border border-white/20 shadow-inner shrink-0"
+                              style={{ backgroundColor: color.code }}
+                            />
+                            {color.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Finish Selection */}
+                  <div className="flex flex-col gap-3 border-t border-slate-200/60 pt-4">
+                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      2. Select Finish: <span className="text-slate-800 font-extrabold capitalize">{selectedFinish} Finish</span>
+                    </span>
+                    <div className="flex gap-3">
+                      {product.availableFinishes?.filter(f => f.enabled).map((finish) => {
+                        const isSelected = selectedFinish === finish.name;
+                        return (
+                          <button
+                            key={finish.name}
+                            onClick={() => setSelectedFinish(finish.name)}
+                            suppressHydrationWarning
+                            className={`flex-1 flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
+                              isSelected
+                                ? "border-brand-orange bg-brand-orange-pale/10 text-brand-orange ring-1 ring-brand-orange/20 shadow-sm"
+                                : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                            }`}
+                          >
+                            <span className="text-xs font-bold capitalize">{finish.name}</span>
+                            <span className="text-[9px] text-slate-400 mt-0.5 block">
+                              {finish.name === "Mirror" ? "High reflectivity gloss finish" : "Elegant brushed texture finish"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Highlights Bullet List */}
               {product.highlights && product.highlights.length > 0 && (
@@ -329,6 +651,7 @@ export default function ProductDetailClient({ product, similarProducts, settings
               <div className="flex flex-wrap gap-4 pt-2">
                 <button
                   onClick={handleScrollToForm}
+                  suppressHydrationWarning
                   className="flex-1 bg-brand-orange text-white py-4 px-6 rounded-full text-[0.9rem] font-bold text-center transition-all duration-300 hover:bg-brand-orange-light hover:-translate-y-0.5 active:translate-y-0 shadow-md hover:shadow-lg flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4 shrink-0" /> Inquire & Request Price
@@ -423,6 +746,8 @@ export default function ProductDetailClient({ product, similarProducts, settings
               productId={product._id.toString()} 
               productTitle={product.title} 
               productSlug={product.slug} 
+              customizationColor={isLayoutCabin ? selectedColor : undefined}
+              customizationFinish={isLayoutCabin ? selectedFinish : undefined}
             />
           </div>
 

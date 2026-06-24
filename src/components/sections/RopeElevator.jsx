@@ -1,13 +1,18 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export const RopeElevator = () => {
   const containerRef = useRef(null);
   const requestRef = useRef(null);
   const scrollYRef = useRef(0);
   const touchStartRef = useRef(0);
+  const skipEasingRef = useRef(false);
+  const taggedElementRef = useRef(null);
+
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
 
   // Layout positions
   const [coords, setCoords] = useState({ startX: 0, startY: 0, endY: 0 });
@@ -36,6 +41,7 @@ export const RopeElevator = () => {
 
   // Global event listener for elevator transition trigger
   useEffect(() => {
+    if (isAdmin) return;
     const handleTransitionEvent = (e) => {
       const url = e.detail?.targetUrl || "/products";
       const liftEl = document.getElementById("rope-elevator-lift");
@@ -54,10 +60,11 @@ export const RopeElevator = () => {
     return () => {
       window.removeEventListener("trigger-elevator-transition", handleTransitionEvent);
     };
-  }, [router]);
+  }, [router, isAdmin]);
 
   // Transition timeline control machine
   useEffect(() => {
+    if (isAdmin) return;
     if (transitionState === "focusing") {
       const timer = setTimeout(() => {
         setTransitionState("opening");
@@ -75,10 +82,11 @@ export const RopeElevator = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [transitionState, targetUrl, router]);
+  }, [transitionState, targetUrl, router, isAdmin]);
 
   // Prevent user scroll interactions during transition sequence
   useEffect(() => {
+    if (isAdmin) return;
     if (transitionState === "idle") return;
 
     const preventDefault = (e) => e.preventDefault();
@@ -91,7 +99,7 @@ export const RopeElevator = () => {
       window.removeEventListener("touchmove", preventDefault);
       document.body.style.overflow = "";
     };
-  }, [transitionState]);
+  }, [transitionState, isAdmin]);
 
   // Ref tracking for requestAnimationFrame loops
   const physicsRef = useRef({
@@ -116,20 +124,21 @@ export const RopeElevator = () => {
 
   // Calculate coordinates on resize/load (avoiding reflows during scroll)
   const calculateCoordinates = () => {
-    const heroEl = document.getElementById("home");
+    const heroEl = document.getElementById("home") || document.querySelector("main section") || document.querySelector("section");
     const footerEl = document.getElementById("footer");
 
-    if (!heroEl || !footerEl) return;
-
-    const heroRect = heroEl.getBoundingClientRect();
-    const footerRect = footerEl.getBoundingClientRect();
+    if (!footerEl) return;
 
     const currentScrollY = window.scrollY;
     const currentScrollX = window.scrollX;
 
-    const heroBottomDoc = heroRect.bottom + currentScrollY;
-    const footerTopDoc = footerRect.top + currentScrollY;
+    const refRect = heroEl ? heroEl.getBoundingClientRect() : document.body.getBoundingClientRect();
+    const footerRect = footerEl.getBoundingClientRect();
 
+    const startY = heroEl
+      ? (refRect.bottom + currentScrollY)
+      : 150; // Fallback startY height (e.g. after header)
+    const footerTopDoc = footerRect.top + currentScrollY;
     // Aligned to the right margin of the page containers
     let margin = 40;
     if (window.innerWidth < 768) {
@@ -137,8 +146,7 @@ export const RopeElevator = () => {
     } else if (window.innerWidth < 1024) {
       margin = 25;
     }
-
-    const startX = heroRect.right + currentScrollX - margin;
+    const startX = window.innerWidth + currentScrollX - margin;
 
     // Responsive cabin height to position the elevator exactly sitting at the footer entrance
     const w = window.innerWidth;
@@ -149,12 +157,13 @@ export const RopeElevator = () => {
 
     setCoords({
       startX,
-      startY: heroBottomDoc - 5,
+      startY: startY - 5,
       endY: footerTopDoc - liftHeight + overlap,
     });
   };
 
   useEffect(() => {
+    if (isAdmin) return;
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     physicsRef.current.reducedMotion = mediaQuery.matches;
 
@@ -168,6 +177,19 @@ export const RopeElevator = () => {
     };
     checkSizes();
     window.addEventListener("resize", checkSizes);
+
+    // ResizeObserver to track dynamic body height changes (e.g., page height transitions, tab switching)
+    let resizeObserver;
+    let rafId;
+    if (typeof window !== "undefined" && window.ResizeObserver) {
+      resizeObserver = new window.ResizeObserver(() => {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(calculateCoordinates);
+      });
+      if (document.body) {
+        resizeObserver.observe(document.body);
+      }
+    }
 
     // Dynamic layout sync double-check
     const timer = setTimeout(calculateCoordinates, 1500);
@@ -183,22 +205,90 @@ export const RopeElevator = () => {
       window.removeEventListener("load", calculateCoordinates);
       window.removeEventListener("resize", calculateCoordinates);
       window.removeEventListener("resize", checkSizes);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      cancelAnimationFrame(rafId);
       clearTimeout(timer);
     };
-  }, []);
-
+  }, [isAdmin]);
   // Track window scroll coordinates natively using passive scroll events
   useEffect(() => {
+    if (isAdmin) return;
     const handleScroll = () => {
       scrollYRef.current = window.scrollY;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     scrollYRef.current = window.scrollY;
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isAdmin]);
+  // Recalculate coordinates and auto-tag home hero element on path changes
+  useEffect(() => {
+    if (isAdmin) return;
+
+    // Reset elevator transition states on pathname change to prevent getting stuck in expanding layout
+    setTransitionState("idle");
+    setStartRect(null);
+
+    // Disable easing during page transition to prevent sliding/glide glitch from previous scroll state
+    skipEasingRef.current = true;
+    const snapTimer = setTimeout(() => {
+      skipEasingRef.current = false;
+    }, 1200);
+
+    // 1. Reset scroll reference to top of new page
+    scrollYRef.current = 0;
+
+    const isHomePage = pathname === "/";
+
+    if (!isHomePage) {
+      // Clean up any existing "home" ID to avoid duplicate/stale references on subpages
+      const existingHome = document.getElementById("home");
+      if (existingHome) {
+        existingHome.removeAttribute("id");
+      }
+
+      // Automatically tag the top-most inner rounded container inside <main> as "home"
+      const mainEl = document.querySelector("main");
+      if (mainEl) {
+        const firstSection = mainEl.querySelector("section");
+        if (firstSection) {
+          const innerCard = firstSection.firstElementChild;
+          if (innerCard) {
+            innerCard.setAttribute("id", "home");
+            taggedElementRef.current = innerCard;
+          }
+        }
+      }
+    }
+
+    // 2. Trigger layout calculations
+    calculateCoordinates();
+
+    // 3. Poll to make sure coordinates catch up with DOM updates/transition delays
+    const timer1 = setTimeout(calculateCoordinates, 100);
+    const timer2 = setTimeout(calculateCoordinates, 450); // around end of page transition fade-in
+    const timer3 = setTimeout(calculateCoordinates, 1000);
+    const timer4 = setTimeout(calculateCoordinates, 2000); // safety fallback for slow loads
+
+    return () => {
+      clearTimeout(snapTimer);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearTimeout(timer4);
+
+      // Cleanup dynamics: if we tagged an element, remove the ID from it
+      if (taggedElementRef.current) {
+        taggedElementRef.current.removeAttribute("id");
+        taggedElementRef.current = null;
+      }
+    };
+  }, [pathname, isAdmin]);
 
   // Intercept and slow down/dampen scrolling during rope deployment
   useEffect(() => {
+    if (isAdmin) return;
     if (!isDeploying) return;
 
     const handleWheel = (e) => {
@@ -240,14 +330,15 @@ export const RopeElevator = () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [isDeploying]);
+  }, [isDeploying, isAdmin]);
 
   // Scroll trigger check: activates the deployment when scrolling past the Hero
   useEffect(() => {
+    if (isAdmin) return;
     if (hasDeployed || isDeploying) return;
 
     const triggerCheck = () => {
-      const heroEl = document.getElementById("home");
+      const heroEl = document.getElementById("home") || document.querySelector("main section") || document.querySelector("section");
       if (!heroEl) return;
 
       const heroRect = heroEl.getBoundingClientRect();
@@ -260,7 +351,7 @@ export const RopeElevator = () => {
 
     window.addEventListener("scroll", triggerCheck);
     return () => window.removeEventListener("scroll", triggerCheck);
-  }, [hasDeployed, isDeploying]);
+  }, [hasDeployed, isDeploying, isAdmin]);
 
   const startDeployment = () => {
     setIsDeploying(true);
@@ -301,10 +392,12 @@ export const RopeElevator = () => {
 
   // 60FPS physics loop for elevator movement, cable tension, and rotation sways
   useEffect(() => {
-    if (!hasDeployed) return;
+    if (isAdmin || !hasDeployed) return;
 
-    physicsRef.current.currentY = coords.startY;
-    physicsRef.current.targetY = coords.startY;
+    if (physicsRef.current.currentY === 0) {
+      physicsRef.current.currentY = coords.startY;
+      physicsRef.current.targetY = coords.startY;
+    }
 
     const renderLoop = () => {
       const scrollY = scrollYRef.current;
@@ -330,10 +423,16 @@ export const RopeElevator = () => {
 
       // Ease positioning with linear interpolation (lerp factor 0.08)
       const diffY = targetY - physicsRef.current.currentY;
-      physicsRef.current.currentY += diffY * 0.08;
+      
+      if (skipEasingRef.current) {
+        physicsRef.current.currentY = targetY;
+        physicsRef.current.velocity = 0;
+      } else {
+        physicsRef.current.currentY += diffY * 0.08;
+        physicsRef.current.velocity = diffY;
+      }
 
       // Update dynamics metrics
-      physicsRef.current.velocity = diffY;
       physicsRef.current.time += 1;
 
       // Enhance sway physics:
@@ -378,13 +477,12 @@ export const RopeElevator = () => {
         if (anim.state === "walking_out") {
           anim.walkTime += 1.2;
 
-          // Orange walks first to its target
+          // Both walk out together directly to their targets
           if (anim.orangeX > orangeXSvgTarget) {
-            anim.orangeX = Math.max(anim.orangeX - 0.6, orangeXSvgTarget);
+            anim.orangeX = Math.max(anim.orangeX - 0.8, orangeXSvgTarget);
           }
-          // Blue walks next to its target
-          if (anim.orangeX < -15 && anim.blueX > blueXSvgTarget) {
-            anim.blueX = Math.max(anim.blueX - 0.6, blueXSvgTarget);
+          if (anim.blueX > blueXSvgTarget) {
+            anim.blueX = Math.max(anim.blueX - 0.8, blueXSvgTarget);
           }
 
           if (anim.orangeX === orangeXSvgTarget && anim.blueX === blueXSvgTarget) {
@@ -406,13 +504,13 @@ export const RopeElevator = () => {
         }
 
         if (anim.state === "running_in") {
-          anim.walkTime += 1.6; // run back faster
+          anim.walkTime += 2.2; // Run back with rapid leg swings
 
           if (anim.blueX < 0) {
-            anim.blueX = Math.min(anim.blueX + 1.2, 0);
+            anim.blueX = Math.min(anim.blueX + 1.8, 0); // Fast running speed
           }
           if (anim.orangeX < 0) {
-            anim.orangeX = Math.min(anim.orangeX + 1.2, 0);
+            anim.orangeX = Math.min(anim.orangeX + 1.8, 0); // Fast running speed
           }
 
           if (anim.blueX === 0 && anim.orangeX === 0) {
@@ -484,14 +582,14 @@ export const RopeElevator = () => {
   const liftWidth = isMobile ? 30 : isTablet ? 40 : 50;
   const liftHeight = isMobile ? 69 : isTablet ? 76 : 92;
 
-  if (coords.endY <= coords.startY) return null;
+  if (isAdmin || coords.endY <= coords.startY) return null;
 
   return (
     <>
-      {/* Rope Track and Guide Systems (Always behind content) */}
+      {/* Rope Track and Guide Systems (Rendered in front of page backgrounds but behind cabin) */}
       <div
         ref={containerRef}
-        className="absolute top-0 left-0 w-full pointer-events-none select-none z-[-1]"
+        className="absolute top-0 left-0 w-full pointer-events-none select-none z-20"
         style={{ height: `${coords.endY + 200}px` }}
       >
         <svg className="absolute inset-0 w-full h-full">
@@ -704,7 +802,7 @@ export const RopeElevator = () => {
                 <>
                   {/* Blue Character */}
                   <g
-                    transform={`translate(${blueX}, ${blueY})`}
+                    transform={`translate(${blueX}, ${blueY}) ${animRef.current.state === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
                     style={{
                       transformOrigin: "20px 29px",
                       transition: "none",
@@ -749,6 +847,28 @@ export const RopeElevator = () => {
                         {/* Right Leg (Bent) */}
                         <path d="M 20 29 L 16.5 29 L 16.5 36.5" stroke="#3B82F6" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </>
+                    ) : animRef.current.state === "running_in" ? (
+                      // RUNNING Posture (Leaning forward, arms bent and swinging fast, wide leg swing)
+                      <>
+                        {/* Left Arm (bent, running stance) */}
+                        <path d="M 20 20.5 Q 15 20 13 23.5" stroke="#3B82F6" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+                        {/* Right Arm (bent, running stance) */}
+                        <path d="M 20 20.5 Q 25 24 23 27.5" stroke="#3B82F6" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+
+                        {/* Legs (wide running swings) */}
+                        <g style={{
+                          transform: `rotate(${walkTime > 0 ? 40 * Math.sin(walkTime * 0.45) : 0}deg)`,
+                          transformOrigin: "20px 29px"
+                        }}>
+                          <line x1="20" y1="29" x2="18.5" y2="35.3" stroke="#3B82F6" strokeWidth="1.6" strokeLinecap="round" />
+                        </g>
+                        <g style={{
+                          transform: `rotate(${walkTime > 0 ? -40 * Math.sin(walkTime * 0.45) : 0}deg)`,
+                          transformOrigin: "20px 29px"
+                        }}>
+                          <line x1="20" y1="29" x2="21.5" y2="35.3" stroke="#3B82F6" strokeWidth="1.6" strokeLinecap="round" />
+                        </g>
+                      </>
                     ) : (
                       // WALKING / STANDING Posture
                       <>
@@ -776,7 +896,7 @@ export const RopeElevator = () => {
 
                   {/* Orange Character */}
                   <g
-                    transform={`translate(${orangeX}, ${orangeY})`}
+                    transform={`translate(${orangeX}, ${orangeY}) ${animRef.current.state === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
                     style={{
                       transformOrigin: "30px 29px",
                       transition: "none",
@@ -819,6 +939,28 @@ export const RopeElevator = () => {
                         <path d="M 30 29 L 24.5 29 L 24.5 36.5" stroke="#F97316" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                         {/* Right Leg (Bent) */}
                         <path d="M 30 29 L 26.5 29 L 26.5 36.5" stroke="#F97316" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                      </>
+                    ) : animRef.current.state === "running_in" ? (
+                      // RUNNING Posture (Leaning forward, arms bent and swinging fast, wide leg swing)
+                      <>
+                        {/* Left Arm (bent, running stance) */}
+                        <path d="M 30 20.5 Q 25 20 23 23.5" stroke="#F97316" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+                        {/* Right Arm (bent, running stance) */}
+                        <path d="M 30 20.5 Q 35 24 33 27.5" stroke="#F97316" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+
+                        {/* Legs (wide running swings) */}
+                        <g style={{
+                          transform: `rotate(${walkTime > 0 ? 40 * Math.sin(walkTime * 0.45 + 0.5) : 0}deg)`,
+                          transformOrigin: "30px 29px"
+                        }}>
+                          <line x1="30" y1="29" x2="28.5" y2="35.3" stroke="#F97316" strokeWidth="1.6" strokeLinecap="round" />
+                        </g>
+                        <g style={{
+                          transform: `rotate(${walkTime > 0 ? -40 * Math.sin(walkTime * 0.45 + 0.5) : 0}deg)`,
+                          transformOrigin: "30px 29px"
+                        }}>
+                          <line x1="30" y1="29" x2="31.5" y2="35.3" stroke="#F97316" strokeWidth="1.6" strokeLinecap="round" />
+                        </g>
                       </>
                     ) : (
                       // WALKING / STANDING Posture

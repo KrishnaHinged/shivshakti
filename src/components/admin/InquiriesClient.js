@@ -85,7 +85,14 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
   };
 
   const handleCopyDetails = (lead) => {
-    const text = `Lead Details:\nName: ${lead.name}\nCompany: ${lead.company || "N/A"}\nPhone: ${lead.phone}\nEmail: ${lead.email}\nElevator Type: ${lead.elevatorType || "N/A"}\nComponent: ${lead.componentNeeded || lead.productInterest || "N/A"}\nQuantity: ${lead.quantity || "N/A"}\nMessage: ${lead.message}`;
+    let text = `Lead Details:\nName: ${lead.name}\nCompany: ${lead.company || "N/A"}\nPhone: ${lead.phone}\nEmail: ${lead.email}\nElevator Type: ${lead.elevatorType || "N/A"}\nComponent: ${lead.componentNeeded || lead.productInterest || "N/A"}\nQuantity: ${lead.quantity || "N/A"}`;
+    if (lead.customizationColor) {
+      text += `\nCustom Color: ${lead.customizationColor}`;
+    }
+    if (lead.customizationFinish) {
+      text += `\nCustom Finish: ${lead.customizationFinish} Finish`;
+    }
+    text += `\nMessage: ${lead.message}`;
     navigator.clipboard.writeText(text);
     alert("Lead details copied to clipboard!");
   };
@@ -477,7 +484,17 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                       <strong>Quantity:</strong> {selectedLead.quantity}<br />
                     </>
                   )}
-                  <strong>Component:</strong> {selectedLead.componentNeeded || selectedLead.productInterest || "N/A"}
+                  <strong>Component:</strong> {selectedLead.componentNeeded || selectedLead.productInterest || "N/A"}<br />
+                  {selectedLead.customizationColor && (
+                    <>
+                      <strong>Custom Color:</strong> {selectedLead.customizationColor}<br />
+                    </>
+                  )}
+                  {selectedLead.customizationFinish && (
+                    <>
+                      <strong>Custom Finish:</strong> {selectedLead.customizationFinish} Finish<br />
+                    </>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -533,6 +550,22 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                       <p className="font-semibold text-slate-800 bg-brand-orange-pale text-brand-orange px-3 py-1.5 rounded-xl inline-block mt-0.5">{selectedLead.componentNeeded}</p>
                     </div>
                   </>
+                )}
+                {(selectedLead.customizationColor || selectedLead.customizationFinish) && (
+                  <div className="grid grid-cols-2 gap-4 bg-slate-50/50 p-3 rounded-xl border border-slate-100">
+                    {selectedLead.customizationColor && (
+                      <div>
+                        <span className="text-[0.68rem] uppercase tracking-wider font-bold text-slate-400 block mb-0.5">Custom Color</span>
+                        <p className="font-bold text-xs text-slate-800 capitalize">{selectedLead.customizationColor}</p>
+                      </div>
+                    )}
+                    {selectedLead.customizationFinish && (
+                      <div>
+                        <span className="text-[0.68rem] uppercase tracking-wider font-bold text-slate-400 block mb-0.5">Custom Finish</span>
+                        <p className="font-bold text-xs text-slate-800 capitalize">{selectedLead.customizationFinish} Finish</p>
+                      </div>
+                    )}
+                  </div>
                 )}
                 <div>
                   <span className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400 block mb-1">User Message</span>

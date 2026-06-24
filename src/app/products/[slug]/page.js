@@ -2,7 +2,7 @@ import dbConnect from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Setting from "@/models/Setting";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import ProductDetailClient from "./ProductDetailClient";
 
 export const revalidate = 0; // Prevent caching from serving stale data
@@ -61,6 +61,11 @@ export default async function ProductDetailPage({ params }) {
   const product = await Product.findOne(query);
   if (!product) {
     notFound();
+  }
+
+  // Redirect elevator kits back to /products with inquiry trigger
+  if (product.productType === "elevator-kit" || product.category === "elevator-kit") {
+    redirect(`/products?inquire=${product.slug}`);
   }
 
   // Load recommendations, settings, and full listings

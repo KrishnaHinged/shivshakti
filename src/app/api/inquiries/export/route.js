@@ -15,7 +15,7 @@ export async function GET() {
     const inquiries = await Inquiry.find().sort({ createdAt: -1 });
 
     let csvContent =
-      "Name,Company,Phone,Email,City,Product Interest,Message,Status,Notes,Date\n";
+      "Name,Company,Phone,Email,City,Product Interest,Customization Color,Customization Finish,Message,Status,Notes,Date\n";
 
     inquiries.forEach((item) => {
       const escape = (val) => {
@@ -30,7 +30,7 @@ export async function GET() {
         item.phone
       )},${escape(item.email)},${escape(item.city)},${escape(
         item.productInterest
-      )},${escape(item.message)},${escape(item.status)},${escape(
+      )},${escape(item.customizationColor)},${escape(item.customizationFinish)},${escape(item.message)},${escape(item.status)},${escape(
         item.notes
       )},${escape(item.createdAt.toISOString())}\n`;
     });

@@ -94,9 +94,9 @@ export default function Cabin360Viewer({ view360, productName }) {
       rendererRef.current = renderer;
 
       // Box Geometry — proportioned to match image ratios
-      const boxWidth = 4;
-      const boxDepth = 4;
-      const boxHeight = boxWidth * 1.5; // 6 matches 2:3 wall ratio
+      const boxWidth = 3;
+      const boxDepth = 3;
+      const boxHeight = 5; // matches 3:5 wall ratio
 
       const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 

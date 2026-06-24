@@ -1,5 +1,7 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import PageTransitionProvider from "@/components/layout/PageTransitionProvider";
+import RopeElevator from "@/components/sections/RopeElevator";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -14,7 +16,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={outfit.className} suppressHydrationWarning>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <PageTransitionProvider>
+          <RopeElevator />
+          {children}
+        </PageTransitionProvider>
+      </body>
     </html>
   );
 }

@@ -53,6 +53,24 @@ export const Header = ({ logoUrl }) => {
     }
   };
 
+  const handleNavigation = (e, url) => {
+    const isCurrentPageHash = url.startsWith("#") || (url.startsWith("/#") && pathname === "/");
+    if (isCurrentPageHash) {
+      if (url.includes("#contact")) {
+        handleGetQuoteClick(e);
+      }
+      return;
+    }
+
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    window.dispatchEvent(
+      new CustomEvent("trigger-page-load-transition", {
+        detail: { targetUrl: url },
+      })
+    );
+  };
+
   // Determine if a route is currently active
   const isHomeActive = pathname === "/" && currentHash !== "#contact";
   const isAboutActive = pathname === "/about";
@@ -92,27 +110,27 @@ export const Header = ({ logoUrl }) => {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex gap-2.5 items-center" aria-label="Desktop Navigation">
-            <Link href="/" onClick={() => handleLinkClick("")} className={linkClass(isHomeActive)}>
+            <Link href="/" onClick={(e) => handleNavigation(e, "/")} className={linkClass(isHomeActive)}>
               Home
             </Link>
 
-            <Link href="/about" onClick={() => handleLinkClick("")} className={linkClass(isAboutActive)}>
+            <Link href="/about" onClick={(e) => handleNavigation(e, "/about")} className={linkClass(isAboutActive)}>
               About
             </Link>
 
-            <Link href="/products" onClick={() => handleLinkClick("")} className={linkClass(isProductsActive)}>
+            <Link href="/products" onClick={(e) => handleNavigation(e, "/products")} className={linkClass(isProductsActive)}>
               Products
             </Link>
 
-            <Link href="/gallery" onClick={() => handleLinkClick("")} className={linkClass(isGalleryActive)}>
+            <Link href="/gallery" onClick={(e) => handleNavigation(e, "/gallery")} className={linkClass(isGalleryActive)}>
               Gallery
             </Link>
 
-            <Link href="/blog" onClick={() => handleLinkClick("")} className={linkClass(pathname.startsWith("/blog"))}>
+            <Link href="/blog" onClick={(e) => handleNavigation(e, "/blog")} className={linkClass(pathname.startsWith("/blog"))}>
               Blog
             </Link>
 
-            <Link href="/#contact" onClick={() => handleLinkClick("#contact")} className={linkClass(isContactActive)}>
+            <Link href="/#contact" onClick={(e) => handleNavigation(e, "/#contact")} className={linkClass(isContactActive)}>
               Contact
             </Link>
           </nav>
@@ -140,7 +158,7 @@ export const Header = ({ logoUrl }) => {
 
             <Link
               href="/#contact"
-              onClick={handleGetQuoteClick}
+              onClick={(e) => handleNavigation(e, "/#contact")}
               className="bg-brand-orange text-white px-6 py-2.5 rounded-full text-[0.9rem] font-semibold transition-all duration-300 hover:bg-brand-orange-light hover:-translate-y-0.5 shadow-sm active:translate-y-0 select-none cursor-pointer"
             >
               Get Quote
@@ -196,7 +214,7 @@ export const Header = ({ logoUrl }) => {
         <nav className="flex flex-col gap-6" aria-label="Mobile Navigation">
           <Link
             href="/"
-            onClick={() => handleLinkClick("")}
+            onClick={(e) => handleNavigation(e, "/")}
             className={`text-[1.1rem] font-medium transition duration-200 ${isHomeActive ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -204,7 +222,7 @@ export const Header = ({ logoUrl }) => {
           </Link>
           <Link
             href="/about"
-            onClick={() => handleLinkClick("")}
+            onClick={(e) => handleNavigation(e, "/about")}
             className={`text-[1.1rem] font-medium transition duration-200 ${isAboutActive ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -214,7 +232,7 @@ export const Header = ({ logoUrl }) => {
           {/* Products Accordion trigger */}
           <Link
             href="/products"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={(e) => handleNavigation(e, "/products")}
             className={`text-[1.1rem] font-medium transition duration-200 ${isProductsActive ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -223,7 +241,7 @@ export const Header = ({ logoUrl }) => {
 
           <Link
             href="/gallery"
-            onClick={() => handleLinkClick("")}
+            onClick={(e) => handleNavigation(e, "/gallery")}
             className={`text-[1.1rem] font-medium transition duration-200 ${isGalleryActive ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -232,7 +250,7 @@ export const Header = ({ logoUrl }) => {
 
           <Link
             href="/blog"
-            onClick={() => handleLinkClick("")}
+            onClick={(e) => handleNavigation(e, "/blog")}
             className={`text-[1.1rem] font-medium transition duration-200 ${pathname.startsWith("/blog") ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -241,7 +259,7 @@ export const Header = ({ logoUrl }) => {
 
           <Link
             href="/#contact"
-            onClick={() => handleLinkClick("#contact")}
+            onClick={(e) => handleNavigation(e, "/#contact")}
             className={`text-[1.1rem] font-medium transition duration-200 ${isContactActive ? "text-brand-orange" : "text-text-secondary hover:text-white"
               }`}
           >
@@ -253,7 +271,7 @@ export const Header = ({ logoUrl }) => {
         <div className="mt-auto flex flex-col gap-4">
           <Link
             href="/#contact"
-            onClick={handleGetQuoteClick}
+            onClick={(e) => handleNavigation(e, "/#contact")}
             className="bg-brand-orange text-white py-3.5 rounded-full text-center text-[1rem] font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-md transition-all cursor-pointer"
           >
             Get Quote

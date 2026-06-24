@@ -2,18 +2,20 @@
 
 import React from "react";
 
-export const Gallery = ({ gallery }) => {
+export const Gallery = ({ gallery, hideHeader = false }) => {
   return (
     <section id="gallery" className="bg-transparent text-text-light-primary px-6 pb-8 lg:px-20 pt-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 w-full gap-6">
-        <div>
-          <span className="text-brand-blue text-[0.85rem] font-bold uppercase tracking-[0.2em] block mb-2">Showcase</span>
-          <h2 className="text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">Landmark Projects</h2>
+      {!hideHeader && (
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 w-full gap-6">
+          <div>
+            <span className="text-brand-blue text-[0.85rem] font-bold uppercase tracking-[0.2em] block mb-2">Showcase</span>
+            <h2 className="text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">Landmark Projects</h2>
+          </div>
+          {/* <p className="text-[0.95rem] text-text-light-secondary max-w-[28rem] leading-[1.6]">
+            Shivshakti premium components deployed in outstanding residential, commercial, and hospitality projects across India.
+          </p> */}
         </div>
-        {/* <p className="text-[0.95rem] text-text-light-secondary max-w-[28rem] leading-[1.6]">
-          Shivshakti premium components deployed in outstanding residential, commercial, and hospitality projects across India.
-        </p> */}
-      </div>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
         {gallery.length > 0 ? (

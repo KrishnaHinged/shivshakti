@@ -32,44 +32,47 @@ export const Products = ({ products }) => {
       </div>
 
       {/* Grid of Rounded Cards with Full Image Backgrounds */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
         {products.map((product) => {
+          const categoryLabel = product.category === "in-house"
+            ? "IN-HOUSE"
+            : product.category === "trading"
+              ? "TRADING"
+              : "AUTHORIZED";
+
           return (
             <Link
               key={product._id}
               href={`/products/${product.slug}`}
-              className="relative rounded-[2rem] lg:rounded-[2.5rem] overflow-hidden h-[380px] group shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1.5 flex flex-col justify-end text-left"
+              className="relative w-full aspect-square rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white"
             >
               {/* Product Background Image */}
               <div className="absolute inset-0 z-0">
                 <ProductImage
                   src={product.featuredImage}
                   alt={product.title}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
               </div>
 
-              {/* Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/35 to-transparent z-10 opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
+              {/* Premium Bluish Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/95 via-[#0a1128]/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-[#0a1128]/55" />
 
-              {/* Floating Badge */}
+              {/* Glassmorphic Pill Badge */}
               {product.badge && (
-                <span
-                  className={`absolute top-4 right-4 text-white px-3 py-1.5 rounded-lg text-[0.72rem] font-bold backdrop-blur-[4px] z-20 ${product.badgeColor === "brand-orange" ? "bg-brand-orange/85" : "bg-brand-blue/85"
-                    }`}
-                >
+                <span className="absolute top-6 right-6 px-5 py-2.5 rounded-full backdrop-blur-md bg-white/15 border border-white/20 text-white font-extrabold text-[0.7rem] tracking-wider uppercase shadow-md z-20">
                   {product.badge}
                 </span>
               )}
 
               {/* Text Content overlay at bottom */}
-              <div className="relative z-20 p-8 flex flex-col justify-end">
-                {/* <span className="text-brand-orange text-[0.75rem] font-bold uppercase tracking-widest mb-1.5">
-                  {product.category === "in-house" ? "In-House Made" : product.category === "trading" ? "Trading Component" : "Authorized"}
-                </span> */}
-                <h3 className="text-white text-[1.3rem] font-extrabold leading-[1.2] group-hover:text-brand-orange-light transition-colors duration-300">
-                  {product.title}
+              <div className="relative z-20 p-8 flex flex-col gap-1 text-left">
+                <h3 className="text-2xl font-extrabold tracking-wide uppercase text-white mb-0.5">
+                  {categoryLabel}
                 </h3>
+                <p className="text-[1rem] font-medium text-white/90">
+                  {product.title}
+                </p>
               </div>
             </Link>
           );
