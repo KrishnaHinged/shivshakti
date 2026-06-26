@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Setting } from "@/shared/models";
-import SettingsClient from "@/features/admin/components/SettingsClient";
+import { SettingsClient } from "@/features/admin";
 
 export const revalidate = 0; // Dynamic server rendering
 

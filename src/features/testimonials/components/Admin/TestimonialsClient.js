@@ -7,6 +7,7 @@ import {
   deleteTestimonialAction,
 } from "@/features/testimonials/services/actions";
 import { Plus, AlertTriangle, Edit, Trash2 } from "lucide-react";
+import { Button, Card, Input, Textarea, Select } from "@/shared/ui";
 
 export default function TestimonialsClient({ initialItems }) {
   const [items, setItems] = useState(initialItems);
@@ -103,146 +104,130 @@ export default function TestimonialsClient({ initialItems }) {
           <h1 className="text-3xl font-bold text-slate-900">Testimonials CMS</h1>
           <p className="text-slate-500 text-sm mt-1">Configure client feedback quotes, roles, ratings and publishing order.</p>
         </div>
-        <button
+        <Button
           onClick={() => {
             resetForm();
             setShowForm(true);
           }}
-          className="bg-brand-orange text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition cursor-pointer flex items-center gap-1.5"
+          icon={<Plus className="w-4 h-4 shrink-0" />}
         >
-          <Plus className="w-4 h-4 shrink-0" /> Add Testimonial
-        </button>
+          Add Testimonial
+        </Button>
       </div>
 
       {showForm ? (
         /* Form view */
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm max-w-xl">
-          <h2 className="text-lg font-bold text-slate-900 mb-6">
-            {editingItem ? "Edit Testimonial Details" : "Add Testimonial"}
-          </h2>
+        <Card className="border-slate-100 max-w-xl">
+          <Card.Body>
+            <h2 className="text-lg font-bold text-slate-900 mb-6">
+              {editingItem ? "Edit Testimonial Details" : "Add Testimonial"}
+            </h2>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-650 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Author Name</label>
-                <input
-                  type="text"
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Author Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="e.g. Shadman Sheikh"
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Role / Company</label>
-                <input
-                  type="text"
+                <Input
+                  label="Role / Company"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                   required
                   placeholder="e.g. Managing Director"
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Star Rating</label>
-                <select
+              <div className="grid grid-cols-3 gap-4">
+                <Select
+                  label="Star Rating"
                   value={rating}
                   onChange={(e) => setRating(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 >
                   <option value="5">5 Stars</option>
                   <option value="4">4 Stars</option>
                   <option value="3">3 Stars</option>
                   <option value="2">2 Stars</option>
                   <option value="1">1 Star</option>
-                </select>
-              </div>
+                </Select>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Publish Status</label>
-                <select
+                <Select
+                  label="Publish Status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 >
                   <option value="published">Published</option>
                   <option value="hidden">Hidden</option>
-                </select>
-              </div>
+                </Select>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Display Sequence</label>
-                <input
+                <Input
+                  label="Display Sequence"
                   type="number"
                   value={displayOrder}
                   onChange={(e) => setDisplayOrder(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Customer Avatar Image URL (Optional)</label>
-              <input
-                type="text"
+              <Input
+                label="Customer Avatar Image URL (Optional)"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 placeholder="Can leave blank for initials"
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Customer Review Statement</label>
-              <textarea
-                rows="4"
+              <Textarea
+                label="Customer Review Statement"
+                rows={4}
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
                 required
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                className="border border-slate-200 px-5 py-2 rounded-xl text-slate-600 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-brand-orange text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition disabled:opacity-50 cursor-pointer"
-              >
-                {loading ? "Saving..." : "Save Testimonial"}
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  loading={loading}
+                >
+                  Save Testimonial
+                </Button>
+              </div>
+            </form>
+          </Card.Body>
+        </Card>
       ) : (
         /* Testimonials List view */
-        <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.015)] overflow-hidden">
-          <div className="p-6 border-b border-slate-100">
+        <Card className="border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
+          <Card.Header>
             <h2 className="font-bold text-slate-900 text-lg">Testimonials Registry</h2>
-          </div>
+          </Card.Header>
 
           <div className="divide-y divide-slate-100">
             {items.length === 0 ? (
@@ -282,25 +267,29 @@ export default function TestimonialsClient({ initialItems }) {
                     </span>
                     
                     <div className="flex gap-2 mt-4 text-xs">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => handleOpenEdit(item)}
-                        className="bg-brand-blue/10 text-brand-blue hover:bg-brand-blue/20 px-3 py-1.5 rounded-lg font-semibold cursor-pointer flex items-center gap-1"
+                        icon={<Edit className="w-3.5 h-3.5 shrink-0" />}
                       >
-                        <Edit className="w-3.5 h-3.5 shrink-0" /> Edit
-                      </button>
-                      <button
+                        Edit
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
                         onClick={() => handleDelete(item._id)}
-                        className="bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-semibold cursor-pointer flex items-center gap-1"
+                        icon={<Trash2 className="w-3.5 h-3.5 shrink-0" />}
                       >
-                        <Trash2 className="w-3.5 h-3.5 shrink-0" /> Delete
-                      </button>
+                        Delete
+                      </Button>
                     </div>
                   </div>
                 </div>
               ))
             )}
           </div>
-        </div>
+        </Card>
       )}
 
     </div>

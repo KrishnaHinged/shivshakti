@@ -7,6 +7,7 @@ import {
   deleteGalleryAction,
 } from "@/features/gallery/services/actions";
 import { Plus, AlertTriangle, Edit, Trash2 } from "lucide-react";
+import { Button, Card, Input, Select, Checkbox } from "@/shared/ui";
 
 export default function GalleryClient({ initialItems }) {
   const [items, setItems] = useState(initialItems);
@@ -105,130 +106,110 @@ export default function GalleryClient({ initialItems }) {
           <h1 className="text-3xl font-bold text-slate-900">Gallery Management</h1>
           <p className="text-slate-500 text-sm mt-1">Configure layout categories and showcase images on the landing page.</p>
         </div>
-        <button
+        <Button
           onClick={() => {
             resetForm();
             setShowForm(true);
           }}
-          className="bg-brand-orange text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition cursor-pointer flex items-center gap-1.5"
+          icon={<Plus className="w-4 h-4 shrink-0" />}
         >
-          <Plus className="w-4 h-4 shrink-0" /> Add Gallery Image
-        </button>
+          Add Gallery Image
+        </Button>
       </div>
 
       {showForm ? (
         /* Form view */
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm max-w-xl">
-          <h2 className="text-lg font-bold text-slate-900 mb-6">
-            {editingItem ? "Edit Gallery Details" : "Add Image to Gallery"}
-          </h2>
+        <Card className="border-slate-100 max-w-xl">
+          <Card.Body>
+            <h2 className="text-lg font-bold text-slate-900 mb-6">
+              {editingItem ? "Edit Gallery Details" : "Add Image to Gallery"}
+            </h2>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-650 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Image Title</label>
-              <input
-                type="text"
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
+              <Input
+                label="Image Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 placeholder="e.g. Surat office front facade"
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Image URL</label>
-              <input
-                type="text"
+              <Input
+                label="Image URL"
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
                 required
                 placeholder="Copy URL from Media Library"
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Category</label>
-                <select
+              <div className="grid grid-cols-2 gap-4">
+                <Select
+                  label="Category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
-                >
-                  {categories.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                  options={categories}
+                  inputClassName="bg-slate-50 text-sm"
+                />
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Display Order Sequence</label>
-                <input
+                <Input
+                  label="Display Order Sequence"
                   type="number"
                   value={sortOrder}
                   onChange={(e) => setSortOrder(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
 
-            </div>
-
-            <div className="flex items-center gap-2 mt-2">
-              <input
-                type="checkbox"
+              <Checkbox
+                label="Feature on Public Landing Showcase"
                 id="featured"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="w-4.5 h-4.5 accent-brand-orange rounded"
+                className="mt-2"
               />
-              <label htmlFor="featured" className="text-xs font-bold text-slate-600 cursor-pointer">
-                Feature on Public Landing Showcase
-              </label>
-            </div>
 
-            <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                className="border border-slate-200 px-5 py-2 rounded-xl text-slate-600 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-brand-orange text-white px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition disabled:opacity-50 cursor-pointer"
-              >
-                {loading ? "Saving..." : "Save Image"}
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  loading={loading}
+                >
+                  Save Image
+                </Button>
+              </div>
+            </form>
+          </Card.Body>
+        </Card>
       ) : (
         /* Grid view */
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
           {items.length === 0 ? (
             <div className="col-span-full bg-white border border-slate-150 rounded-2xl py-16 text-slate-400 text-center italic">
-              No gallery images configured. Click "Add Gallery Image" to publish items.
+              No gallery images configured. Click &ldquo;Add Gallery Image&rdquo; to publish items.
             </div>
           ) : (
             items.map((item) => (
-              <div
+              <Card
                 key={item._id}
-                className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between group"
+                className="border-slate-100 overflow-hidden shadow-sm flex flex-col justify-between group"
               >
                 <div className="relative aspect-video bg-slate-100 border-b border-slate-100 overflow-hidden flex items-center justify-center">
                   <img
@@ -253,21 +234,27 @@ export default function GalleryClient({ initialItems }) {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-xs border-t border-slate-50 pt-3">
-                    <button
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleOpenEdit(item)}
-                      className="bg-slate-100 text-slate-700 hover:bg-slate-200 py-1.5 rounded-lg font-semibold text-center cursor-pointer flex items-center justify-center gap-1"
+                      icon={<Edit className="w-3.5 h-3.5 shrink-0 text-slate-500" />}
+                      className="w-full border-none bg-slate-100 text-slate-700 hover:bg-slate-200"
                     >
-                      <Edit className="w-3.5 h-3.5 shrink-0 text-slate-500" /> Edit
-                    </button>
-                    <button
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleDelete(item._id)}
-                      className="bg-red-50 text-red-600 hover:bg-red-100 py-1.5 rounded-lg font-semibold text-center cursor-pointer flex items-center justify-center gap-1"
+                      icon={<Trash2 className="w-3.5 h-3.5 shrink-0" />}
+                      className="w-full"
                     >
-                      <Trash2 className="w-3.5 h-3.5 shrink-0 text-red-500" /> Delete
-                    </button>
+                      Delete
+                    </Button>
                   </div>
                 </div>
-              </div>
+              </Card>
             ))
           )}
         </div>

@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Admin } from "@/shared/models";
-import UsersClient from "@/features/admin/components/UsersClient";
+import { UsersClient } from "@/features/admin";
 
 export const revalidate = 0;
 

@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Testimonial } from "@/shared/models";
-import TestimonialsClient from "@/features/testimonials/components/Admin/TestimonialsClient";
+import { TestimonialsClient } from "@/features/testimonials";
 
 export const revalidate = 0; // Dynamic server rendering
 

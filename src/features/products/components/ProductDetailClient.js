@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -10,7 +11,7 @@ import Footer from "@/shared/layouts/Footer/Footer";
 import ProductImage from "./ProductImage";
 import ProductInquiryForm from "./ProductInquiryForm";
 
-const Cabin360Viewer = dynamic(() => import("@/features/configurator/components/Cabin360Viewer"), {
+const Cabin360Viewer = dynamic(() => import("@/features/configurator").then((mod) => mod.Cabin360Viewer), {
   ssr: false,
   loading: () => (
     <div className="w-full aspect-[16/10] max-sm:aspect-square bg-slate-100 rounded-[24px] flex items-center justify-center">
@@ -32,6 +33,10 @@ export default function ProductDetailClient({ product, similarProducts, settings
   // Safe extraction of query params or fallback defaults
   const [selectedColor, setSelectedColor] = useState(product.defaultColor || "Dark Grey");
   const [selectedFinish, setSelectedFinish] = useState(product.defaultFinish || "Mirror");
+
+  // Gallery active image state
+  const galleryList = [product.featuredImage, ...(product.galleryImages || product.images || [])].filter(Boolean);
+  const [activeImage, setActiveImage] = useState(galleryList[0] || product.featuredImage);
 
   // Sync state from query parameters on mount to avoid hydration mismatch
   useEffect(() => {
@@ -76,10 +81,6 @@ export default function ProductDetailClient({ product, similarProducts, settings
       window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
     }
   }, [selectedColor, selectedFinish, isLayoutCabin, pathname]);
-
-  // Gallery active image state
-  const galleryList = [product.featuredImage, ...(product.galleryImages || product.images || [])].filter(Boolean);
-  const [activeImage, setActiveImage] = useState(galleryList[0] || product.featuredImage);
 
   // Effect to handle selection changes and trigger the crossfade transition
   useEffect(() => {

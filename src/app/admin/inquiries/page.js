@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Inquiry, Admin } from "@/shared/models";
-import InquiriesClient from "@/features/crm/components/InquiriesClient";
+import { InquiriesClient } from "@/features/crm";
 import { cookies } from "next/headers";
 import { verifyToken } from "@/shared/lib/auth";
 

@@ -2,7 +2,7 @@ import dbConnect from "@/shared/lib/mongodb";
 import { Blog, Setting, Product } from "@/shared/models";
 import Header from "@/shared/layouts/Header/Header";
 import Footer from "@/shared/layouts/Footer/Footer";
-import BlogListingClient from "@/features/blog/components/BlogListingClient";
+import { BlogListingClient } from "@/features/blog";
 
 export const revalidate = 0; // Dynamic server rendering
 

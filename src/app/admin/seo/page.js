@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Seo } from "@/shared/models";
-import SeoClient from "@/features/admin/components/SeoClient";
+import { SeoClient } from "@/features/admin";
 
 export const revalidate = 0; // Dynamic server rendering
 

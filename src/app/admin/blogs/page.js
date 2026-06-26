@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Blog } from "@/shared/models";
-import BlogsClient from "@/features/blog/components/Admin/BlogsClient";
+import { BlogsClient } from "@/features/blog";
 
 export const revalidate = 0; // Dynamic server rendering
 

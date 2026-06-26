@@ -4,10 +4,10 @@ import React from "react";
 import { Header, Footer } from "@/shared/layouts";
 import Hero from "./components/Hero";
 import WhyChooseUs from "./components/WhyChooseUs";
-import HomeGallery from "@/features/gallery/components/HomeGallery";
-import HomeProducts from "@/features/products/components/HomeProducts";
-import HomeTestimonials from "@/features/testimonials/components/HomeTestimonials";
-import ContactFormSection from "@/features/contact/components/ContactFormSection";
+import { HomeGallery } from "@/features/gallery";
+import { HomeProducts } from "@/features/products";
+import { HomeTestimonials } from "@/features/testimonials";
+import { ContactFormSection } from "@/features/contact";
 
 /**
  * Home page orchestrator component assembling all visual sections of the homepage.

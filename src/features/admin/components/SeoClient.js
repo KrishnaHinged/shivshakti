@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateSeoAction } from "../services/seoActions";
 import { Plus, AlertTriangle, Edit, Info } from "lucide-react";
+import { Button, Card, Input, Textarea, Select } from "@/shared/ui";
 
 export default function SeoClient({ initialItems }) {
   const [items, setItems] = useState(initialItems);
@@ -88,15 +89,15 @@ export default function SeoClient({ initialItems }) {
           <h1 className="text-3xl font-bold text-slate-900">SEO Optimization</h1>
           <p className="text-slate-500 text-sm mt-1">Configure search meta tags, OpenGraph cards, and local business JSON-LD schemas.</p>
         </div>
-        <button
+        <Button
           onClick={() => {
             resetForm();
             setShowForm(true);
           }}
-          className="bg-brand-orange text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition cursor-pointer flex items-center gap-1.5"
+          icon={<Plus className="w-4 h-4 shrink-0" />}
         >
-          <Plus className="w-4 h-4 shrink-0" /> Configure Page SEO
-        </button>
+          Configure Page SEO
+        </Button>
       </div>
 
       {message && (
@@ -108,109 +109,95 @@ export default function SeoClient({ initialItems }) {
 
       {showForm ? (
         /* Form Card */
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm max-w-2xl">
-          <h2 className="text-lg font-bold text-slate-900 mb-6">
-            {editingItem ? `Edit SEO: ${editingItem.pagePath}` : "Configure Page SEO Details"}
-          </h2>
+        <Card className="border-slate-100 max-w-2xl">
+          <Card.Body>
+            <h2 className="text-lg font-bold text-slate-900 mb-6">
+              {editingItem ? `Edit SEO: ${editingItem.pagePath}` : "Configure Page SEO Details"}
+            </h2>
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-4 py-2.5 rounded-xl mb-6 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-red-650 shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Page Route Path</label>
-              <select
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4.5">
+              <Select
+                label="Page Route Path"
                 value={pagePath}
                 onChange={(e) => setPagePath(e.target.value)}
                 disabled={editingItem !== null}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
-              >
-                {pages.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+                options={pages}
+                inputClassName="bg-slate-50 text-sm"
+              />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Meta Title Tag</label>
-              <input
-                type="text"
+              <Input
+                label="Meta Title Tag"
                 value={metaTitle}
                 onChange={(e) => setMetaTitle(e.target.value)}
                 required
                 placeholder="Target SEO Title"
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Meta Description Summary</label>
-              <textarea
-                rows="3"
+              <Textarea
+                label="Meta Description Summary"
+                rows={3}
                 value={metaDescription}
                 onChange={(e) => setMetaDescription(e.target.value)}
                 required
                 placeholder="Target Description summary..."
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">OpenGraph share image URL</label>
-              <input
-                type="text"
+              <Input
+                label="OpenGraph share image URL"
                 value={openGraphImage}
                 onChange={(e) => setOpenGraphImage(e.target.value)}
                 placeholder="Copy URL from Media Library"
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Structured Schema Markup (JSON-LD)</label>
-              <textarea
-                rows="6"
-                value={schemaMarkup}
-                onChange={(e) => setSchemaMarkup(e.target.value)}
-                placeholder='{ "@context": "https://schema.org", "@type": "LocalBusiness", ... }'
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition font-mono"
-              />
-              <span className="text-[0.65rem] text-slate-400">Must be valid JSON formatting. Used for Manufacturer / Local Business snippets.</span>
-            </div>
+              <div className="flex flex-col gap-1.5">
+                <Textarea
+                  label="Structured Schema Markup (JSON-LD)"
+                  rows={6}
+                  value={schemaMarkup}
+                  onChange={(e) => setSchemaMarkup(e.target.value)}
+                  placeholder='{ "@context": "https://schema.org", "@type": "LocalBusiness", ... }'
+                  inputClassName="bg-slate-50 text-sm font-mono"
+                />
+                <span className="text-[0.65rem] text-slate-400">Must be valid JSON formatting. Used for Manufacturer / Local Business snippets.</span>
+              </div>
 
-            <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  resetForm();
-                }}
-                className="border border-slate-200 px-5 py-2.5 rounded-xl text-slate-600 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-brand-orange text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition disabled:opacity-50 cursor-pointer"
-              >
-                {loading ? "Saving Configs..." : "Save SEO Config"}
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowForm(false);
+                    resetForm();
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  loading={loading}
+                >
+                  Save SEO Config
+                </Button>
+              </div>
+            </form>
+          </Card.Body>
+        </Card>
       ) : (
         /* Pages List Table */
-        <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.015)] overflow-hidden">
-          <div className="p-6 border-b border-slate-100">
+        <Card className="border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
+          <Card.Header>
             <h2 className="font-bold text-slate-900 text-lg">SEO Page Configurations</h2>
-          </div>
+          </Card.Header>
 
           <div className="divide-y divide-slate-100">
             {items.length === 0 ? (
@@ -233,17 +220,20 @@ export default function SeoClient({ initialItems }) {
                     )}
                   </div>
 
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => handleOpenEdit(item)}
-                    className="bg-brand-blue/10 text-brand-blue hover:bg-brand-blue/20 px-4 py-2 rounded-lg text-xs font-bold shrink-0 self-end sm:self-center cursor-pointer flex items-center gap-1.5"
+                    icon={<Edit className="w-3.5 h-3.5 shrink-0" />}
+                    className="self-end sm:self-center"
                   >
-                    <Edit className="w-3.5 h-3.5 shrink-0" /> Edit Configurations
-                  </button>
+                    Edit Configurations
+                  </Button>
                 </div>
               ))
             )}
           </div>
-        </div>
+        </Card>
       )}
 
     </div>

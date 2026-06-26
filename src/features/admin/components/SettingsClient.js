@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateSettingsAction } from "@/features/admin/services/settingsActions";
 import { Info, AlertTriangle, Phone, Mail } from "lucide-react";
+import { Button, Card, Input, Textarea } from "@/shared/ui";
 
 export default function SettingsClient({ settings }) {
   const [companyName, setCompanyName] = useState(settings.companyName || "");
@@ -142,303 +143,263 @@ export default function SettingsClient({ settings }) {
       <form onSubmit={handleSubmit} className="flex flex-col gap-8">
         
         {/* Company Identity */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-          <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Company Details</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Company Name</label>
-              <input
-                type="text"
+        <Card className="border-slate-100">
+          <Card.Body className="flex flex-col gap-5">
+            <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Company Details</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Input
+                label="Company Name"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
                 required
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
-            
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Tagline</label>
-              <input
-                type="text"
+              
+              <Input
+                label="Tagline"
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Sub Tagline</label>
-              <input
-                type="text"
+              <Input
+                label="Sub Tagline"
                 value={subTagline}
                 onChange={(e) => setSubTagline(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Global Contacts & Social Links */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-          <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Global Contacts &amp; Social Links</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Emails (Comma-separated)</label>
-                <input
-                  type="text"
+        <Card className="border-slate-100">
+          <Card.Body className="flex flex-col gap-5">
+            <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Global Contacts &amp; Social Links</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-4">
+                <Input
+                  label="Emails (Comma-separated)"
                   value={emails}
                   onChange={(e) => setEmails(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Phone Numbers (Comma-separated)</label>
-                <input
-                  type="text"
+                <Input
+                  label="Phone Numbers (Comma-separated)"
                   value={phones}
                   onChange={(e) => setPhones(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">WhatsApp Number (Call / API)</label>
-                <input
-                  type="text"
+                <Input
+                  label="WhatsApp Number (Call / API)"
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
-            </div>
 
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Facebook Page URL</label>
-                <input
-                  type="text"
+              <div className="flex flex-col gap-4">
+                <Input
+                  label="Facebook Page URL"
                   value={facebook}
                   onChange={(e) => setFacebook(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Instagram Profile URL</label>
-                <input
-                  type="text"
+                <Input
+                  label="Instagram Profile URL"
                   value={instagram}
                   onChange={(e) => setInstagram(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">WhatsApp Chat URL Link</label>
-                <input
-                  type="text"
+                <Input
+                  label="WhatsApp Chat URL Link"
                   value={whatsappLink}
                   onChange={(e) => setWhatsappLink(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Statutory details */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-          <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Statutory Certifications</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">GST Registration Number</label>
-              <input
-                type="text"
+        <Card className="border-slate-100">
+          <Card.Body className="flex flex-col gap-5">
+            <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Statutory Certifications</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Input
+                label="GST Registration Number"
                 value={gst}
                 onChange={(e) => setGst(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">IE Code (Import Export Code)</label>
-              <input
-                type="text"
+              <Input
+                label="IE Code (Import Export Code)"
                 value={iec}
                 onChange={(e) => setIec(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Corporate Banking Partner</label>
-              <input
-                type="text"
+              <Input
+                label="Corporate Banking Partner"
                 value={banker}
                 onChange={(e) => setBanker(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Logo, Branding, maps */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col gap-5">
-          <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Branding assets &amp; Map integrations</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Logo Asset Path URL</label>
-                <input
-                  type="text"
+        <Card className="border-slate-100">
+          <Card.Body className="flex flex-col gap-5">
+            <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-3">Branding assets &amp; Map integrations</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-4">
+                <Input
+                  label="Logo Asset Path URL"
                   value={logoUrl}
                   onChange={(e) => setLogoUrl(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Favicon Icon Path URL</label>
-                <input
-                  type="text"
+                <Input
+                  label="Favicon Icon Path URL"
                   value={faviconUrl}
                   onChange={(e) => setFaviconUrl(e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
-              </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase">Google Maps embed SRC URL</label>
-                <input
-                  type="text"
+                <Input
+                  label="Google Maps embed SRC URL"
                   value={googleMapsEmbed}
                   onChange={(e) => handleMapUrlChange(e.target.value)}
                   placeholder="https://www.google.com/maps/embed?pb=... or paste iframe code"
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                  inputClassName="bg-slate-50 text-sm"
                 />
               </div>
-            </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-slate-500 uppercase">Footer Description Summary</label>
-              <textarea
-                rows="6"
+              <Textarea
+                label="Footer Description Summary"
+                rows={6}
                 value={footerDescription}
                 onChange={(e) => setFooterDescription(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange"
+                inputClassName="bg-slate-50 text-sm"
               />
             </div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         {/* Dynamic branches addresses list */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-          <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-2">Corporate Branches / Locations</h2>
+        <Card className="border-slate-100">
+          <Card.Body className="flex flex-col gap-6">
+            <h2 className="font-bold text-slate-900 text-base border-b border-slate-50 pb-2">Corporate Branches / Locations</h2>
 
-          {/* Table display */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {branches.map((branch, index) => (
-              <div key={index} className="border border-slate-200 rounded-xl p-5 bg-slate-50/50 flex flex-col justify-between shadow-sm relative">
-                <button
-                  type="button"
-                  onClick={() => handleRemoveBranch(index)}
-                  className="absolute top-4 right-4 text-slate-400 hover:text-red-500 font-bold font-mono text-sm cursor-pointer"
-                  title="Remove Branch"
-                >
-                  ✕
-                </button>
-                <div>
-                  <span className={`text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                    branch.badge === "Head Office" ? "bg-brand-orange-pale text-brand-orange" : "bg-brand-blue-pale text-brand-blue"
-                  }`}>
-                    {branch.badge}
-                  </span>
-                  <h4 className="font-bold text-slate-800 text-sm mt-3">{branch.branchName}</h4>
-                  <p className="text-[0.8rem] text-slate-500 leading-relaxed mt-2">{branch.addressLine}, {branch.cityState}</p>
+            {/* Table display */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {branches.map((branch, index) => (
+                <div key={index} className="border border-slate-200 rounded-xl p-5 bg-slate-50/50 flex flex-col justify-between shadow-sm relative">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveBranch(index)}
+                    className="absolute top-4 right-4 text-slate-400 hover:text-red-500 font-bold font-mono text-sm cursor-pointer"
+                    title="Remove Branch"
+                  >
+                    ✕
+                  </button>
+                  <div>
+                    <span className={`text-[0.65rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
+                      branch.badge === "Head Office" ? "bg-brand-orange-pale text-brand-orange" : "bg-brand-blue-pale text-brand-blue"
+                    }`}>
+                      {branch.badge}
+                    </span>
+                    <h4 className="font-bold text-slate-800 text-sm mt-3">{branch.branchName}</h4>
+                    <p className="text-[0.8rem] text-slate-500 leading-relaxed mt-2">{branch.addressLine}, {branch.cityState}</p>
+                  </div>
+                  <div className="border-t border-slate-100 pt-3 mt-4 flex flex-col gap-1.5 text-[0.75rem] text-slate-500">
+                    <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-slate-400" /> {branch.phone}</span>
+                    <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-slate-400" /> {branch.email}</span>
+                  </div>
                 </div>
-                <div className="border-t border-slate-100 pt-3 mt-4 flex flex-col gap-1.5 text-[0.75rem] text-slate-500">
-                  <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-slate-400" /> {branch.phone}</span>
-                  <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-slate-400" /> {branch.email}</span>
-                </div>
+              ))}
+            </div>
+
+            {/* New branch details form builder */}
+            <div className="border border-slate-200 rounded-xl p-5 bg-slate-50 flex flex-col gap-4">
+              <span className="text-xs font-bold text-slate-500 uppercase">Add Office Branch</span>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Branch Name (e.g. Surat HO)"
+                  value={branchName}
+                  onChange={(e) => setBranchName(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
+                <Input
+                  placeholder="Badge (e.g. Head Office)"
+                  value={badge}
+                  onChange={(e) => setBadge(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
+                <Input
+                  placeholder="City & ZIP (e.g. Indore - 452010)"
+                  value={cityState}
+                  onChange={(e) => setCityState(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
               </div>
-            ))}
-          </div>
 
-          {/* New branch details form builder */}
-          <div className="border border-slate-200 rounded-xl p-5 bg-slate-50 flex flex-col gap-4">
-            <span className="text-xs font-bold text-slate-500 uppercase">Add Office Branch</span>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="Branch Name (e.g. Surat HO)"
-                value={branchName}
-                onChange={(e) => setBranchName(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Badge (e.g. Head Office)"
-                value={badge}
-                onChange={(e) => setBadge(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
-              <input
-                type="text"
-                placeholder="City & ZIP (e.g. Indore - 452010)"
-                value={cityState}
-                onChange={(e) => setCityState(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Full Phone Details"
+                  value={bPhone}
+                  onChange={(e) => setBPhone(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
+                <Input
+                  placeholder="Email Address"
+                  value={bEmail}
+                  onChange={(e) => setBEmail(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
+                <Input
+                  placeholder="Address Details Line"
+                  value={addressLine}
+                  onChange={(e) => setAddressLine(e.target.value)}
+                  inputClassName="bg-white rounded-lg px-3 py-2 text-xs"
+                />
+              </div>
+
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleAddBranch}
+                className="self-start"
+              >
+                Add Office Branch
+              </Button>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <input
-                type="text"
-                placeholder="Full Phone Details"
-                value={bPhone}
-                onChange={(e) => setBPhone(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Email Address"
-                value={bEmail}
-                onChange={(e) => setBEmail(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
-              <input
-                type="text"
-                placeholder="Address Details Line"
-                value={addressLine}
-                onChange={(e) => setAddressLine(e.target.value)}
-                className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none"
-              />
-            </div>
-
-            <button
-              onClick={handleAddBranch}
-              className="bg-brand-blue text-white px-4 py-2 rounded-xl text-xs font-bold self-start cursor-pointer hover:bg-brand-blue-light"
-            >
-              Add Office Branch
-            </button>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
 
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="bg-brand-orange text-white px-8 py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow shadow-brand-orange/20 transition disabled:opacity-50 cursor-pointer"
+            loading={loading}
+            className="px-8 py-3.5 shadow shadow-brand-orange/20"
           >
-            {loading ? "Saving Settings..." : "Save Website Settings"}
-          </button>
+            Save Website Settings
+          </Button>
         </div>
 
       </form>

@@ -224,7 +224,7 @@ export default async function BlogDetailPage({ params }) {
 
           {/* Short Excerpt */}
           <div className="border-l-4 border-brand-orange bg-slate-50 pl-5 py-4 my-4 italic text-sm md:text-base text-slate-600 rounded-r-xl leading-relaxed">
-            "{post.shortDescription}"
+            &ldquo;{post.shortDescription}&rdquo;
           </div>
 
           {/* Main Content Body */}

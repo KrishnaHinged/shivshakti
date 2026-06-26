@@ -1,7 +1,7 @@
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import PageTransitionProvider from "@/shared/providers/PageTransitionProvider";
-import RopeElevator from "@/features/rope-elevator/components/RopeElevator";
+import { RopeElevator } from "@/features/rope-elevator";
 
 const outfit = Outfit({
   subsets: ["latin"],

@@ -433,7 +433,7 @@ export default function BlogsClient({ initialItems }) {
           <div className="divide-y divide-slate-100">
             {items.length === 0 ? (
               <div className="py-12 text-slate-400 text-center italic">
-                No blog posts recorded. Click "Create Blog Post" to add new articles.
+                No blog posts recorded. Click &ldquo;Create Blog Post&rdquo; to add new articles.
               </div>
             ) : (
               items.map((blog) => (

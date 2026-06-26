@@ -2,7 +2,7 @@ import Link from "next/link";
 import dbConnect from "@/shared/lib/mongodb";
 import { Setting, Product } from "@/shared/models";
 import Header from "@/shared/layouts/Header/Header";
-import About from "@/features/about/About";
+import { About } from "@/features/about";
 import Footer from "@/shared/layouts/Footer/Footer";
 
 export const revalidate = 0; // Ensure fresh data on refresh
@@ -152,7 +152,7 @@ export default async function AboutPage() {
                   </span>
                 </h1>
                 <p className="text-[1rem] lg:text-[1.1rem] text-text-secondary leading-[1.6] mt-1 opacity-90 max-w-2xl">
-                  One of India's leading manufacturers and suppliers of elevator
+                  One of India&apos;s leading manufacturers and suppliers of elevator
                   components, recognized for quality, innovation, and reliability
                   in the vertical transportation industry.
                 </p>

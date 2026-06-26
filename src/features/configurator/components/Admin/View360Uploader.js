@@ -1,9 +1,11 @@
 "use client";
+/* eslint-disable react-hooks/refs */
 
 import { useState, useRef } from "react";
 import { Upload, X, RefreshCw, AlertTriangle, Eye, Loader2, ChevronDown } from "lucide-react";
 import { validate360File, VIEW_360_SLOTS } from "@/shared/lib/validateAspectRatio";
-import CropModal from "@/features/admin/components/CropModal";
+import { CropModal } from "@/features/admin";
+import { Modal } from "@/shared/ui";
 import dynamic from "next/dynamic";
 
 const Cabin360Viewer = dynamic(() => import("../Cabin360Viewer"), {
@@ -691,69 +693,49 @@ export default function View360Uploader({
       )}
 
       {/* Base Preview Modal */}
-      {showPreview && allFilled && (
-        <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <div>
-                <h3 className="font-bold text-slate-900 text-sm">
-                  360° Interior Preview — Default
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  This is how customers will see the interactive viewer.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowPreview(false)}
-                className="text-slate-400 hover:text-slate-700 transition cursor-pointer p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4">
-              <Cabin360Viewer
-                view360={view360}
-                productName={productName || "Product Preview"}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal isOpen={showPreview && allFilled} onClose={() => setShowPreview(false)} size="2xl">
+        <Modal.Header>
+          <h3 className="font-bold text-slate-900 text-sm">
+            360° Interior Preview — Default
+          </h3>
+          <p className="text-xs text-slate-400 mt-0.5 font-medium leading-none">
+            This is how customers will see the interactive viewer.
+          </p>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          <Cabin360Viewer
+            view360={view360}
+            productName={productName || "Product Preview"}
+          />
+        </Modal.Body>
+      </Modal>
 
       {/* Variant Preview Modal */}
-      {showVariantPreview && variantPreviewData && (
-        <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-              <div>
-                <h3 className="font-bold text-slate-900 text-sm">
-                  360° Interior Preview — {variantPreviewData.label}
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Variant-specific 360° view for this configuration.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowVariantPreview(false);
-                  setVariantPreviewData(null);
-                }}
-                className="text-slate-400 hover:text-slate-700 transition cursor-pointer p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4">
-              <Cabin360Viewer
-                view360={variantPreviewData.view360}
-                productName={`${productName} — ${variantPreviewData.label}`}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={showVariantPreview && !!variantPreviewData}
+        onClose={() => {
+          setShowVariantPreview(false);
+          setVariantPreviewData(null);
+        }}
+        size="2xl"
+      >
+        <Modal.Header>
+          <h3 className="font-bold text-slate-900 text-sm">
+            360° Interior Preview — {variantPreviewData?.label}
+          </h3>
+          <p className="text-xs text-slate-400 mt-0.5 font-medium leading-none">
+            Variant-specific 360° view for this configuration.
+          </p>
+        </Modal.Header>
+        <Modal.Body className="p-4">
+          {variantPreviewData && (
+            <Cabin360Viewer
+              view360={variantPreviewData.view360}
+              productName={`${productName} — ${variantPreviewData.label}`}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

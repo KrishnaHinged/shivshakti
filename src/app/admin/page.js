@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Inquiry, Product, Gallery, Testimonial, ActivityLog, Newsletter } from "@/shared/models";
-import DashboardClient from "@/features/dashboard/components/DashboardClient";
+import { DashboardClient } from "@/features/dashboard";
 
 export const revalidate = 0; // Dynamic server rendering
 

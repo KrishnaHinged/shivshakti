@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deleteSubscriberAction } from "../services/newsletterActions";
+import { Button, Card } from "@/shared/ui";
 
 export default function NewsletterClient({ initialItems }) {
   const [items, setItems] = useState(initialItems);
@@ -35,7 +36,7 @@ export default function NewsletterClient({ initialItems }) {
       </div>
 
       {/* Database list */}
-      <div className="bg-white border border-slate-100 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.015)] overflow-hidden">
+      <Card className="border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
         <table className="w-full text-left border-collapse text-sm">
           <thead>
             <tr className="bg-slate-50 text-slate-400 text-[0.72rem] uppercase font-bold tracking-wider border-b border-slate-100">
@@ -65,19 +66,20 @@ export default function NewsletterClient({ initialItems }) {
                     </span>
                   </td>
                   <td className="py-4 px-6 text-right">
-                    <button
+                    <Button
+                      variant="danger"
+                      size="sm"
                       onClick={() => handleDelete(sub._id)}
-                      className="bg-red-50 text-red-600 hover:bg-red-100 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer"
                     >
                       Remove
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }

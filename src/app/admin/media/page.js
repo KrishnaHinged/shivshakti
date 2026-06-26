@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { MediaLibrary } from "@/shared/models";
-import MediaClient from "@/features/admin/components/MediaClient";
+import { MediaClient } from "@/features/admin";
 
 export const revalidate = 0; // Dynamic server rendering
 

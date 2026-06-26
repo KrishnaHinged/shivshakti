@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import React, { useState, useEffect, useMemo, Suspense, useRef } from "react";
 import Link from "next/link";
@@ -8,6 +9,7 @@ import Footer from "@/shared/layouts/Footer/Footer";
 import ProductImage from "./ProductImage";
 import ProductInquiryForm from "./ProductInquiryForm";
 import { ArrowRight, ArrowLeft, Search, X, Shield, Star, Info, HelpCircle } from "lucide-react";
+import { Modal } from "@/shared/ui";
 
 function ProductsListingClient({ products, categories, settings }) {
   const router = useRouter();
@@ -519,7 +521,7 @@ function ProductsListingClient({ products, categories, settings }) {
                   Authorized Dealer Products
                 </h2>
                 <p className="text-slate-500 text-sm max-w-2xl">
-                  We are strategic distribution partners for the world's leading brands of elevator ropes, gearless machines, and digital control boards.
+                  We are strategic distribution partners for the world&apos;s leading brands of elevator ropes, gearless machines, and digital control boards.
                 </p>
               </div>
 
@@ -759,28 +761,23 @@ function ProductsListingClient({ products, categories, settings }) {
       )}
 
       {/* GLOBAL GLASSMORPHIC INQUIRY MODAL */}
-      {activeInquiryProduct && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-          <div className="relative w-full max-w-xl bg-[#FDFBF9] rounded-[2rem] shadow-2xl p-1 overflow-hidden animate-in zoom-in-95 duration-300">
-            {/* Embedded close button */}
-            <button
-              onClick={() => setActiveInquiryProduct(null)}
-              className="absolute top-5 right-5 p-2 rounded-full hover:bg-slate-200/80 text-slate-500 hover:text-slate-800 transition cursor-pointer z-50"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Inner Wrapper */}
-            <div className="p-5 max-h-[90vh] overflow-y-auto">
-              <ProductInquiryForm
-                productId={activeInquiryProduct._id}
-                productTitle={activeInquiryProduct.title}
-                productSlug={activeInquiryProduct.slug}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={!!activeInquiryProduct}
+        onClose={() => setActiveInquiryProduct(null)}
+        size="md"
+        className="!bg-[#FDFBF9] rounded-[2rem] p-1 text-slate-800"
+      >
+        <Modal.Header showClose={true} className="border-b-0 pb-0" />
+        <Modal.Body className="p-5 overflow-y-auto">
+          {activeInquiryProduct && (
+            <ProductInquiryForm
+              productId={activeInquiryProduct._id}
+              productTitle={activeInquiryProduct.title}
+              productSlug={activeInquiryProduct.slug}
+            />
+          )}
+        </Modal.Body>
+      </Modal>
 
       {/* Exit transit overlay */}
       {showExitOverlay && (

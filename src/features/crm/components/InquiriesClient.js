@@ -23,6 +23,8 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { Button, Card, Input, Select } from "@/shared/ui";
+
 export default function InquiriesClient({ inquiries: initialInquiries, adminsList = [], currentUser = {} }) {
   const [inquiries, setInquiries] = useState(initialInquiries);
   const [selectedLead, setSelectedLead] = useState(null);
@@ -252,49 +254,51 @@ export default function InquiriesClient({ inquiries: initialInquiries, adminsLis
       </div>
 
       {/* Filters & Search Row */}
-      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] flex flex-col md:flex-row gap-4">
-        <div className="flex-1">
-          <input
-            type="text"
-            placeholder="Search by name, email, city, company, components..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-150 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
-          />
-        </div>
-
-        {viewMode === "list" && (
-          <div className="w-full md:w-48">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-150 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
-            >
-              <option value="all">All Statuses</option>
-              <option value="new">New</option>
-              <option value="contacted">Contacted</option>
-              <option value="qualified">Qualified</option>
-              <option value="closed">Closed</option>
-              <option value="rejected">Rejected</option>
-            </select>
+      <Card className="border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)]">
+        <Card.Body className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <Input
+              type="text"
+              placeholder="Search by name, email, city, company, components..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              inputClassName="bg-slate-50 text-sm py-3"
+            />
           </div>
-        )}
 
-        <div className="w-full md:w-56">
-          <select
-            value={productFilter}
-            onChange={(e) => setProductFilter(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-150 rounded-xl px-4 py-3 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
-          >
-            <option value="all">All Products</option>
-            {productOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+          {viewMode === "list" && (
+            <div className="w-full md:w-48">
+              <Select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                inputClassName="bg-slate-50 text-sm py-3"
+              >
+                <option value="all">All Statuses</option>
+                <option value="new">New</option>
+                <option value="contacted">Contacted</option>
+                <option value="qualified">Qualified</option>
+                <option value="closed">Closed</option>
+                <option value="rejected">Rejected</option>
+              </Select>
+            </div>
+          )}
+
+          <div className="w-full md:w-56">
+            <Select
+              value={productFilter}
+              onChange={(e) => setProductFilter(e.target.value)}
+              inputClassName="bg-slate-50 text-sm py-3"
+            >
+              <option value="all">All Products</option>
+              {productOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </Select>
+          </div>
+        </Card.Body>
+      </Card>
 
       {/* CRM Board / List Grid Layout */}
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-8 items-start">
@@ -455,129 +459,133 @@ export default function InquiriesClient({ inquiries: initialInquiries, adminsLis
         )}
 
         {/* Lead Detailed Action Drawer Card */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.015)] sticky top-6">
-          {selectedLead ? (
-            <div className="flex flex-col gap-6">
-              
-              {/* Header Details */}
-              <div className="flex justify-between items-start border-b border-slate-100 pb-5">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 leading-snug">{selectedLead.name}</h3>
-                  <p className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span>Received: {new Date(selectedLead.createdAt).toLocaleString()}</span>
-                  </p>
+        <Card className="border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.015)] sticky top-6">
+          <Card.Body className="p-0">
+            {selectedLead ? (
+              <div className="flex flex-col gap-6">
+                
+                {/* Header Details */}
+                <div className="flex justify-between items-start border-b border-slate-100 pb-5">
+                  <div>
+                    <h3 className="text-xl font-bold text-slate-900 leading-snug">{selectedLead.name}</h3>
+                    <p className="text-slate-500 text-xs mt-1 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Received: {new Date(selectedLead.createdAt).toLocaleString()}</span>
+                    </p>
+                  </div>
+                  {currentUser.role === "SUPER_ADMIN" && (
+                    <button
+                      onClick={() => handleDeleteLead(selectedLead._id)}
+                      className="text-slate-400 hover:text-red-600 transition flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+                      title="Delete Lead"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
-                {currentUser.role === "SUPER_ADMIN" && (
-                  <button
-                    onClick={() => handleDeleteLead(selectedLead._id)}
-                    className="text-slate-400 hover:text-red-600 transition flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
-                    title="Delete Lead"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+
+                {/* Success update notify */}
+                {successMsg && (
+                  <div className="bg-green-50 border border-green-200 text-green-700 text-xs px-4 py-2.5 rounded-xl">
+                    {successMsg}
+                  </div>
                 )}
-              </div>
 
-              {/* Success update notify */}
-              {successMsg && (
-                <div className="bg-green-50 border border-green-200 text-green-700 text-xs px-4 py-2.5 rounded-xl">
-                  {successMsg}
-                </div>
-              )}
-
-              {/* Status Manager */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Lead Status</label>
-                <select
+                {/* Status Manager */}
+                <Select
+                  label="Lead Status"
                   value={status}
                   onChange={(e) => handleStatusChange(e.target.value)}
                   disabled={updating}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange transition cursor-pointer"
+                  inputClassName="bg-slate-50 text-sm py-2.5"
                 >
                   <option value="New">New</option>
                   <option value="Contacted">Contacted</option>
                   <option value="Qualified">Qualified</option>
                   <option value="Closed">Closed / Won</option>
                   <option value="Rejected">Rejected</option>
-                </select>
-              </div>
+                </Select>
 
-              {/* Lead Owner / Assignment */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Assigned To</label>
-                {["SUPER_ADMIN", "SALES_MANAGER"].includes(currentUser.role) ? (
-                  <select
-                    value={selectedLead.assignedTo?._id || selectedLead.assignedTo || ""}
-                    onChange={(e) => handleAssignLead(selectedLead._id, e.target.value)}
-                    disabled={updating}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange transition cursor-pointer"
-                  >
-                    <option value="">Unassigned</option>
-                    {adminsList.map((adm) => (
-                      <option key={adm._id} value={adm._id}>
-                        {adm.name} ({adm.role.replace("_", " ")})
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <div className="text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-100 p-3 rounded-xl">
-                    {selectedLead.assignedTo?.name || "Unassigned"}
+                {/* Lead Owner / Assignment */}
+                <div className="flex flex-col gap-2">
+                  {["SUPER_ADMIN", "SALES_MANAGER"].includes(currentUser.role) ? (
+                    <Select
+                      label="Assigned To"
+                      value={selectedLead.assignedTo?._id || selectedLead.assignedTo || ""}
+                      onChange={(e) => handleAssignLead(selectedLead._id, e.target.value)}
+                      disabled={updating}
+                      inputClassName="bg-slate-50 text-sm py-2.5"
+                    >
+                      <option value="">Unassigned</option>
+                      {adminsList.map((adm) => (
+                        <option key={adm._id} value={adm._id}>
+                          {adm.name} ({adm.role.replace("_", " ")})
+                        </option>
+                      ))}
+                    </Select>
+                  ) : (
+                    <div>
+                      <label className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Assigned To</label>
+                      <div className="text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-100 p-3 rounded-xl mt-1">
+                        {selectedLead.assignedTo?.name || "Unassigned"}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* WhatsApp Quick Actions Card */}
+                <div className="bg-slate-50 border border-slate-150 rounded-2xl p-5 flex flex-col gap-4">
+                  <span className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Quick Actions</span>
+                  
+                  {/* Meta details preview */}
+                  <div className="bg-white border border-slate-100 rounded-xl p-3.5 text-xs text-slate-600 leading-relaxed font-mono">
+                    <strong>Name:</strong> {selectedLead.name}<br />
+                    <strong>Phone:</strong> {selectedLead.phone}<br />
+                    <strong>City:</strong> {selectedLead.city || "Online"}<br />
+                    {selectedLead.elevatorType && (
+                      <>
+                        <strong>Elevator Type:</strong> {selectedLead.elevatorType}<br />
+                        <strong>Quantity:</strong> {selectedLead.quantity}<br />
+                      </>
+                    )}
+                    <strong>Component:</strong> {selectedLead.componentNeeded || selectedLead.productInterest || "N/A"}<br />
+                    {selectedLead.customizationColor && (
+                      <>
+                        <strong>Custom Color:</strong> {selectedLead.customizationColor}<br />
+                      </>
+                    )}
+                    {selectedLead.customizationFinish && (
+                      <>
+                        <strong>Custom Finish:</strong> {selectedLead.customizationFinish} Finish<br />
+                      </>
+                    )}
                   </div>
-                )}
-              </div>
 
-              {/* WhatsApp Quick Actions Card */}
-              <div className="bg-slate-50 border border-slate-150 rounded-2xl p-5 flex flex-col gap-4">
-                <span className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Quick Actions</span>
-                
-                {/* Meta details preview */}
-                <div className="bg-white border border-slate-100 rounded-xl p-3.5 text-xs text-slate-600 leading-relaxed font-mono">
-                  <strong>Name:</strong> {selectedLead.name}<br />
-                  <strong>Phone:</strong> {selectedLead.phone}<br />
-                  <strong>City:</strong> {selectedLead.city || "Online"}<br />
-                  {selectedLead.elevatorType && (
-                    <>
-                      <strong>Elevator Type:</strong> {selectedLead.elevatorType}<br />
-                      <strong>Quantity:</strong> {selectedLead.quantity}<br />
-                    </>
-                  )}
-                  <strong>Component:</strong> {selectedLead.componentNeeded || selectedLead.productInterest || "N/A"}<br />
-                  {selectedLead.customizationColor && (
-                    <>
-                      <strong>Custom Color:</strong> {selectedLead.customizationColor}<br />
-                    </>
-                  )}
-                  {selectedLead.customizationFinish && (
-                    <>
-                      <strong>Custom Finish:</strong> {selectedLead.customizationFinish} Finish<br />
-                    </>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <a
-                    href={getCallUrl(selectedLead.phone)}
-                    className="flex items-center justify-center gap-2 border border-slate-200 bg-white px-4 py-2.5 rounded-xl text-slate-700 text-xs font-bold hover:bg-slate-100 text-center transition"
+                  <div className="grid grid-cols-2 gap-3">
+                    <a
+                      href={getCallUrl(selectedLead.phone)}
+                      className="flex items-center justify-center gap-2 border border-slate-200 bg-white px-4 py-2.5 rounded-xl text-slate-700 text-xs font-bold hover:bg-slate-100 text-center transition"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" /> Call Lead
+                    </a>
+                    <a
+                      href={getWhatsAppUrl(selectedLead)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#20ba59] text-center transition"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-white shrink-0" /> WhatsApp
+                    </a>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 py-2.5 border-none shadow-none"
+                    onClick={() => handleCopyDetails(selectedLead)}
+                    icon={<Clipboard className="w-3.5 h-3.5 text-slate-600 shrink-0" />}
                   >
-                    <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" /> Call Lead
-                  </a>
-                  <a
-                    href={getWhatsAppUrl(selectedLead)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#25D366] text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-[#20ba59] text-center transition"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5 text-white shrink-0" /> WhatsApp
-                  </a>
+                    Copy Details
+                  </Button>
                 </div>
-                <button
-                  onClick={() => handleCopyDetails(selectedLead)}
-                  className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 py-2.5 rounded-xl text-xs font-bold tracking-wider transition flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <Clipboard className="w-3.5 h-3.5 text-slate-600 shrink-0" /> Copy Details
-                </button>
-              </div>
 
               {/* Details specifications */}
               <div className="flex flex-col gap-4 border-t border-slate-100 pt-5 text-sm">
@@ -628,7 +636,7 @@ export default function InquiriesClient({ inquiries: initialInquiries, adminsLis
                 <div>
                   <span className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400 block mb-1">User Message</span>
                   <p className="text-slate-600 leading-relaxed bg-slate-50 border border-slate-100 p-4 rounded-xl italic">
-                    "{selectedLead.message}"
+                    &ldquo;{selectedLead.message}&rdquo;
                   </p>
                 </div>
               </div>
@@ -654,35 +662,37 @@ export default function InquiriesClient({ inquiries: initialInquiries, adminsLis
                 </div>
 
                 <div className="flex gap-2 mt-2">
-                  <input
+                  <Input
                     type="text"
                     placeholder="Log a call or discussion update..."
                     value={noteInput}
                     onChange={(e) => setNoteInput(e.target.value)}
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange focus:bg-white transition"
+                    inputClassName="bg-slate-50 text-sm py-2.5"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleSaveNotes();
                       }
                     }}
                   />
-                  <button
+                  <Button
+                    variant="secondary"
                     onClick={handleSaveNotes}
                     disabled={updating || !noteInput.trim()}
-                    className="bg-brand-blue text-white rounded-xl px-4 py-2.5 text-xs font-bold uppercase tracking-wider transition hover:bg-brand-blue-light disabled:opacity-50 cursor-pointer"
+                    loading={updating}
                   >
-                    {updating ? "Saving..." : "Add"}
-                  </button>
+                    Add
+                  </Button>
                 </div>
               </div>
 
             </div>
           ) : (
-            <div className="text-slate-400 text-sm py-20 text-center italic">
+            <div className="text-slate-400 text-sm py-20 text-center italic p-6">
               Select a lead from the database list to access notes, statuses, and quick action WhatsApp widgets.
             </div>
           )}
-        </div>
+        </Card.Body>
+      </Card>
 
       </div>
     </div>

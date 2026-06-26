@@ -1,6 +1,6 @@
 import dbConnect from "@/shared/lib/mongodb";
 import { Product, Category } from "@/shared/models";
-import ProductsClient from "@/features/products/components/Admin/ProductsClient";
+import { ProductsClient } from "@/features/products";
 
 export const revalidate = 0; // Dynamic server rendering
 

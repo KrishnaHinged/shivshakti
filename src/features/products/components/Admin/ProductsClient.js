@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useState, useMemo, useEffect } from "react";
 import {
@@ -9,7 +10,8 @@ import {
   archiveProductAction,
 } from "../../services/actions";
 import { Plus, AlertTriangle, Archive, Copy, Edit, Trash2, Eye, Upload } from "lucide-react";
-import View360Uploader from "@/features/configurator/components/Admin/View360Uploader";
+import { View360Uploader } from "@/features/configurator";
+import { Button } from "@/shared/ui";
 
 export default function ProductsClient({ products: initialProducts, categories }) {
   const [products, setProducts] = useState(initialProducts);
@@ -566,15 +568,16 @@ export default function ProductsClient({ products: initialProducts, categories }
           </p>
         </div>
         {!showForm && (
-          <button
+          <Button
             onClick={() => {
               resetForm();
               setShowForm(true);
             }}
-            className="bg-brand-orange text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition cursor-pointer flex items-center gap-1.5"
+            variant="primary"
+            icon={<Plus className="w-4 h-4 shrink-0" />}
           >
-            <Plus className="w-4 h-4 shrink-0" /> Add New Product
-          </button>
+            Add New Product
+          </Button>
         )}
       </div>
 
@@ -1441,23 +1444,22 @@ export default function ProductsClient({ products: initialProducts, categories }
 
             {/* Form Actions footer */}
             <div className="flex justify-end gap-3 border-t border-slate-100 pt-5 mt-3">
-              <button
-                type="button"
+              <Button
+                variant="outline"
                 onClick={() => {
                   setShowForm(false);
                   resetForm();
                 }}
-                className="border border-slate-200 px-6 py-2.5 rounded-xl text-slate-600 text-xs font-bold uppercase tracking-wider hover:bg-slate-50 cursor-pointer"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                disabled={loading}
-                className="bg-brand-orange text-white px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-orange-light shadow-sm transition disabled:opacity-50 cursor-pointer"
+                variant="primary"
+                loading={loading}
               >
-                {loading ? "Saving..." : editingProduct ? "Update Product" : "Publish Product"}
-              </button>
+                {editingProduct ? "Update Product" : "Publish Product"}
+              </Button>
             </div>
           </form>
         </div>

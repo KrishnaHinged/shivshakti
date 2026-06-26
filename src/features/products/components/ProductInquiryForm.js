@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { createInquiryAction } from "@/features/crm/services/actions";
 import { AlertTriangle } from "lucide-react";
+import { Button, Card, Input, Textarea } from "@/shared/ui";
 
 export const ProductInquiryForm = ({ productId, productTitle, productSlug, customizationColor, customizationFinish }) => {
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -32,7 +33,7 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug, custo
     : `Hello, I am interested in inquiring about specifications, lead times, and pricing details for the ${productTitle}. Please share the brochure and catalog.`;
 
   return (
-    <div className="bg-bg-light border border-border-light rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-6 shadow-sm">
+    <Card className="border-border-light rounded-[1.5rem] p-6 lg:p-8 flex flex-col gap-6 shadow-sm">
       <div>
         <h3 className="text-[1.25rem] font-bold text-text-light-primary">Request Details & Pricing</h3>
         <p className="text-[0.85rem] text-text-light-secondary mt-1">
@@ -68,52 +69,52 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug, custo
           <input type="hidden" name="customizationColor" value={customizationColor || ""} />
           <input type="hidden" name="customizationFinish" value={customizationFinish || ""} />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
+            <Input
               type="text"
               name="name"
               placeholder="Full Name"
               required
               suppressHydrationWarning
-              className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+              inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
             />
-            <input
+            <Input
               type="text"
               name="company"
               placeholder="Company Name"
               suppressHydrationWarning
-              className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+              inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input
+            <Input
               type="tel"
               name="phone"
               placeholder="Phone Number"
               required
               suppressHydrationWarning
-              className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+              inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
             />
-            <input
+            <Input
               type="email"
               name="email"
               placeholder="Email Address"
               required
               suppressHydrationWarning
-              className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+              inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
             />
           </div>
 
-          <input
+          <Input
             type="text"
             name="city"
             placeholder="Your City"
             required
             suppressHydrationWarning
-            className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+            inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
           />
 
-          <textarea
+          <Textarea
             key={customizationColor && customizationFinish ? `${customizationColor}-${customizationFinish}` : "default"}
             name="message"
             placeholder="Your Message"
@@ -121,20 +122,21 @@ export const ProductInquiryForm = ({ productId, productTitle, productSlug, custo
             required
             suppressHydrationWarning
             defaultValue={defaultMessage}
-            className="bg-white border border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none focus:border-brand-orange transition placeholder:text-text-light-secondary/60"
+            inputClassName="bg-white border-border-light rounded-xl px-4 py-3 text-text-light-primary text-[0.9rem] outline-none placeholder:text-text-light-secondary/60"
           />
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            suppressHydrationWarning
-            className="bg-brand-orange text-white w-full rounded-full py-3.5 font-semibold text-center hover:bg-brand-orange-light hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer text-[0.9rem]"
+            loading={loading}
+            radius="full"
+            className="w-full py-3.5 shadow-md hover:shadow-lg text-[0.9rem]"
           >
-            {loading ? "Sending..." : "Submit Inquiry →"}
-          </button>
+            Submit Inquiry →
+          </Button>
         </form>
       )}
-    </div>
+    </Card>
   );
 };
 
