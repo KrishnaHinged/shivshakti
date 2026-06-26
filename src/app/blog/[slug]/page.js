@@ -54,12 +54,12 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// Simple Markdown/Plaintext formatter helper to convert line breaks to HTML
+// Simple Markdown/Plaintext formatter helper (Tailored for B2B Reading Comfort)
 function renderContent(text) {
   if (!text) return "";
   // If text already looks like HTML, render it directly
   if (text.includes("<p>") || text.includes("</div>") || text.includes("<br")) {
-    return <div dangerouslySetInnerHTML={{ __html: text }} className="prose-container" />;
+    return <div dangerouslySetInnerHTML={{ __html: text }} className="prose-container text-slate-600 leading-[1.7] text-[1.02rem]" />;
   }
 
   // Basic Markdown inline parser for display fallback
@@ -69,13 +69,13 @@ function renderContent(text) {
 
     // Headers
     if (cleanLine.startsWith("### ")) {
-      return <h3 key={idx} className="text-xl font-bold text-white mt-6 mb-3">{cleanLine.replace("### ", "")}</h3>;
+      return <h3 key={idx} className="text-lg font-bold text-slate-900 mt-6 mb-3 tracking-tight">{cleanLine.replace("### ", "")}</h3>;
     }
     if (cleanLine.startsWith("## ")) {
-      return <h2 key={idx} className="text-2xl font-black text-white mt-8 mb-4">{cleanLine.replace("## ", "")}</h2>;
+      return <h2 key={idx} className="text-xl font-bold text-slate-900 mt-8 mb-4 tracking-tight">{cleanLine.replace("## ", "")}</h2>;
     }
     if (cleanLine.startsWith("# ")) {
-      return <h1 key={idx} className="text-3xl font-black text-white mt-10 mb-5">{cleanLine.replace("# ", "")}</h1>;
+      return <h1 key={idx} className="text-2xl font-extrabold text-slate-900 mt-10 mb-5 tracking-tight">{cleanLine.replace("# ", "")}</h1>;
     }
 
     // Bold text parsing (**text**)
@@ -86,7 +86,7 @@ function renderContent(text) {
     return (
       <p
         key={idx}
-        className="text-text-secondary text-sm md:text-base leading-relaxed mb-4"
+        className="text-slate-600 text-[1rem] md:text-[1.05rem] leading-[1.7] mb-5"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     );
@@ -162,7 +162,7 @@ export default async function BlogDetailPage({ params }) {
   };
 
   return (
-    <div className="bg-[#040814] text-white min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+    <div className="bg-[#F9F9FB] text-slate-800 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
       
       {/* Inject JSON-LD Schema */}
       <script
@@ -173,15 +173,15 @@ export default async function BlogDetailPage({ params }) {
       {/* Navbar wrapper */}
       <Header logoUrl={settings.logoUrl} />
 
-      {/* Main Spacer */}
-      <main className="flex-1 max-w-[950px] w-full mx-auto px-6 lg:px-12 pt-36 pb-24">
+      {/* Main Container - Optimized max-width for reading text (B2B standard) */}
+      <main className="flex-1 max-w-[800px] w-full mx-auto px-4 md:px-6 py-12 pt-36 pb-24">
         
-        {/* Breadcrumb / Back button */}
+        {/* Back button */}
         <Link
           href="/blog"
-          className="text-text-secondary hover:text-brand-orange text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 mb-10 transition duration-200"
+          className="text-slate-500 hover:text-brand-orange text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 mb-8 transition-colors duration-150 cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Blog Listing
+          <ArrowLeft className="w-4 h-4 shrink-0" /> Back to Blog Listing
         </Link>
 
         {/* Article Details */}
@@ -189,32 +189,34 @@ export default async function BlogDetailPage({ params }) {
           
           {/* Header Metadata */}
           <div className="flex flex-col gap-3">
-            <span className="text-brand-orange text-xs font-bold uppercase tracking-wider bg-brand-orange/10 border border-brand-orange/20 px-3.5 py-1 rounded-full w-fit">
+            <span className="text-brand-orange text-xs font-extrabold uppercase tracking-[0.2em] bg-brand-orange-pale px-3 py-1 rounded border border-brand-orange/10 w-fit">
               {post.category || "General"}
             </span>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-[2.5rem] font-bold text-slate-900 leading-[1.1] tracking-tight mt-1">
               {post.title}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-5 mt-3 text-xs text-text-secondary font-bold uppercase tracking-wider">
+            <div className="flex flex-wrap items-center gap-4 mt-3 text-[10px] md:text-[11px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 pb-4">
               <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-brand-orange" />
+                <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 {new Date(post.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
               </span>
+              <span className="text-slate-200">|</span>
               <span className="flex items-center gap-1.5">
-                <User className="w-4 h-4 text-brand-orange" />
+                <User className="w-3.5 h-3.5 text-slate-400" />
                 By {post.author || "Shivshakti Team"}
               </span>
+              <span className="text-slate-200">|</span>
               <span className="flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-brand-orange" />
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
                 {readTime} Min Read
               </span>
             </div>
           </div>
 
           {/* Featured Image */}
-          <div className="relative aspect-video w-full rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] mt-4">
+          <div className="relative aspect-video w-full rounded-xl overflow-hidden border border-slate-100 shadow-[0_4px_12px_rgba(0,0,0,0.01)]">
             <img
               src={post.featuredImage || "/images/placeholder.jpg"}
               alt={post.title}
@@ -223,26 +225,26 @@ export default async function BlogDetailPage({ params }) {
           </div>
 
           {/* Short Excerpt */}
-          <div className="border-l-4 border-brand-orange pl-5 py-2 my-6 italic text-[1.05rem] text-text-secondary leading-relaxed bg-white/[0.01] rounded-r-xl">
+          <div className="border-l-4 border-brand-orange bg-slate-50 pl-5 py-4 my-4 italic text-sm md:text-base text-slate-600 rounded-r-xl leading-relaxed">
             "{post.shortDescription}"
           </div>
 
           {/* Main Content Body */}
-          <div className="text-slate-300 prose prose-invert max-w-none mb-16">
+          <div className="text-slate-700 prose max-w-none mb-10">
             {renderContent(post.content)}
           </div>
 
           {/* Article tags */}
           {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2.5 items-center border-t border-b border-white/5 py-6 mb-16">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1 mr-2">
-                <Tag className="w-4 h-4 text-slate-500" /> Tags:
+            <div className="flex flex-wrap gap-2 items-center border-t border-b border-slate-100 py-4 mb-10">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1 mr-2">
+                <Tag className="w-3.5 h-3.5 text-slate-400" /> Tags:
               </span>
               {post.tags.map((tag) => (
                 <Link
                   key={tag}
                   href={`/blog?query=${encodeURIComponent(tag)}`}
-                  className="bg-white/[0.03] border border-white/10 hover:border-brand-orange/40 hover:bg-white/[0.06] text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition duration-200"
+                  className="bg-slate-50 border border-slate-200 hover:border-brand-orange/40 hover:bg-slate-100/50 text-slate-700 text-xs font-semibold px-2.5 py-1 rounded transition-colors duration-150 cursor-pointer"
                 >
                   #{tag}
                 </Link>
@@ -250,37 +252,53 @@ export default async function BlogDetailPage({ params }) {
             </div>
           )}
 
+          {/* B2B Author Box (Editorial Profile Box) */}
+          <div className="bg-white border border-slate-100 rounded-xl p-5 flex items-start gap-4 shadow-[0_4px_12px_rgba(0,0,0,0.01)] mb-10">
+            <div className="w-10 h-10 rounded-full bg-brand-blue-pale text-brand-blue flex items-center justify-center shrink-0">
+              <User className="w-5 h-5" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Written By</span>
+              <h4 className="text-sm font-bold text-slate-900">{post.author || "Shivshakti Team"}</h4>
+              <p className="text-xs text-slate-500 leading-relaxed mt-0.5">
+                Technical and design division of Shivshakti Elevator Components Pvt. Ltd. We manufacture heavy-duty elevator cabins, doors, car frames, and safety configurations certified to comply with standard load rules across India.
+              </p>
+            </div>
+          </div>
+
         </article>
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
-          <div className="mt-16 border-t border-white/5 pt-16">
-            <h3 className="text-2xl font-black text-white mb-8">Related Articles</h3>
+          <div className="mt-12 border-t border-slate-100 pt-12">
+            <h3 className="text-lg font-bold text-slate-900 mb-6">Related Articles</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.slice(0, 3).map((item) => (
                 <div
                   key={item._id}
-                  className="bg-white/[0.01] border border-white/5 hover:border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.03] transition-all duration-300 flex flex-col group"
+                  className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.01)] transition-colors duration-150 flex flex-col group"
                 >
                   <Link href={`/blog/${item.slug}`} className="relative block aspect-video overflow-hidden">
                     <img
                       src={item.featuredImage || "/images/placeholder.jpg"}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:opacity-90 transition-opacity duration-200"
                     />
                   </Link>
-                  <div className="p-5 flex flex-col gap-3 flex-1">
-                    <span className="text-brand-orange font-bold text-[0.68rem] uppercase tracking-wider">{item.category || "General"}</span>
-                    <h4 className="font-extrabold text-[0.95rem] text-white group-hover:text-brand-orange line-clamp-2 leading-snug flex-1">
-                      <Link href={`/blog/${item.slug}`}>
-                        {item.title}
-                      </Link>
-                    </h4>
+                  <div className="p-4 flex flex-col gap-2.5 flex-1 justify-between">
+                    <div className="flex flex-col gap-2">
+                      <span className="text-brand-orange font-bold text-[10px] uppercase tracking-wider">{item.category || "General"}</span>
+                      <h4 className="font-bold text-xs md:text-sm text-slate-900 group-hover:text-brand-orange transition-colors duration-150 line-clamp-2 leading-snug">
+                        <Link href={`/blog/${item.slug}`}>
+                          {item.title}
+                        </Link>
+                      </h4>
+                    </div>
                     <Link
                       href={`/blog/${item.slug}`}
-                      className="text-brand-orange text-[0.7rem] font-bold uppercase tracking-widest flex items-center gap-1 mt-1"
+                      className="text-brand-orange text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 mt-1 transition-colors duration-150 cursor-pointer"
                     >
-                      Read Now <ArrowLeft className="w-3 h-3 rotate-180" />
+                      Read Now <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
                     </Link>
                   </div>
                 </div>

@@ -2,7 +2,7 @@ import dbConnect from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 import Setting from "@/models/Setting";
 import Link from "next/link";
-import { Calendar, User, Tag, ArrowRight, Search } from "lucide-react";
+import { ArrowRight, Search, Clock, Calendar } from "lucide-react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Product from "@/models/Product"; // For footer products
@@ -69,17 +69,27 @@ export default async function BlogListingPage({ searchParams }) {
 
   const posts = await Blog.find(dbQuery).sort({ publishedAt: -1 });
 
+  // Separate featured post (first post) from remaining posts for asymmetric B2B layout
+  const featuredPost = posts[0];
+  const remainingPosts = posts.slice(1);
+
   // Fetch unique categories
   const allPublished = await Blog.find({ status: "published", publishedAt: { $lte: new Date() } });
   const categories = Array.from(new Set(allPublished.map((p) => p.category || "General").filter(Boolean)));
 
+  // Read time helper function
+  const getReadTime = (contentText) => {
+    const wordCount = contentText ? contentText.split(/\s+/).length : 0;
+    return Math.max(1, Math.ceil(wordCount / 225));
+  };
+
   return (
-    <div className="bg-white text-black min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+    <div className="bg-[#F9F9FB] text-slate-800 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
       {/* Navbar wrapper */}
       <Header logoUrl={settings.logoUrl} />
 
       <main className="flex-grow">
-        {/* Premium Hero Header Section */}
+        {/* Premium Hero Header Section (Kept exactly as is) */}
         <section className="w-full px-4 lg:px-8 pt-24 lg:pt-28 pb-4 bg-transparent">
           <div className="relative w-full rounded-[2.5rem] lg:rounded-[3.5rem] overflow-hidden bg-neutral-950 flex flex-col justify-center p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
             {/* Background Image & Radial Glow Overlay */}
@@ -112,103 +122,172 @@ export default async function BlogListingPage({ searchParams }) {
           </div>
         </section>
 
-        {/* Core Layout Grid Wrapper */}
-        <div className="max-w-[1300px] mx-auto px-6 lg:px-12 py-12">
-          {/* Core Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12 items-start">
+        {/* Core Layout Grid Wrapper with extra padding top for breathing room */}
+        <div className="max-w-[1300px] mx-auto px-4 md:px-6 lg:px-12 py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 lg:gap-16 items-start">
 
             {/* Left: Blog Grid */}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-10">
               {posts.length === 0 ? (
-                <div className="bg-white/[0.02] border border-white/5 p-16 rounded-[2rem] text-center">
-                  <p className="text-text-secondary text-base italic">
+                <div className="bg-white border border-slate-100 p-12 rounded-xl text-center shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                  <p className="text-slate-500 text-sm italic">
                     No articles matched your search filters. Try clearing your filters or changing your query.
                   </p>
                   <Link
                     href="/blog"
-                    className="bg-brand-orange text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider hover:bg-brand-orange-light inline-block mt-6"
+                    className="bg-brand-orange text-white px-6 py-2.5 rounded-full font-bold text-xs uppercase tracking-wider hover:bg-brand-orange-light inline-block mt-6 transition-colors duration-150 cursor-pointer"
                   >
                     Reset All Filters
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {posts.map((post) => (
-                    <article
-                      key={post._id}
-                      className="bg-white/[0.02] border border-white/5 rounded-[2rem] overflow-hidden hover:bg-white/[0.04] hover:border-white/10 hover:-translate-y-1 transition-all duration-300 flex flex-col group shadow-lg"
-                    >
-                      <Link href={`/blog/${post.slug}`} className="relative block aspect-video overflow-hidden">
+                <div className="flex flex-col gap-10">
+                  
+                  {/* FEATURED POST (Asymmetric top element) */}
+                  {featuredPost && (
+                    <article className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.015)] transition-colors duration-150 flex flex-col lg:flex-row group w-full">
+                      <Link href={`/blog/${featuredPost.slug}`} className="relative block lg:w-[55%] aspect-video lg:aspect-auto min-h-[260px] overflow-hidden">
                         <img
-                          src={post.featuredImage || "/images/placeholder.jpg"}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          src={featuredPost.featuredImage || "/images/placeholder.jpg"}
+                          alt={featuredPost.title}
+                          className="w-full h-full object-cover group-hover:opacity-95 transition-opacity duration-200"
                         />
                       </Link>
 
-                      <div className="p-6 flex flex-col flex-1 gap-4">
-                        {/* Meta */}
-                        <div className="flex items-center justify-between text-xs text-text-secondary font-bold uppercase tracking-wider">
-                          <span className="text-brand-orange">{post.category || "General"}</span>
-                          <span>{new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>
-                        </div>
+                      <div className="lg:w-[45%] p-6 md:p-8 flex flex-col justify-between gap-5">
+                        <div className="flex flex-col gap-3">
+                          {/* Category & Read Time Row */}
+                          <div className="flex items-center gap-3 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                            <span className="text-brand-orange font-semibold">{featuredPost.category || "General"}</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-slate-200" />
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              {getReadTime(featuredPost.content)} Min Read
+                            </span>
+                          </div>
 
-                        {/* Content details */}
-                        <div className="flex flex-col gap-2 flex-1">
-                          <h2 className="text-xl font-extrabold text-white group-hover:text-brand-orange transition duration-200">
-                            <Link href={`/blog/${post.slug}`}>
-                              {post.title}
+                          <h2 className="text-xl md:text-2xl font-bold text-slate-900 group-hover:text-brand-orange transition-colors duration-150 leading-snug">
+                            <Link href={`/blog/${featuredPost.slug}`}>
+                              {featuredPost.title}
                             </Link>
                           </h2>
-                          <p className="text-text-secondary text-xs leading-relaxed line-clamp-3">
-                            {post.shortDescription}
+                          
+                          <p className="text-xs md:text-sm text-slate-500 leading-relaxed line-clamp-4">
+                            {featuredPost.shortDescription}
                           </p>
                         </div>
 
-                        {/* Action */}
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="text-brand-orange font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 hover:text-brand-orange-light mt-2"
-                        >
-                          Read Article <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
+                        <div className="flex items-center justify-between border-t border-slate-100 pt-4 mt-2">
+                          <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">
+                            {new Date(featuredPost.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                          </span>
+                          
+                          <Link
+                            href={`/blog/${featuredPost.slug}`}
+                            className="text-brand-orange font-bold text-xs uppercase tracking-wider flex items-center gap-1 hover:text-brand-orange-light transition-colors duration-150 cursor-pointer"
+                          >
+                            Read Article <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
                       </div>
                     </article>
-                  ))}
+                  )}
+
+                  {/* REMAINING POSTS GRID */}
+                  {remainingPosts.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {remainingPosts.map((post) => (
+                        <article
+                          key={post._id}
+                          className="bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-slate-200 shadow-[0_4px_12px_rgba(0,0,0,0.015)] transition-colors duration-150 flex flex-col group"
+                        >
+                          <Link href={`/blog/${post.slug}`} className="relative block aspect-video overflow-hidden">
+                            <img
+                              src={post.featuredImage || "/images/placeholder.jpg"}
+                              alt={post.title}
+                              className="w-full h-full object-cover group-hover:opacity-90 transition-opacity duration-200"
+                            />
+                          </Link>
+
+                          <div className="p-5 flex flex-col flex-1 justify-between gap-4">
+                            <div className="flex flex-col gap-2">
+                              {/* Meta Info Row */}
+                              <div className="flex items-center gap-3.5 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                                <span className="text-brand-orange font-semibold">{post.category || "General"}</span>
+                                <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                <span className="flex items-center gap-1">
+                                  <Clock className="w-3 h-3 text-slate-400" />
+                                  {getReadTime(post.content)} Min Read
+                                </span>
+                              </div>
+
+                              <h2 className="text-base md:text-lg font-bold text-slate-900 group-hover:text-brand-orange transition-colors duration-150 leading-snug">
+                                <Link href={`/blog/${post.slug}`}>
+                                  {post.title}
+                                </Link>
+                              </h2>
+                              
+                              <p className="text-xs md:text-sm text-slate-500 leading-relaxed line-clamp-3">
+                                {post.shortDescription}
+                              </p>
+                            </div>
+
+                            <div className="flex items-center justify-between border-t border-slate-100 pt-3.5 mt-2">
+                              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
+                                {new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                              </span>
+
+                              <Link
+                                href={`/blog/${post.slug}`}
+                                className="text-brand-orange font-bold text-xs uppercase tracking-wider flex items-center gap-1 hover:text-brand-orange-light transition-colors duration-150 cursor-pointer"
+                              >
+                                Read Article <ArrowRight className="w-3.5 h-3.5" />
+                              </Link>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+
                 </div>
               )}
             </div>
 
-            {/* Right: Sidebar filters */}
-            <aside className="flex flex-col gap-8 lg:sticky lg:top-36">
+            {/* Right: Sidebar filters (Sticky) */}
+            <aside className="flex flex-col gap-6 lg:sticky lg:top-36">
 
               {/* Search Box */}
-              <div className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] shadow-sm">
-                <h3 className="font-bold text-sm uppercase tracking-wider text-white mb-4">Search Articles</h3>
+              <div className="bg-white border border-slate-100 p-5 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <h3 className="font-bold text-xs uppercase tracking-widest text-slate-900 mb-3.5">Search Articles</h3>
                 <form action="/blog" method="GET" className="relative flex">
                   <input
                     type="text"
                     name="query"
                     defaultValue={query}
-                    placeholder="Fuzzy search..."
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-full px-5 py-3 text-white text-xs outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
+                    placeholder="Search articles..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-full px-5 py-2.5 text-slate-800 text-xs outline-none focus:border-brand-orange focus:bg-white transition-all duration-150"
                   />
                   <button
                     type="submit"
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
                   >
-                    <Search className="w-4 h-4" />
+                    <Search className="w-3.5 h-3.5" />
                   </button>
                 </form>
               </div>
 
-              {/* Categories filter */}
-              <div className="bg-white/[0.02] border border-white/5 p-6 rounded-[2rem] shadow-sm">
-                <h3 className="font-bold text-sm uppercase tracking-wider text-white mb-4">Categories</h3>
+              {/* Categories filter with Left-Accent active borders */}
+              <div className="bg-white border border-slate-100 p-5 rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+                <h3 className="font-bold text-xs uppercase tracking-widest text-slate-900 mb-3.5">Categories</h3>
                 <div className="flex flex-col gap-2">
                   <Link
                     href="/blog"
-                    className={`px-4 py-2.5 rounded-full text-xs font-semibold tracking-wider transition ${!activeCategory ? "bg-brand-orange text-white" : "text-text-secondary hover:bg-white/5 hover:text-white"}`}
+                    className={`px-4 py-2 rounded-r text-xs font-bold tracking-wider transition-colors duration-150 border-l-2 ${
+                      !activeCategory
+                        ? "bg-slate-950 text-white border-brand-orange"
+                        : "bg-slate-50 text-slate-600 border-transparent hover:bg-slate-100 hover:text-slate-900"
+                    }`}
                   >
                     All Categories
                   </Link>
@@ -216,7 +295,11 @@ export default async function BlogListingPage({ searchParams }) {
                     <Link
                       key={cat}
                       href={`/blog?category=${encodeURIComponent(cat)}`}
-                      className={`px-4 py-2.5 rounded-full text-xs font-semibold tracking-wider transition ${activeCategory === cat ? "bg-brand-orange text-white" : "text-text-secondary hover:bg-white/5 hover:text-white"}`}
+                      className={`px-4 py-2 rounded-r text-xs font-bold tracking-wider transition-colors duration-150 border-l-2 ${
+                        activeCategory === cat
+                          ? "bg-slate-950 text-white border-brand-orange"
+                          : "bg-slate-50 text-slate-600 border-transparent hover:bg-slate-100 hover:text-slate-900"
+                      }`}
                     >
                       {cat}
                     </Link>

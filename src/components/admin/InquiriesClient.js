@@ -5,6 +5,7 @@ import {
   updateInquiryStatusAction,
   addInquiryNoteAction,
   deleteInquiryAction,
+  assignInquiryAction,
 } from "@/actions/inquiries";
 import {
   Download,
@@ -22,7 +23,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export default function InquiriesClient({ inquiries: initialInquiries }) {
+export default function InquiriesClient({ inquiries: initialInquiries, adminsList = [], currentUser = {} }) {
   const [inquiries, setInquiries] = useState(initialInquiries);
   const [selectedLead, setSelectedLead] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,6 +82,25 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
         setInquiries(inquiries.filter((item) => item._id !== id));
         setSelectedLead(null);
       }
+    }
+  };
+
+  const handleAssignLead = async (inquiryId, userId) => {
+    setUpdating(true);
+    setSuccessMsg("");
+    const res = await assignInquiryAction(inquiryId, userId);
+    setUpdating(false);
+    if (res.success) {
+      const updated = inquiries.map((item) =>
+        item._id === inquiryId ? res.data : item
+      );
+      setInquiries(updated);
+      if (selectedLead && selectedLead._id === inquiryId) {
+        setSelectedLead(res.data);
+      }
+      setSuccessMsg("Lead assigned successfully!");
+    } else {
+      alert("Failed to assign lead: " + res.error);
     }
   };
 
@@ -220,12 +240,14 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
             </button>
           </div>
 
-          <a
-            href="/api/inquiries/export"
-            className="flex items-center gap-2 border border-slate-200 bg-white px-4 py-2.5 rounded-xl text-slate-700 text-xs font-bold shadow-sm hover:bg-slate-50 uppercase tracking-wider transition cursor-pointer"
-          >
-            <Download className="w-4 h-4 text-slate-500 shrink-0" /> Export CSV
-          </a>
+          {currentUser.role !== "SALES_EXECUTIVE" && (
+            <a
+              href="/api/inquiries/export"
+              className="flex items-center gap-2 border border-slate-200 bg-white px-4 py-2.5 rounded-xl text-slate-700 text-xs font-bold shadow-sm hover:bg-slate-50 uppercase tracking-wider transition cursor-pointer"
+            >
+              <Download className="w-4 h-4 text-slate-500 shrink-0" /> Export CSV
+            </a>
+          )}
         </div>
       </div>
 
@@ -327,6 +349,11 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                               <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate">{lead.company || "Individual"}</span>
                             </p>
+                            {lead.assignedTo && (
+                              <p className="text-[0.65rem] text-slate-400 font-medium leading-none mt-1">
+                                Owner: <span className="font-bold text-slate-600">{lead.assignedTo.name || lead.assignedTo.email || lead.assignedTo}</span>
+                              </p>
+                            )}
                             
                             <div className="flex flex-wrap items-center justify-between gap-1.5 mt-0.5 border-t border-slate-100 pt-2.5">
                               <span className="text-[0.62rem] font-bold text-brand-blue bg-brand-blue-pale px-2 py-0.5 rounded-md truncate max-w-[85px]">
@@ -393,6 +420,11 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                           <span className="text-[0.7rem] bg-brand-blue-pale text-brand-blue font-bold px-2.5 py-0.5 rounded">
                             {productOptions.find((p) => p.value === lead.productInterest || p.value === lead.componentNeeded)?.label || lead.productInterest || lead.componentNeeded}
                           </span>
+                          {lead.assignedTo && (
+                            <span className="text-[0.7rem] bg-slate-100 text-slate-600 font-bold px-2.5 py-0.5 rounded">
+                              Owner: {lead.assignedTo.name || lead.assignedTo.email || lead.assignedTo}
+                            </span>
+                          )}
                         </div>
                       </div>
                       
@@ -436,13 +468,15 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                     <span>Received: {new Date(selectedLead.createdAt).toLocaleString()}</span>
                   </p>
                 </div>
-                <button
-                  onClick={() => handleDeleteLead(selectedLead._id)}
-                  className="text-slate-400 hover:text-red-600 transition flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
-                  title="Delete Lead"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+                {currentUser.role === "SUPER_ADMIN" && (
+                  <button
+                    onClick={() => handleDeleteLead(selectedLead._id)}
+                    className="text-slate-400 hover:text-red-600 transition flex items-center justify-center p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+                    title="Delete Lead"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
               </div>
 
               {/* Success update notify */}
@@ -467,6 +501,30 @@ export default function InquiriesClient({ inquiries: initialInquiries }) {
                   <option value="Closed">Closed / Won</option>
                   <option value="Rejected">Rejected</option>
                 </select>
+              </div>
+
+              {/* Lead Owner / Assignment */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[0.72rem] uppercase tracking-wider font-bold text-slate-400">Assigned To</label>
+                {["SUPER_ADMIN", "SALES_MANAGER"].includes(currentUser.role) ? (
+                  <select
+                    value={selectedLead.assignedTo?._id || selectedLead.assignedTo || ""}
+                    onChange={(e) => handleAssignLead(selectedLead._id, e.target.value)}
+                    disabled={updating}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm outline-none focus:border-brand-orange transition cursor-pointer"
+                  >
+                    <option value="">Unassigned</option>
+                    {adminsList.map((adm) => (
+                      <option key={adm._id} value={adm._id}>
+                        {adm.name} ({adm.role.replace("_", " ")})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <div className="text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-100 p-3 rounded-xl">
+                    {selectedLead.assignedTo?.name || "Unassigned"}
+                  </div>
+                )}
               </div>
 
               {/* WhatsApp Quick Actions Card */}

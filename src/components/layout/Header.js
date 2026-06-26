@@ -26,7 +26,7 @@ export const Header = ({ logoUrl }) => {
     window.addEventListener("scroll", handleScroll);
 
     // Set initial hash values
-    setCurrentHash(window.location.hash);
+    setTimeout(() => setCurrentHash(window.location.hash), 0);
     const handleHashChange = () => {
       setCurrentHash(window.location.hash);
     };

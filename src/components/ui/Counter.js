@@ -3,20 +3,26 @@
 import React, { useState, useEffect, useRef } from "react";
 
 export const Counter = ({ value, suffix = "", duration = 1500 }) => {
-  const [count, setCount] = useState(0);
+  const numericStr = String(value).replace(/[^0-9]/g, "");
+  const target = parseInt(numericStr, 10);
+  const isNumeric = !isNaN(target);
+
+  const [count, setCount] = useState(() => (isNumeric ? 0 : value));
   const countRef = useRef(null);
   const [hasStarted, setHasStarted] = useState(false);
 
   useEffect(() => {
+    if (hasStarted) return;
+
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-      setHasStarted(true);
-      return;
+      const timer = setTimeout(() => setHasStarted(true), 0);
+      return () => clearTimeout(timer);
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting && !hasStarted) {
+        if (entry.isIntersecting) {
           setHasStarted(true);
         }
       },
@@ -36,14 +42,7 @@ export const Counter = ({ value, suffix = "", duration = 1500 }) => {
   }, [hasStarted]);
 
   useEffect(() => {
-    if (!hasStarted) return;
-
-    const numericStr = String(value).replace(/[^0-9]/g, "");
-    const target = parseInt(numericStr, 10);
-    if (isNaN(target)) {
-      setCount(value);
-      return;
-    }
+    if (!hasStarted || !isNumeric) return;
 
     let start = 0;
     const end = target;
@@ -61,7 +60,7 @@ export const Counter = ({ value, suffix = "", duration = 1500 }) => {
     }, stepTime);
 
     return () => clearInterval(timer);
-  }, [hasStarted, value, duration]);
+  }, [hasStarted, isNumeric, target, duration]);
 
   const formatNumber = (num) => {
     if (value === 40000 || value === "40,000") {

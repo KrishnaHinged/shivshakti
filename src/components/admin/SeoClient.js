@@ -215,7 +215,7 @@ export default function SeoClient({ initialItems }) {
           <div className="divide-y divide-slate-100">
             {items.length === 0 ? (
               <div className="py-12 text-slate-400 text-center italic">
-                No routes configured. Click "Configure Page SEO" to set meta details.
+                No routes configured. Click &quot;Configure Page SEO&quot; to set meta details.
               </div>
             ) : (
               items.map((item) => (

@@ -24,7 +24,7 @@ export const Hero = ({ settings }) => {
           </h1>
 
           <p className="text-[1rem] lg:text-[1.2rem] font-normal text-text-secondary max-w-[36rem] leading-[1.6] opacity-90">
-            India's trusted manufacturer of premium elevator cabins, automatic doors, and elevator components. Engineered in Surat. Delivered across India.
+            India&apos;s trusted manufacturer of premium elevator cabins, automatic doors, and elevator components. Engineered in Surat. Delivered across India.
           </p>
 
           <a

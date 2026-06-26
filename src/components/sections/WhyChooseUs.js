@@ -76,7 +76,7 @@ export const WhyChooseUs = () => {
           </div>
           <h3 className="text-[1.25rem] font-bold text-text-light-primary mb-3">Authorized Dealer</h3>
           <p className="text-[0.92rem] text-text-light-secondary leading-relaxed">
-            Official authorized dealer for Usha Martin — the world's No. 1 wire rope brand trusted globally.
+            Official authorized dealer for Usha Martin — the world&apos;s No. 1 wire rope brand trusted globally.
           </p>
         </div>
 

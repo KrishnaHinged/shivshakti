@@ -44,6 +44,20 @@ const InquirySchema = new mongoose.Schema(
     productTitle: { type: String, default: "" },
     customizationColor: { type: String, default: "" },
     customizationFinish: { type: String, default: "" },
+    assignedTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+    },
+    assignedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+      default: null,
+    },
+    assignedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

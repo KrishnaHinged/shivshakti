@@ -38,7 +38,7 @@ export const Footer = ({ products, settings }) => {
             <img
               src={settings.logoUrl || "/images/logo.png"}
               alt="SHIVSHAKTI Logo"
-              className="h-14 md:h-16 w-auto object-contain"
+              className="h-14 md:h-16 w-auto object-contain p-2 bg-white/50 rounded-xl "
             />
           </a>
           <p className="text-[0.95rem] text-text-secondary leading-[1.6] max-w-[20rem]">
@@ -156,7 +156,7 @@ export const Footer = ({ products, settings }) => {
 
       {/* Bottom copyright */}
       <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-[0.85rem] text-text-secondary gap-6 md:gap-0 max-w-[1300px] mx-auto">
-        <p>© 2025 {settings.companyName || "Shivshakti Elevator Components Pvt. Ltd."} All Rights Reserved.</p>
+        <p>© 2026 {settings.companyName || "Shivshakti Elevator Components Pvt. Ltd."} All Rights Reserved.</p>
         <div className="flex flex-col md:flex-row gap-4 md:gap-8 items-center text-center">
           <a
             href={`tel:${primaryPhone}`}

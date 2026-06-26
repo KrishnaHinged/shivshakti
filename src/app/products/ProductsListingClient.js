@@ -144,8 +144,8 @@ function ProductsListingClient({ products, categories, settings }) {
   useEffect(() => {
     if (activeMainTab === "dealer") {
       const defaultBrand = dealerBrands[0] || "";
-      const currentSub = (activeSubTab && activeSubTab !== "all" && activeSubTab !== "door" && activeSubTab !== "cabin" && activeSubTab !== "frame") 
-        ? activeSubTab 
+      const currentSub = (activeSubTab && activeSubTab !== "all" && activeSubTab !== "door" && activeSubTab !== "cabin" && activeSubTab !== "frame")
+        ? activeSubTab
         : defaultBrand;
 
       if (activeSubTab !== currentSub) {
@@ -276,7 +276,7 @@ function ProductsListingClient({ products, categories, settings }) {
         <div className="relative w-full rounded-[2.5rem] lg:rounded-[3.5rem] overflow-hidden bg-neutral-950 flex flex-col justify-center p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
           {/* Background Image & Radial Glow Overlay */}
           <div className="absolute inset-0 bg-[url('/images/hero.jpeg')] bg-cover bg-center bg-no-repeat opacity-30 z-0" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(30,10,5,0.45)_0%,rgba(10,5,0,0.95)_100%)] z-10" />
+          <div className="absolute inset-0 z-10" />
 
           {/* Content Details */}
           <div className="relative z-20 max-w-[1300px] flex flex-col gap-6">
@@ -346,9 +346,8 @@ function ProductsListingClient({ products, categories, settings }) {
             ref={(el) => (mainTabsRef.current["manufactured"] = el)}
             onClick={() => handleMainTabChange("manufactured")}
             suppressHydrationWarning
-            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-              activeMainTab === "manufactured" ? "text-white" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeMainTab === "manufactured" ? "text-white" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Our Manufactured Products
           </button>
@@ -357,9 +356,8 @@ function ProductsListingClient({ products, categories, settings }) {
             ref={(el) => (mainTabsRef.current["dealer"] = el)}
             onClick={() => handleMainTabChange("dealer")}
             suppressHydrationWarning
-            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-              activeMainTab === "dealer" ? "text-white" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeMainTab === "dealer" ? "text-white" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Authorized Dealer Products
           </button>
@@ -368,9 +366,8 @@ function ProductsListingClient({ products, categories, settings }) {
             ref={(el) => (mainTabsRef.current["kits"] = el)}
             onClick={() => handleMainTabChange("kits")}
             suppressHydrationWarning
-            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-              activeMainTab === "kits" ? "text-white" : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`relative z-10 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeMainTab === "kits" ? "text-white" : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Complete Elevator Kits
           </button>
@@ -396,9 +393,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   ref={(el) => (subTabsRef.current["door"] = el)}
                   onClick={() => setActiveSubTab("door")}
                   suppressHydrationWarning
-                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-                    activeSubTab === "door" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
-                  }`}
+                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeSubTab === "door" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
+                    }`}
                 >
                   Doors
                 </button>
@@ -406,9 +402,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   ref={(el) => (subTabsRef.current["cabin"] = el)}
                   onClick={() => setActiveSubTab("cabin")}
                   suppressHydrationWarning
-                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-                    activeSubTab === "cabin" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
-                  }`}
+                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeSubTab === "cabin" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
+                    }`}
                 >
                   Cabins
                 </button>
@@ -416,9 +411,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   ref={(el) => (subTabsRef.current["frame"] = el)}
                   onClick={() => setActiveSubTab("frame")}
                   suppressHydrationWarning
-                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-                    activeSubTab === "frame" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
-                  }`}
+                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeSubTab === "frame" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
+                    }`}
                 >
                   Frames
                 </button>
@@ -426,9 +420,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   ref={(el) => (subTabsRef.current["layout-cabin"] = el)}
                   onClick={() => setActiveSubTab("layout-cabin")}
                   suppressHydrationWarning
-                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-                    activeSubTab === "layout-cabin" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
-                  }`}
+                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeSubTab === "layout-cabin" ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
+                    }`}
                 >
                   Layout Cabins
                 </button>
@@ -440,9 +433,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   ref={(el) => (subTabsRef.current[brand] = el)}
                   onClick={() => setActiveSubTab(brand)}
                   suppressHydrationWarning
-                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${
-                    activeSubTab === brand ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
-                  }`}
+                  className={`relative z-10 px-5 py-2 rounded-full text-[0.72rem] font-bold uppercase tracking-wider transition-colors duration-300 cursor-pointer select-none whitespace-nowrap ${activeSubTab === brand ? "text-[#0a1128]" : "text-slate-500 hover:text-slate-800"
+                    }`}
                 >
                   {brand === "all" ? "All Brands" : brand}
                 </button>
@@ -455,9 +447,8 @@ function ProductsListingClient({ products, categories, settings }) {
       {/* Dynamic Products Grid Section */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-16 pb-20 lg:pb-28">
         <div
-          className={`transition-all duration-300 ease-out transform ${
-            fadeState === "in" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-          }`}
+          className={`transition-all duration-300 ease-out transform ${fadeState === "in" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+            }`}
         >
           {displayTab.main === "manufactured" && (
             <div className="flex flex-col gap-12 text-left">

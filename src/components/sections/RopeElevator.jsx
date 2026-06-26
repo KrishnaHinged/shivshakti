@@ -13,6 +13,7 @@ export const RopeElevator = () => {
 
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  const isAbout = pathname === "/about";
 
   // Layout positions
   const [coords, setCoords] = useState({ startX: 0, startY: 0, endY: 0 });
@@ -32,6 +33,7 @@ export const RopeElevator = () => {
   const [orangeY, setOrangeY] = useState(0);
   const [blueY, setBlueY] = useState(0);
   const [walkTime, setWalkTime] = useState(0);
+  const [animState, setAnimState] = useState("closed");
 
   // Cinematic products transition states
   const router = useRouter();
@@ -167,7 +169,9 @@ export const RopeElevator = () => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     physicsRef.current.reducedMotion = mediaQuery.matches;
 
-    calculateCoordinates();
+    const timer1 = setTimeout(() => {
+      calculateCoordinates();
+    }, 0);
     window.addEventListener("load", calculateCoordinates);
     window.addEventListener("resize", calculateCoordinates);
 
@@ -175,7 +179,7 @@ export const RopeElevator = () => {
       setIsMobile(window.innerWidth < 768);
       setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
     };
-    checkSizes();
+    const timer2 = setTimeout(checkSizes, 0);
     window.addEventListener("resize", checkSizes);
 
     // ResizeObserver to track dynamic body height changes (e.g., page height transitions, tab switching)
@@ -202,6 +206,8 @@ export const RopeElevator = () => {
     }
 
     return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
       window.removeEventListener("load", calculateCoordinates);
       window.removeEventListener("resize", calculateCoordinates);
       window.removeEventListener("resize", checkSizes);
@@ -227,8 +233,10 @@ export const RopeElevator = () => {
     if (isAdmin) return;
 
     // Reset elevator transition states on pathname change to prevent getting stuck in expanding layout
-    setTransitionState("idle");
-    setStartRect(null);
+    const resetTimer = setTimeout(() => {
+      setTransitionState("idle");
+      setStartRect(null);
+    }, 0);
 
     // Disable easing during page transition to prevent sliding/glide glitch from previous scroll state
     skipEasingRef.current = true;
@@ -263,7 +271,7 @@ export const RopeElevator = () => {
     }
 
     // 2. Trigger layout calculations
-    calculateCoordinates();
+    const calcTimer = setTimeout(calculateCoordinates, 0);
 
     // 3. Poll to make sure coordinates catch up with DOM updates/transition delays
     const timer1 = setTimeout(calculateCoordinates, 100);
@@ -272,6 +280,8 @@ export const RopeElevator = () => {
     const timer4 = setTimeout(calculateCoordinates, 2000); // safety fallback for slow loads
 
     return () => {
+      clearTimeout(resetTimer);
+      clearTimeout(calcTimer);
       clearTimeout(snapTimer);
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -332,27 +342,6 @@ export const RopeElevator = () => {
     };
   }, [isDeploying, isAdmin]);
 
-  // Scroll trigger check: activates the deployment when scrolling past the Hero
-  useEffect(() => {
-    if (isAdmin) return;
-    if (hasDeployed || isDeploying) return;
-
-    const triggerCheck = () => {
-      const heroEl = document.getElementById("home") || document.querySelector("main section") || document.querySelector("section");
-      if (!heroEl) return;
-
-      const heroRect = heroEl.getBoundingClientRect();
-      // Deploy when the bottom of the Hero section enters viewport center
-      if (heroRect.bottom < window.innerHeight * 0.75) {
-        window.removeEventListener("scroll", triggerCheck);
-        startDeployment();
-      }
-    };
-
-    window.addEventListener("scroll", triggerCheck);
-    return () => window.removeEventListener("scroll", triggerCheck);
-  }, [hasDeployed, isDeploying, isAdmin]);
-
   const startDeployment = () => {
     setIsDeploying(true);
 
@@ -389,6 +378,27 @@ export const RopeElevator = () => {
 
     requestRef.current = requestAnimationFrame(animateRope);
   };
+
+  // Scroll trigger check: activates the deployment when scrolling past the Hero
+  useEffect(() => {
+    if (isAdmin) return;
+    if (hasDeployed || isDeploying) return;
+
+    const triggerCheck = () => {
+      const heroEl = document.getElementById("home") || document.querySelector("main section") || document.querySelector("section");
+      if (!heroEl) return;
+
+      const heroRect = heroEl.getBoundingClientRect();
+      // Deploy when the bottom of the Hero section enters viewport center
+      if (heroRect.bottom < window.innerHeight * 0.75) {
+        window.removeEventListener("scroll", triggerCheck);
+        startDeployment();
+      }
+    };
+
+    window.addEventListener("scroll", triggerCheck);
+    return () => window.removeEventListener("scroll", triggerCheck);
+  }, [hasDeployed, isDeploying, isAdmin]);
 
   // 60FPS physics loop for elevator movement, cable tension, and rotation sways
   useEffect(() => {
@@ -554,6 +564,7 @@ export const RopeElevator = () => {
       setOrangeY(anim.orangeY);
       setBlueY(anim.blueY);
       setWalkTime(anim.walkTime);
+      setAnimState(anim.state);
 
       // Direct DOM manipulation avoiding React re-render lags
       const liftEl = document.getElementById("rope-elevator-lift");
@@ -802,7 +813,7 @@ export const RopeElevator = () => {
                 <>
                   {/* Blue Character */}
                   <g
-                    transform={`translate(${blueX}, ${blueY}) ${animRef.current.state === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
+                    transform={`translate(${blueX}, ${blueY}) ${animState === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
                     style={{
                       transformOrigin: "20px 29px",
                       transition: "none",
@@ -834,7 +845,7 @@ export const RopeElevator = () => {
                     <line x1="20" y1="17.7" x2="20" y2="29" stroke="#3B82F6" strokeWidth="1.6" strokeLinecap="round" />
 
                     {/* Arms & Legs based on posture */}
-                    {doorsOpenPercent > 0 && animRef.current.state === "outside" ? (
+                    {doorsOpenPercent > 0 && animState === "outside" ? (
                       // SITTING Posture
                       <>
                         {/* Left Arm resting on edge */}
@@ -847,7 +858,7 @@ export const RopeElevator = () => {
                         {/* Right Leg (Bent) */}
                         <path d="M 20 29 L 16.5 29 L 16.5 36.5" stroke="#3B82F6" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </>
-                    ) : animRef.current.state === "running_in" ? (
+                    ) : animState === "running_in" ? (
                       // RUNNING Posture (Leaning forward, arms bent and swinging fast, wide leg swing)
                       <>
                         {/* Left Arm (bent, running stance) */}
@@ -896,7 +907,7 @@ export const RopeElevator = () => {
 
                   {/* Orange Character */}
                   <g
-                    transform={`translate(${orangeX}, ${orangeY}) ${animRef.current.state === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
+                    transform={`translate(${orangeX}, ${orangeY}) ${animState === "running_in" ? "rotate(12)" : ""} scale(0.82)`}
                     style={{
                       transformOrigin: "30px 29px",
                       transition: "none",
@@ -927,7 +938,7 @@ export const RopeElevator = () => {
                     <line x1="30" y1="17.7" x2="30" y2="29" stroke="#F97316" strokeWidth="1.6" strokeLinecap="round" />
 
                     {/* Arms & Legs based on posture */}
-                    {doorsOpenPercent > 0 && animRef.current.state === "outside" ? (
+                    {doorsOpenPercent > 0 && animState === "outside" ? (
                       // SITTING Posture
                       <>
                         {/* Left Arm resting on lap */}
@@ -940,7 +951,7 @@ export const RopeElevator = () => {
                         {/* Right Leg (Bent) */}
                         <path d="M 30 29 L 26.5 29 L 26.5 36.5" stroke="#F97316" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
                       </>
-                    ) : animRef.current.state === "running_in" ? (
+                    ) : animState === "running_in" ? (
                       // RUNNING Posture (Leaning forward, arms bent and swinging fast, wide leg swing)
                       <>
                         {/* Left Arm (bent, running stance) */}

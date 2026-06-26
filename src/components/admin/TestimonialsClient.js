@@ -247,7 +247,7 @@ export default function TestimonialsClient({ initialItems }) {
           <div className="divide-y divide-slate-100">
             {items.length === 0 ? (
               <div className="py-12 text-slate-400 text-center italic">
-                No testimonials registered. Click "Add Testimonial" to configure reviews.
+                No testimonials registered. Click &quot;Add Testimonial&quot; to configure reviews.
               </div>
             ) : (
               items.map((item) => (
@@ -267,7 +267,7 @@ export default function TestimonialsClient({ initialItems }) {
                     </div>
 
                     <p className="text-slate-600 text-sm italic mt-3.5 leading-relaxed bg-slate-50 border border-slate-100 p-4.5 rounded-xl">
-                      "{item.review}"
+                      &quot;{item.review}&quot;
                     </p>
                   </div>
 

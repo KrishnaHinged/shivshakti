@@ -7,8 +7,12 @@ try {
 }
 
 const AdminSchema = new mongoose.Schema({
+  name: { type: String, default: "System Administrator" },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, default: "SUPER_ADMIN" },
+  isActive: { type: Boolean, default: true },
+  permissions: { type: [String], default: [] }
 });
 
 const SettingSchema = new mongoose.Schema({
@@ -65,6 +69,9 @@ const ProductSchema = new mongoose.Schema({
   defaultColor: String,
   defaultFinish: String,
   customizationVariants: mongoose.Schema.Types.Mixed,
+  has360View: { type: Boolean, default: false },
+  view360: mongoose.Schema.Types.Mixed,
+  view360Variants: mongoose.Schema.Types.Mixed,
 });
 
 const TestimonialSchema = new mongoose.Schema({
@@ -95,16 +102,25 @@ async function seed() {
   console.log("Connected to MongoDB for seeding...");
 
   // 1. Seed admin
-  const adminCount = await Admin.countDocuments();
-  if (adminCount === 0) {
+  const defaultAdminEmail = "admin@shivshakti.com";
+  const existingDefaultAdmin = await Admin.findOne({ email: defaultAdminEmail.toLowerCase() });
+  
+  if (existingDefaultAdmin) {
+    existingDefaultAdmin.role = "SUPER_ADMIN";
+    existingDefaultAdmin.name = "Super Admin";
+    existingDefaultAdmin.isActive = true;
+    await existingDefaultAdmin.save();
+    console.log("Updated existing admin account admin@shivshakti.com to SUPER_ADMIN role.");
+  } else {
     const hashedPassword = await bcrypt.hash("admin12345", 10);
     await Admin.create({
-      email: "admin@shivshakti.com",
+      name: "Super Admin",
+      email: defaultAdminEmail,
       password: hashedPassword,
+      role: "SUPER_ADMIN",
+      isActive: true
     });
-    console.log("Seeded default admin account: admin@shivshakti.com / admin12345");
-  } else {
-    console.log("Admin accounts already exist. Skipping admin seed.");
+    console.log("Seeded default super admin account: admin@shivshakti.com / admin12345");
   }
 
   // 2. Seed Settings

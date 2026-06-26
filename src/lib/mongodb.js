@@ -36,6 +36,13 @@ async function dbConnect() {
 
   try {
     cached.conn = await cached.promise;
+    // Start email background queue processor (singleton)
+    try {
+      const { initEmailWorker } = require("./email-worker");
+      initEmailWorker();
+    } catch (workerErr) {
+      console.error("[mongodb] Email background worker startup failed:", workerErr);
+    }
   } catch (e) {
     cached.promise = null;
     throw e;

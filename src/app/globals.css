@@ -8,14 +8,14 @@
   --color-accent-dark: #3a2c20;
   --color-border-glass: rgba(255, 255, 255, 0.12);
   --color-bg-glass: rgba(58, 44, 32, 0.45);
-  
+
   /* Light Theme Variables for About & Catalog */
   --color-bg-light: #fdfbf9;
   --color-text-light-primary: #1c1511;
   --color-text-light-secondary: #5a4b41;
   --color-border-light: rgba(90, 75, 65, 0.12);
   --color-card-bg: #ffffff;
-  
+
   --font-main: var(--font-outfit), system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
 }
@@ -44,35 +44,65 @@ body {
   --brand-orange-pale: rgba(249, 115, 22, 0.10);
 }
 
-.text-brand-blue { color: #1E3A8A; }
-.text-brand-orange { color: #F97316; }
-.bg-brand-blue { background: #1E3A8A; }
-.bg-brand-orange { background: #F97316; }
-.border-brand-blue { border-color: #1E3A8A; }
-.border-brand-orange { border-color: #F97316; }
-.bg-brand-blue-pale { background: rgba(30, 58, 138, 0.08); }
-.bg-brand-orange-pale { background: rgba(249, 115, 22, 0.10); }
+.text-brand-blue {
+  color: #1E3A8A;
+}
+
+.text-brand-orange {
+  color: #F84502;
+}
+
+.bg-brand-blue {
+  background: #1E3A8A;
+}
+
+.bg-brand-orange {
+  background: #F84502;
+}
+
+.border-brand-blue {
+  border-color: #1E3A8A;
+}
+
+.border-brand-orange {
+  border-color: #F97316;
+}
+
+.bg-brand-blue-pale {
+  background: rgba(30, 58, 138, 0.08);
+}
+
+.bg-brand-orange-pale {
+  background: rgba(249, 115, 22, 0.10);
+}
 
 /* Custom scrollbar styling for sidebar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.25);
 }
 
 /* Hide default browser scrollbars globally for all scrollable elements, while preserving scroll functionality */
 * {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
 }
+
 *::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+  display: none;
+  /* Chrome, Safari, Opera */
 }

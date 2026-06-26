@@ -11,6 +11,18 @@ export async function GET() {
       return new Response("Unauthorized access.", { status: 401 });
     }
 
+    const { verifyToken } = require("@/lib/auth");
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      return new Response("Invalid or expired session token.", { status: 401 });
+    }
+
+    const { hasPermission } = require("@/permissions/permissions");
+    const { PERMISSIONS } = require("@/permissions/roles");
+    if (!hasPermission(decoded, PERMISSIONS.EXPORT_CRM)) {
+      return new Response("Access Denied: You do not have permission to export CRM data.", { status: 403 });
+    }
+
     await dbConnect();
     const inquiries = await Inquiry.find().sort({ createdAt: -1 });
 

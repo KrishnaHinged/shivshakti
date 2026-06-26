@@ -15,6 +15,108 @@ const Cabin360Viewer = dynamic(() => import("@/components/Cabin360Viewer"), {
   ),
 });
 
+const handleDragOver = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
+const renderSlotCard = ({
+  slot,
+  imageUrl,
+  error,
+  isUploading,
+  onFileSelect,
+  onRemove,
+  refKey,
+  onTriggerClick,
+  setInputRef,
+  onDrop,
+}) => {
+  let aspectClass = "aspect-square";
+  if (slot.aspectLabel === "3:5") {
+    aspectClass = "aspect-[3/5]";
+  } else if (slot.aspectLabel === "2:3") {
+    aspectClass = "aspect-[2/3]";
+  }
+
+  return (
+    <div key={refKey} className="flex flex-col gap-1.5">
+      <label className="text-[0.72rem] font-bold text-slate-600 uppercase tracking-wider">
+        {slot.label}
+      </label>
+
+      {imageUrl ? (
+        <div className="relative group">
+          <div className={`${aspectClass} rounded-xl overflow-hidden border border-slate-200 bg-slate-50`}>
+            <img src={imageUrl} alt={slot.label} className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={onTriggerClick}
+              className="bg-white text-slate-700 text-[0.68rem] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer hover:bg-slate-100"
+            >
+              <RefreshCw className="w-3 h-3" /> Replace
+            </button>
+            <button
+              type="button"
+              onClick={onRemove}
+              className="bg-red-500 text-white text-[0.68rem] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer hover:bg-red-600"
+            >
+              <X className="w-3 h-3" /> Remove
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div
+          className={`${aspectClass} rounded-xl border-2 border-dashed ${
+            error
+              ? "border-red-300 bg-red-50/50"
+              : "border-slate-200 bg-white hover:border-[#F97316]/40 hover:bg-orange-50/30"
+          } flex flex-col items-center justify-center cursor-pointer transition-colors duration-200`}
+          onClick={() => {
+            if (!isUploading) {
+              onTriggerClick();
+            }
+          }}
+          onDrop={onDrop}
+          onDragOver={handleDragOver}
+        >
+          {isUploading ? (
+            <div className="flex flex-col items-center gap-2">
+              <Loader2 className="w-6 h-6 text-[#F97316] animate-spin" />
+              <span className="text-[0.68rem] font-semibold text-slate-400">Uploading...</span>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1.5 px-3 text-center">
+              <Upload className="w-5 h-5 text-slate-300" />
+              <span className="text-[0.68rem] font-semibold text-slate-400">Click or drop</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Hidden File Input */}
+      <input
+        ref={setInputRef}
+        type="file"
+        accept="image/jpeg,image/png"
+        className="hidden"
+        onChange={(e) => onFileSelect(e.target.files?.[0])}
+      />
+
+      <p className="text-[0.62rem] text-slate-400 leading-snug">{slot.caption}</p>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 text-[0.68rem] px-2.5 py-1.5 rounded-lg flex items-start gap-1.5">
+          <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5" />
+          <span>{error}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function View360Uploader({
   has360View,
   setHas360View,
@@ -43,6 +145,22 @@ export default function View360Uploader({
   const [variantPreviewData, setVariantPreviewData] = useState(null);
   const variantFileInputRefs = useRef({});
 
+  const triggerFileInputClick = (key) => {
+    fileInputRefs.current[key]?.click();
+  };
+
+  const triggerVariantFileInputClick = (key) => {
+    variantFileInputRefs.current[key]?.click();
+  };
+
+  const setFileInputRef = (key, el) => {
+    fileInputRefs.current[key] = el;
+  };
+
+  const setVariantFileInputRef = (key, el) => {
+    variantFileInputRefs.current[key] = el;
+  };
+
   const allFilled = VIEW_360_SLOTS.every((slot) => view360[slot.key]);
 
   // Get active color+finish combinations for layout cabins
@@ -60,6 +178,12 @@ export default function View360Uploader({
             }))
         )
     : [];
+
+  // Active variant combo computations
+  const activeComboData = activeVariantCombo ? activeVariantCombos.find((c) => c.key === activeVariantCombo) : null;
+  const activeVariantV360 = activeComboData ? getVariant360(activeComboData.color, activeComboData.finish) : { front: "", back: "", left: "", right: "", ceiling: "", floor: "" };
+  const activeVariantFilledCount = activeComboData ? VIEW_360_SLOTS.filter((s) => activeVariantV360[s.key]).length : 0;
+  const allVariantFilled = activeComboData ? activeVariantFilledCount === VIEW_360_SLOTS.length : false;
 
   // Helper to get variant 360 data for a combo
   const getVariant360 = (colorName, finishName) => {
@@ -215,11 +339,6 @@ export default function View360Uploader({
     if (file) handleFileSelect(slot, file);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   // Variant file select handler
   const handleVariantFileSelect = async (slot, file, colorName, finishName) => {
     if (!file) return;
@@ -238,122 +357,6 @@ export default function View360Uploader({
     e.stopPropagation();
     const file = e.dataTransfer?.files?.[0];
     if (file) handleVariantFileSelect(slot, file, colorName, finishName);
-  };
-
-  // --- Render slot upload card (shared between base and variant) ---
-  const renderSlotCard = (slot, imageUrl, error, isUploading, onFileSelect, onRemove, refKey) => {
-    let aspectClass = "aspect-square";
-    if (slot.aspectLabel === "3:5") {
-      aspectClass = "aspect-[3/5]";
-    } else if (slot.aspectLabel === "2:3") {
-      aspectClass = "aspect-[2/3]";
-    }
-
-    return (
-      <div key={refKey} className="flex flex-col gap-1.5">
-        <label className="text-[0.72rem] font-bold text-slate-600 uppercase tracking-wider">
-          {slot.label}
-        </label>
-
-        {imageUrl ? (
-          <div className="relative group">
-            <div className={`${aspectClass} rounded-xl overflow-hidden border border-slate-200 bg-slate-50`}>
-              <img src={imageUrl} alt={slot.label} className="w-full h-full object-cover" />
-            </div>
-            <div className="absolute inset-0 bg-black/40 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  if (refKey.includes("|||")) {
-                    variantFileInputRefs.current[refKey]?.click();
-                  } else {
-                    fileInputRefs.current[slot.key]?.click();
-                  }
-                }}
-                className="bg-white text-slate-700 text-[0.68rem] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer hover:bg-slate-100"
-              >
-                <RefreshCw className="w-3 h-3" /> Replace
-              </button>
-              <button
-                type="button"
-                onClick={onRemove}
-                className="bg-red-500 text-white text-[0.68rem] font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer hover:bg-red-600"
-              >
-                <X className="w-3 h-3" /> Remove
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div
-            className={`${aspectClass} rounded-xl border-2 border-dashed ${
-              error
-                ? "border-red-300 bg-red-50/50"
-                : "border-slate-200 bg-white hover:border-[#F97316]/40 hover:bg-orange-50/30"
-            } flex flex-col items-center justify-center cursor-pointer transition-colors duration-200`}
-            onClick={() => {
-              if (!isUploading) {
-                if (refKey.includes("|||")) {
-                  variantFileInputRefs.current[refKey]?.click();
-                } else {
-                  fileInputRefs.current[slot.key]?.click();
-                }
-              }
-            }}
-            onDrop={(e) => {
-              if (refKey.includes("|||")) {
-                const parts = refKey.split("|||");
-                const finishAndSlot = parts[1];
-                const finishName = finishAndSlot.split(`-${slot.key}`)[0];
-                handleVariantDrop(e, slot, parts[0], finishName);
-              } else {
-                handleDrop(e, slot);
-              }
-            }}
-            onDragOver={handleDragOver}
-          >
-            {isUploading ? (
-              <div className="flex flex-col items-center gap-2">
-                <Loader2 className="w-6 h-6 text-[#F97316] animate-spin" />
-                <span className="text-[0.68rem] font-semibold text-slate-400">Uploading...</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-1.5 px-3 text-center">
-                <Upload className="w-5 h-5 text-slate-300" />
-                <span className="text-[0.68rem] font-semibold text-slate-400">Click or drop</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Hidden File Input */}
-        {refKey.includes("|||") ? (
-          <input
-            ref={(el) => (variantFileInputRefs.current[refKey] = el)}
-            type="file"
-            accept="image/jpeg,image/png"
-            className="hidden"
-            onChange={(e) => onFileSelect(e.target.files?.[0])}
-          />
-        ) : (
-          <input
-            ref={(el) => (fileInputRefs.current[slot.key] = el)}
-            type="file"
-            accept="image/jpeg,image/png"
-            className="hidden"
-            onChange={(e) => onFileSelect(e.target.files?.[0])}
-          />
-        )}
-
-        <p className="text-[0.62rem] text-slate-400 leading-snug">{slot.caption}</p>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-[0.68rem] px-2.5 py-1.5 rounded-lg flex items-start gap-1.5">
-            <AlertTriangle className="w-3 h-3 shrink-0 mt-0.5" />
-            <span>{error}</span>
-          </div>
-        )}
-      </div>
-    );
   };
 
   return (
@@ -466,7 +469,9 @@ export default function View360Uploader({
                 isSlotUploading,
                 (file) => handleFileSelect(slot, file),
                 () => handleRemove(slot),
-                slot.key
+                slot.key,
+                () => triggerFileInputClick(slot.key),
+                (el) => setFileInputRef(slot.key, el)
               );
             })}
           </div>
@@ -582,97 +587,90 @@ export default function View360Uploader({
                 </div>
 
                 {/* Active Variant Upload Grid */}
-                {activeVariantCombo && (() => {
-                  const [comboColor, comboFinish] = activeVariantCombo.split("-");
-                  // Find the matching combo data
-                  const combo = activeVariantCombos.find((c) => c.key === activeVariantCombo);
-                  if (!combo) return null;
-                  const v360 = getVariant360(combo.color, combo.finish);
-                  const filledCount = VIEW_360_SLOTS.filter((s) => v360[s.key]).length;
-                  const allVariantFilled = filledCount === VIEW_360_SLOTS.length;
-
-                  return (
-                    <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-6 h-6 rounded-full border border-slate-300 shadow-inner"
-                            style={{ backgroundColor: combo.colorCode }}
-                          />
-                          <div>
-                            <h5 className="text-sm font-bold text-slate-800">
-                              {combo.color} + {combo.finish} Finish
-                            </h5>
-                            <p className="text-[0.68rem] text-slate-400 mt-0.5">
-                              {filledCount === 0
-                                ? "No variant images — will use default 360° images"
-                                : `${filledCount}/${VIEW_360_SLOTS.length} images uploaded`}
-                            </p>
-                          </div>
+                {activeComboData && (
+                  <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-6 h-6 rounded-full border border-slate-300 shadow-inner"
+                          style={{ backgroundColor: activeComboData.colorCode }}
+                        />
+                        <div>
+                          <h5 className="text-sm font-bold text-slate-800">
+                            {activeComboData.color} + {activeComboData.finish} Finish
+                          </h5>
+                          <p className="text-[0.68rem] text-slate-400 mt-0.5">
+                            {activeVariantFilledCount === 0
+                              ? "No variant images — will use default 360° images"
+                              : `${activeVariantFilledCount}/${VIEW_360_SLOTS.length} images uploaded`}
+                          </p>
                         </div>
-                        {filledCount > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              // Clear all images for this variant
-                              if (setView360Variants) {
-                                setView360Variants((prev) =>
-                                  prev.filter(
-                                    (v) => !(v.color === combo.color && v.finish === combo.finish)
-                                  )
-                                );
-                              }
-                            }}
-                            className="text-red-500 hover:text-red-600 text-[0.68rem] font-bold uppercase tracking-wider transition cursor-pointer"
-                          >
-                            Clear All
-                          </button>
-                        )}
                       </div>
-
-                      {/* 5-Slot Upload Grid for this variant */}
-                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {VIEW_360_SLOTS.map((slot) => {
-                          const imageUrl = v360[slot.key];
-                          const uploadKey = `${combo.color}|||${combo.finish}-${slot.key}`;
-                          const error = variantErrors[uploadKey];
-                          const isSlotUploading = variantUploading[uploadKey];
-                          const refKey = `${combo.color}|||${combo.finish}-${slot.key}`;
-
-                          return renderSlotCard(
-                            slot,
-                            imageUrl,
-                            error,
-                            isSlotUploading,
-                            (file) => handleVariantFileSelect(slot, file, combo.color, combo.finish),
-                            () => removeVariantSlot(combo.color, combo.finish, slot.key, slot.syncKey),
-                            refKey
-                          );
-                        })}
-                      </div>
-
-                      {/* Preview button for this variant */}
-                      {allVariantFilled && (
-                        <div className="pt-3 border-t border-slate-100">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setVariantPreviewData({
-                                view360: v360,
-                                label: `${combo.color} + ${combo.finish} Finish`,
-                              });
-                              setShowVariantPreview(true);
-                            }}
-                            className="bg-[#F97316] text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#FB923C] shadow-sm transition cursor-pointer flex items-center gap-1.5"
-                          >
-                            <Eye className="w-4 h-4 shrink-0" />
-                            Preview {combo.color} + {combo.finish} 360°
-                          </button>
-                        </div>
+                      {activeVariantFilledCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Clear all images for this variant
+                            if (setView360Variants) {
+                              setView360Variants((prev) =>
+                                prev.filter(
+                                  (v) => !(v.color === activeComboData.color && v.finish === activeComboData.finish)
+                                )
+                              );
+                            }
+                          }}
+                          className="text-red-500 hover:text-red-600 text-[0.68rem] font-bold uppercase tracking-wider transition cursor-pointer"
+                        >
+                          Clear All
+                        </button>
                       )}
                     </div>
-                  );
-                })()}
+
+                    {/* 5-Slot Upload Grid for this variant */}
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                      {VIEW_360_SLOTS.map((slot) => {
+                        const imageUrl = activeVariantV360[slot.key];
+                        const uploadKey = `${activeComboData.color}|||${activeComboData.finish}-${slot.key}`;
+                        const error = variantErrors[uploadKey];
+                        const isSlotUploading = variantUploading[uploadKey];
+                        const refKey = `${activeComboData.color}|||${activeComboData.finish}-${slot.key}`;
+
+                        return renderSlotCard({
+                          slot,
+                          imageUrl,
+                          error,
+                          isUploading: isSlotUploading,
+                          onFileSelect: (file) => handleVariantFileSelect(slot, file, activeComboData.color, activeComboData.finish),
+                          onRemove: () => removeVariantSlot(activeComboData.color, activeComboData.finish, slot.key, slot.syncKey),
+                          refKey,
+                          onTriggerClick: () => triggerVariantFileInputClick(refKey),
+                          setInputRef: (el) => setVariantFileInputRef(refKey, el),
+                          onDrop: (e) => handleVariantDrop(e, slot, activeComboData.color, activeComboData.finish),
+                        });
+                      })}
+                    </div>
+
+                    {/* Preview button for this variant */}
+                    {allVariantFilled && (
+                      <div className="pt-3 border-t border-slate-100">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setVariantPreviewData({
+                              view360: activeVariantV360,
+                              label: `${activeComboData.color} + ${activeComboData.finish} Finish`,
+                            });
+                            setShowVariantPreview(true);
+                          }}
+                          className="bg-[#F97316] text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#FB923C] shadow-sm transition cursor-pointer flex items-center gap-1.5"
+                        >
+                          <Eye className="w-4 h-4 shrink-0" />
+                          Preview {activeComboData.color} + {activeComboData.finish} 360°
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           )}

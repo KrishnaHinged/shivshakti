@@ -11,6 +11,10 @@ const outfit = Outfit({
 export const metadata = {
   title: "Shivshakti Elevator Components Pvt. Ltd. | Touch The Sky",
   description: "Manufacturer of premium elevator cabins, automatic doors, car frames and elevator components. Headquartered in Surat, Gujarat with branches in Indore and Lucknow.",
+  icons: {
+    icon: "/SSECPL LOGO.png",
+    apple: "/SSECPL LOGO.png",
+  },
 };
 
 export default function RootLayout({ children }) {

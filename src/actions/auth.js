@@ -46,8 +46,32 @@ export async function loginAction(formData) {
       return { success: false, error: "Invalid credentials." };
     }
 
-    // Sign JWT Token
-    const token = signToken({ id: admin._id, email: admin.email });
+    // Check if account is suspended
+    if (admin.isActive === false) {
+      await ActivityLog.create({
+        action: "login_failure",
+        details: `Login attempt for suspended admin: ${email}`,
+        ipAddress,
+        userAgent,
+      });
+      return { success: false, error: "Your account has been suspended." };
+    }
+
+    // Update last login timestamp
+    admin.lastLoginAt = new Date();
+    await admin.save();
+
+    // Get permissions list
+    const { getPermissionsByRole } = require("@/permissions/roles");
+    const userPermissions = getPermissionsByRole(admin.role || "SALES_EXECUTIVE");
+
+    // Sign JWT Token with role and permissions
+    const token = signToken({
+      id: admin._id.toString(),
+      email: admin.email,
+      role: admin.role || "SALES_EXECUTIVE",
+      permissions: userPermissions,
+    });
 
     // Set cookie (Next.js 15+ Async cookies compatibility)
     const cookieStore = await cookies();
@@ -62,7 +86,7 @@ export async function loginAction(formData) {
     // Log activity
     await ActivityLog.create({
       action: "login_success",
-      details: `Successful login for admin: ${email}`,
+      details: `Successful login for admin: ${email} (${admin.role || "SALES_EXECUTIVE"})`,
       ipAddress,
       userAgent,
     });
@@ -121,7 +145,11 @@ export async function changePasswordAction(formData) {
       return { success: false, error: "Passwords do not match." };
     }
 
-    const admin = await Admin.findOne(); // Single admin configuration
+    const { verifyToken } = require("@/lib/auth");
+    const decoded = verifyToken(token);
+    if (!decoded || !decoded.id) return { success: false, error: "Unauthorized." };
+
+    const admin = await Admin.findById(decoded.id);
     if (!admin) return { success: false, error: "Admin account not found." };
 
     const isMatch = await comparePassword(currentPassword, admin.password);
