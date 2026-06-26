@@ -1,6 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Newsletter from "@/models/Newsletter";
-import NewsletterClient from "@/components/admin/NewsletterClient";
+import dbConnect from "@/shared/lib/mongodb";
+import { Newsletter } from "@/shared/models";
+import NewsletterClient from "@/features/admin/components/NewsletterClient";
 
 export const revalidate = 0; // Dynamic server rendering
 

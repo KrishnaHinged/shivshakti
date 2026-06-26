@@ -6,7 +6,7 @@ import {
   loginAction,
   requestOtpAction,
   resetPasswordWithOtpAction,
-} from "@/actions/auth";
+} from "@/features/admin/services/authActions";
 import { AlertTriangle, Info } from "lucide-react";
 
 export default function AdminLoginPage() {

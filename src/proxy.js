@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import { getPermissionsByRole } from "./permissions/roles";
+import { getPermissionsByRole } from "./shared/permissions/roles";
 
 // Keep in-memory rate limits (IP mapped to request timestamps array)
 const rateLimitMap = new Map();

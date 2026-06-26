@@ -1,9 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
-import Testimonial from "@/models/Testimonial";
-import Gallery from "@/models/Gallery";
-import Setting from "@/models/Setting";
-import MainPage from "@/components/MainPage";
+import dbConnect from "@/shared/lib/mongodb";
+import { Product, Testimonial, Gallery, Setting } from "@/shared/models";
+import MainPage from "@/features/home/Home";
 
 export const revalidate = 0; // Ensure real-time entries are loaded on refresh
 

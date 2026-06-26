@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { logoutAction } from "@/actions/auth";
+import { logoutAction } from "@/features/admin/services/authActions";
 import { useState } from "react";
 import {
   LayoutDashboard,

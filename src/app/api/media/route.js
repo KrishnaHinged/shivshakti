@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import MediaLibrary from "@/models/MediaLibrary";
-import ActivityLog from "@/models/ActivityLog";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import dbConnect from "@/shared/lib/mongodb";
+import { MediaLibrary, ActivityLog } from "@/shared/models";
+import { uploadToCloudinary } from "@/shared/lib/cloudinary";
 import { cookies } from "next/headers";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB limit

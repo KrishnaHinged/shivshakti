@@ -1,10 +1,8 @@
-import dbConnect from "@/lib/mongodb";
-import Gallery from "@/models/Gallery";
-import Product from "@/models/Product";
-import Setting from "@/models/Setting";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
-import ShowcaseGallery from "@/components/sections/Gallery";
+import dbConnect from "@/shared/lib/mongodb";
+import { Gallery, Product, Setting } from "@/shared/models";
+import Header from "@/shared/layouts/Header/Header";
+import Footer from "@/shared/layouts/Footer/Footer";
+import ShowcaseGallery from "@/features/gallery/components/HomeGallery";
 import Link from "next/link";
 
 export const revalidate = 0; // Prevent caching from serving stale data

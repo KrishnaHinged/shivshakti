@@ -1,10 +1,9 @@
 import Link from "next/link";
-import dbConnect from "@/lib/mongodb";
-import Setting from "@/models/Setting";
-import Product from "@/models/Product";
-import Header from "@/components/layout/Header";
-import About from "@/components/sections/About";
-import Footer from "@/components/layout/Footer";
+import dbConnect from "@/shared/lib/mongodb";
+import { Setting, Product } from "@/shared/models";
+import Header from "@/shared/layouts/Header/Header";
+import About from "@/features/about/About";
+import Footer from "@/shared/layouts/Footer/Footer";
 
 export const revalidate = 0; // Ensure fresh data on refresh
 

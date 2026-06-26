@@ -55,6 +55,17 @@ The system supports five administrative roles with precise boundaries:
 * **Implementation**: Located at `/products/[slug]`. Customers configure colors and metal finishes in real time with smooth CSS transitions.
 * **360° Variants**: The admin panel (`View360Uploader.js`) supports uploading specific 6-side cubemaps (front, back, left, right, ceiling, floor) per color+finish combo, falling back to base 360° assets if incomplete.
 
+### V. Premium Brand Aesthetic Upgrade (About Page)
+* **Interactive Rope Elevator**: Restored and optimized the custom coordinate-linked `RopeElevator` component to mount, physics-loop, and render seamlessly on `/about`.
+* **Break the Monotony Layout**: Redesigned core strengths into a premium non-uniform layout (1 Featured large card with left-side gradient accent bar + 2 Medium cards with subtle background tint + 3 Small compact cards).
+* **Staggered Product Portfolio Grid**: Redesigned product display grid with a staggered 8-product card layout, interactive hover brand-color accent border-t lines, and tilted decorative icons (+12°).
+* **Clean & Modern Styling**: Removed horizontal dashed line dividers and decorative chevron accent arrows to clean up visual clutter and focus on clean layout spacing.
+
+### VI. React 19 & Next.js 16.2 Compatibility
+* **Safe Ref Rendering**: Refactored Three.js and Canvas elements to strictly read/write `ref.current` inside event handlers and state synchronization hooks, avoiding render-phase mutation side effects forbidden by React 19.
+* **Cascading Render Prevention**: Replaced synchronous state updates inside `useEffect` with queued asynchronous checks using `setTimeout(..., 0)` to guarantee single-pass rendering.
+* **Component-Safe Links**: Refactored static `<a>` tag routing to native Next.js `<Link>` components for automatic prefetching and smooth client-side navigation.
+
 ---
 
 ## 4. System Architecture

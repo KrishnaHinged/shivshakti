@@ -1,6 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import ActivityLog from "@/models/ActivityLog";
-import LogsClient from "@/components/admin/LogsClient";
+import dbConnect from "@/shared/lib/mongodb";
+import { ActivityLog } from "@/shared/models";
+import LogsClient from "@/features/admin/components/LogsClient";
 
 export const revalidate = 0; // Dynamic server rendering
 

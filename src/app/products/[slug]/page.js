@@ -1,9 +1,8 @@
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
-import Setting from "@/models/Setting";
+import dbConnect from "@/shared/lib/mongodb";
+import { Product, Setting } from "@/shared/models";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import ProductDetailClient from "./ProductDetailClient";
+import ProductDetailClient from "@/features/products/components/ProductDetailClient";
 
 export const revalidate = 0; // Prevent caching from serving stale data
 

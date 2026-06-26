@@ -1,8 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
-import Category from "@/models/Category";
-import Setting from "@/models/Setting";
-import ProductsListingClient from "./ProductsListingClient";
+import dbConnect from "@/shared/lib/mongodb";
+import { Product, Category, Setting } from "@/shared/models";
+import ProductsListingClient from "@/features/products/components/ProductsListingClient";
 
 export const revalidate = 0; // Prevent dynamic route caching from serving stale data
 

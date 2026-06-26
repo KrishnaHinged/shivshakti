@@ -1,7 +1,7 @@
-import dbConnect from "@/lib/mongodb";
-import EmailTemplate from "@/models/EmailTemplate";
-import EmailTemplatesClient from "@/components/admin/EmailTemplatesClient";
-import { getEmailTemplatesAction } from "@/actions/email-templates";
+import dbConnect from "@/shared/lib/mongodb";
+import { EmailTemplate } from "@/shared/models";
+import EmailTemplatesClient from "@/features/admin/components/EmailTemplatesClient";
+import { getEmailTemplatesAction } from "@/features/admin/services/emailTemplatesActions";
 
 export const revalidate = 0;
 

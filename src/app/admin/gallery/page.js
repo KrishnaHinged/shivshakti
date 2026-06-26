@@ -1,6 +1,6 @@
-import dbConnect from "@/lib/mongodb";
-import Gallery from "@/models/Gallery";
-import GalleryClient from "@/components/admin/GalleryClient";
+import dbConnect from "@/shared/lib/mongodb";
+import { Gallery } from "@/shared/models";
+import GalleryClient from "@/features/gallery/components/Admin/GalleryClient";
 
 export const revalidate = 0; // Dynamic server rendering
 

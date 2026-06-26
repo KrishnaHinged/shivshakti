@@ -1,9 +1,8 @@
-import dbConnect from "@/lib/mongodb";
-import Inquiry from "@/models/Inquiry";
-import Admin from "@/models/Admin";
-import InquiriesClient from "@/components/admin/InquiriesClient";
+import dbConnect from "@/shared/lib/mongodb";
+import { Inquiry, Admin } from "@/shared/models";
+import InquiriesClient from "@/features/crm/components/InquiriesClient";
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/auth";
+import { verifyToken } from "@/shared/lib/auth";
 
 export const revalidate = 0; // Dynamic server rendering
 

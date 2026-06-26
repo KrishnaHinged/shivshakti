@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Newsletter from "@/models/Newsletter";
+import dbConnect from "@/shared/lib/mongodb";
+import { Newsletter } from "@/shared/models";
 import { cookies } from "next/headers";
 
 export async function GET() {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/mongodb";
-import Inquiry from "@/models/Inquiry";
+import dbConnect from "@/shared/lib/mongodb";
+import { Inquiry } from "@/shared/models";
 import { cookies } from "next/headers";
 
 export async function GET() {
@@ -11,14 +11,14 @@ export async function GET() {
       return new Response("Unauthorized access.", { status: 401 });
     }
 
-    const { verifyToken } = require("@/lib/auth");
+    const { verifyToken } = require("@/shared/lib/auth");
     const decoded = verifyToken(token);
     if (!decoded) {
       return new Response("Invalid or expired session token.", { status: 401 });
     }
 
-    const { hasPermission } = require("@/permissions/permissions");
-    const { PERMISSIONS } = require("@/permissions/roles");
+    const { hasPermission } = require("@/shared/permissions/permissions");
+    const { PERMISSIONS } = require("@/shared/permissions/roles");
     if (!hasPermission(decoded, PERMISSIONS.EXPORT_CRM)) {
       return new Response("Access Denied: You do not have permission to export CRM data.", { status: 403 });
     }

@@ -1,7 +1,5 @@
-import dbConnect from "@/lib/mongodb";
-import Product from "@/models/Product";
-import Category from "@/models/Category";
-import Blog from "@/models/Blog";
+import dbConnect from "@/shared/lib/mongodb";
+import { Product, Category, Blog } from "@/shared/models";
 
 export default async function sitemap() {
   const baseUrl = "https://www.shivshaktielevatorcomponents.com";

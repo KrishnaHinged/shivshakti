@@ -1,12 +1,10 @@
-import dbConnect from "@/lib/mongodb";
-import Blog from "@/models/Blog";
-import Setting from "@/models/Setting";
-import Product from "@/models/Product";
+import dbConnect from "@/shared/lib/mongodb";
+import { Blog, Setting, Product } from "@/shared/models";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, User, Tag, ArrowLeft, Clock } from "lucide-react";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+import Header from "@/shared/layouts/Header/Header";
+import Footer from "@/shared/layouts/Footer/Footer";
 
 export const revalidate = 0; // Dynamic server rendering
 
