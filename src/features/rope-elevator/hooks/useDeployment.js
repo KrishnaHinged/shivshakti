@@ -135,9 +135,17 @@ export default function useDeployment(isAdmin, isAbout) {
     window.addEventListener("scroll", triggerCheck);
     return () => {
       window.removeEventListener("scroll", triggerCheck);
-      cancelAnimationFrame(requestRef.current);
     };
   }, [hasDeployed, isDeploying, isAdmin]);
+
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, []);
 
   return {
     hasDeployed,

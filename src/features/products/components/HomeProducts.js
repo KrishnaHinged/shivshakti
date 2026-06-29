@@ -55,8 +55,8 @@ export const HomeProducts = ({ products }) => {
                 />
               </div>
 
-              {/* Premium Bluish Dark Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/95 via-[#0a1128]/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-[#0a1128]/55" />
+              {/* Premium Neutral Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-black/55" />
 
               {/* Glassmorphic Pill Badge */}
               {product.badge && (

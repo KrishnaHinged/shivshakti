@@ -65,10 +65,12 @@ export default function useTransition(isAdmin, scrollYRef, skipEasingRef) {
         ? CABIN_SIZES.TABLET 
         : CABIN_SIZES.DESKTOP;
 
+    const computedEndY = footerTopDoc - sizes.HEIGHT + sizes.OVERLAP;
+
     setCoords({
       startX,
       startY: startY - 5,
-      endY: footerTopDoc - sizes.HEIGHT + sizes.OVERLAP,
+      endY: computedEndY,
     });
   };
 

@@ -475,8 +475,8 @@ function ProductsListingClient({ products, categories, settings }) {
                                 />
                               </div>
 
-                              {/* Premium Bluish Dark Gradient Overlay */}
-                              <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/95 via-[#0a1128]/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-[#0a1128]/55" />
+                              {/* Premium Neutral Dark Gradient Overlay */}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-black/55" />
 
                               {/* Glassmorphic Pill Badge */}
                               <span className="absolute top-6 right-6 px-4 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 text-white font-extrabold text-[0.68rem] tracking-wider uppercase shadow-md z-20">
@@ -551,8 +551,8 @@ function ProductsListingClient({ products, categories, settings }) {
                           />
                         </div>
 
-                        {/* Premium Bluish Dark Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/95 via-[#0a1128]/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-[#0a1128]/55" />
+                        {/* Premium Neutral Dark Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-black/55" />
 
                         {/* Glassmorphic Pill Badge */}
                         <span className="absolute top-6 right-6 px-4 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 text-white font-extrabold text-[0.68rem] tracking-wider uppercase shadow-md z-20">
@@ -618,8 +618,8 @@ function ProductsListingClient({ products, categories, settings }) {
                           />
                         </div>
 
-                        {/* Premium Bluish Dark Gradient Overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a1128]/95 via-[#0a1128]/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-[#0a1128]/55" />
+                        {/* Premium Neutral Dark Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent z-10 transition-opacity duration-300 group-hover:via-black/55" />
 
                         {/* Glassmorphic Pill Badge */}
                         <span className="absolute top-6 right-6 px-4 py-2 rounded-full backdrop-blur-md bg-white/10 border border-white/20 text-white font-extrabold text-[0.68rem] tracking-wider uppercase shadow-md z-20">
