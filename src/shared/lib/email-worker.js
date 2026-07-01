@@ -2,12 +2,17 @@ import EmailQueue from "@/shared/models/EmailQueue";
 import fs from "fs";
 import path from "path";
 
-let workerInterval = null;
-let isProcessing = false;
+// Use a global singleton state to prevent duplicate intervals during hot-reloads in development
+if (!global.emailWorkerState) {
+  global.emailWorkerState = {
+    interval: null,
+    isProcessing: false,
+  };
+}
 
 async function processQueue() {
-  if (isProcessing) return;
-  isProcessing = true;
+  if (global.emailWorkerState.isProcessing) return;
+  global.emailWorkerState.isProcessing = true;
 
   try {
     const pending = await EmailQueue.find({
@@ -17,7 +22,7 @@ async function processQueue() {
     }).limit(10);
 
     if (pending.length === 0) {
-      isProcessing = false;
+      global.emailWorkerState.isProcessing = false;
       return;
     }
 
@@ -89,7 +94,7 @@ ${email.body}
   } catch (e) {
     console.error("[EmailWorker] Queue processing error:", e.message);
   } finally {
-    isProcessing = false;
+    global.emailWorkerState.isProcessing = false;
   }
 }
 
@@ -97,11 +102,11 @@ ${email.body}
  * Initializes the background email worker.
  */
 export function initEmailWorker() {
-  if (workerInterval) return;
+  if (global.emailWorkerState.interval) return;
 
   console.log("[EmailWorker] Initializing queue background worker (15s interval).");
   // Run queue processor every 15 seconds
-  workerInterval = setInterval(processQueue, 15000);
+  global.emailWorkerState.interval = setInterval(processQueue, 15000);
 }
 
 /**
