@@ -5,7 +5,7 @@ import Footer from "@/shared/layouts/Footer/Footer";
 import { HomeGallery as ShowcaseGallery } from "@/features/gallery";
 import Link from "next/link";
 
-export const revalidate = 0; // Prevent caching from serving stale data
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 export const metadata = {
   title: "Landmark Projects Gallery | Shivshakti Elevator Components",

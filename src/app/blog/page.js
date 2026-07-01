@@ -4,7 +4,7 @@ import Header from "@/shared/layouts/Header/Header";
 import Footer from "@/shared/layouts/Footer/Footer";
 import { BlogListingClient } from "@/features/blog";
 
-export const revalidate = 0; // Dynamic server rendering
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 export async function generateMetadata() {
   await dbConnect();

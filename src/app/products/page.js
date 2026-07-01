@@ -2,7 +2,7 @@ import dbConnect from "@/shared/lib/mongodb";
 import { Product, Category, Setting } from "@/shared/models";
 import { ProductsListingClient } from "@/features/products";
 
-export const revalidate = 0; // Prevent dynamic route caching from serving stale data
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 export const metadata = {
   title: "Elevator Components & Solutions | Shivshakti Elevator Components",

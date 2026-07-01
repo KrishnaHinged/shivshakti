@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { ProductDetailClient } from "@/features/products";
 
-export const revalidate = 0; // Prevent caching from serving stale data
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 // Dynamic SEO Metadata Generator
 export async function generateMetadata({ params }) {

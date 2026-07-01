@@ -5,7 +5,7 @@ import Header from "@/shared/layouts/Header/Header";
 import { About } from "@/features/about";
 import Footer from "@/shared/layouts/Footer/Footer";
 
-export const revalidate = 0; // Ensure fresh data on refresh
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 export const metadata = {
   title: "About Us | ShivShakti Elevator Components Pvt. Ltd.",

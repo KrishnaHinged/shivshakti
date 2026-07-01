@@ -6,7 +6,7 @@ import { Calendar, User, Tag, ArrowLeft, Clock } from "lucide-react";
 import Header from "@/shared/layouts/Header/Header";
 import Footer from "@/shared/layouts/Footer/Footer";
 
-export const revalidate = 0; // Dynamic server rendering
+export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring instant page switches and reducing db queries
 
 // Generate dynamic SEO metadata
 export async function generateMetadata({ params }) {
