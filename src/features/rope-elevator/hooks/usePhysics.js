@@ -93,7 +93,7 @@ export default function usePhysics(
       // Ease positioning with linear interpolation (lerp factor 0.08)
       const diffY = targetY - physicsRef.current.currentY;
       
-      if (skipEasingRef.current) {
+      if (skipEasingRef.current || physicsRef.current.reducedMotion) {
         physicsRef.current.currentY = targetY;
         physicsRef.current.velocity = 0;
       } else {
@@ -111,11 +111,11 @@ export default function usePhysics(
         ? Math.sin(physicsRef.current.time * PHYSICS.VIBRATION_SPEED) * PHYSICS.VIBRATION_AMP
         : 0;
 
-      const totalSway = pendulum + velocitySway + tensionVibe;
+      const totalSway = physicsRef.current.reducedMotion ? 0 : (pendulum + velocitySway + tensionVibe);
       physicsRef.current.sway = totalSway;
 
       // Safe rotational tilt constraint: max +/- 3 degrees
-      const tilt = Math.max(-PHYSICS.MAX_TILT, Math.min(PHYSICS.MAX_TILT, totalSway * PHYSICS.TILT_FACTOR));
+      const tilt = physicsRef.current.reducedMotion ? 0 : Math.max(-PHYSICS.MAX_TILT, Math.min(PHYSICS.MAX_TILT, totalSway * PHYSICS.TILT_FACTOR));
 
       // Doors and cartoon characters state machine
       const atBottom = coords.endY - physicsRef.current.currentY < 12;

@@ -36,7 +36,7 @@ export function Footer({ products, settings }) {
   const primaryEmail = settings.emails?.[0] || "sales.shivshakti22@gmail.com";
 
   return (
-    <footer id="footer" className="bg-[#0a1128] text-white px-6 py-20 lg:px-16 pb-10 border-t border-white/10">
+    <footer id="footer" className="bg-[#0a1128] text-white px-4 py-20 md:px-8 lg:px-12 pb-10 border-t border-white/10">
       <div className="max-w-[1300px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.8fr_1fr_1fr_1.5fr] gap-16 mb-16">
 
         {/* Column 1: Brand details */}
@@ -58,7 +58,7 @@ export function Footer({ products, settings }) {
                 href={settings.socialLinks.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
+                className="w-11 h-11 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
                 title="Facebook"
               >
                 <FacebookIcon className="w-5 h-5" />
@@ -69,7 +69,7 @@ export function Footer({ products, settings }) {
                 href={settings.socialLinks.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
+                className="w-11 h-11 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
                 title="Instagram"
               >
                 <InstagramIcon className="w-5 h-5" />
@@ -80,7 +80,7 @@ export function Footer({ products, settings }) {
                 href={settings.socialLinks.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
+                className="w-11 h-11 rounded-full border border-border-glass flex items-center justify-center text-text-secondary transition-all duration-300 hover:bg-brand-orange hover:text-white hover:border-brand-orange hover:-translate-y-0.5"
                 title="WhatsApp"
               >
                 <WhatsAppIcon className="w-5 h-5" />
@@ -95,16 +95,16 @@ export function Footer({ products, settings }) {
           <ul className="flex flex-col gap-4">
             {products.filter(p => p.featured).slice(0, 6).map(p => (
               <li key={p._id}>
-                <a href="#catalog" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
+                <a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
                   {p.title}
                 </a>
               </li>
             ))}
             {products.filter(p => p.featured).length === 0 && (
               <>
-                <li><a href="#catalog" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Manual Door</a></li>
-                <li><a href="#catalog" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Automatic Door</a></li>
-                <li><a href="#catalog" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">SS / MS Cabin</a></li>
+                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Manual Door</a></li>
+                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Automatic Door</a></li>
+                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">SS / MS Cabin</a></li>
               </>
             )}
           </ul>
@@ -114,12 +114,12 @@ export function Footer({ products, settings }) {
         <div>
           <h4 className="text-base font-bold uppercase tracking-[0.1em] text-white mb-7 border-l-2 border-brand-blue pl-3">Company</h4>
           <ul className="flex flex-col gap-4">
-            <li><a href="#about" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">About Us</a></li>
-            <li><a href="#gallery" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Gallery</a></li>
-            <li><a href="#why-us" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</a></li>
-            <li><Link href="/blog" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Blog</Link></li>
-            <li><a href="#contact" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</a></li>
-            <li><a href="#about" className="text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</a></li>
+            <li><a href="#about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">About Us</a></li>
+            <li><a href="#gallery" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Gallery</a></li>
+            <li><a href="#why-us" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</a></li>
+            <li><Link href="/blog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Blog</Link></li>
+            <li><a href="#contact" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</a></li>
+            <li><a href="#about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</a></li>
           </ul>
         </div>
 

@@ -68,9 +68,9 @@ export const ContactFormSection = ({ settings }) => {
   const primaryEmail = settings.emails?.[0] || "sales.shivshakti22@gmail.com";
 
   return (
-    <section className="w-full px-4 lg:px-8 py-15 bg-transparent">
+    <section className="w-full py-15 bg-transparent">
       {/* Highly Rounded Dark Container Block */}
-      <div id="contact" className="mx-auto max-w-[1300px] rounded-[2.5rem] lg:rounded-[3.5rem] bg-[#0a1128] text-white p-8 md:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+      <div id="contact" className="mx-auto max-w-[1300px] rounded-[2.5rem] lg:rounded-[3.5rem] bg-[#0a1128] text-white p-6 sm:p-12 lg:p-16 border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
 
@@ -113,14 +113,14 @@ export const ContactFormSection = ({ settings }) => {
                     placeholder="Full Name"
                     required
                     suppressHydrationWarning
-                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                   <input
                     type="text"
                     name="company"
                     placeholder="Company Name"
                     suppressHydrationWarning
-                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                 </div>
 
@@ -131,7 +131,7 @@ export const ContactFormSection = ({ settings }) => {
                     placeholder="Phone Number"
                     required
                     suppressHydrationWarning
-                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                   <input
                     type="email"
@@ -139,7 +139,7 @@ export const ContactFormSection = ({ settings }) => {
                     placeholder="Email Address"
                     required
                     suppressHydrationWarning
-                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                 </div>
 
@@ -148,7 +148,7 @@ export const ContactFormSection = ({ settings }) => {
                     name="elevatorType"
                     required
                     suppressHydrationWarning
-                    className="bg-[#0a1128] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
+                    className="bg-[#0a1128] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
                     defaultValue=""
                   >
                     <option value="" disabled className="bg-[#120e0b] text-slate-400">Elevator Type</option>
@@ -163,7 +163,7 @@ export const ContactFormSection = ({ settings }) => {
                     name="componentNeeded"
                     required
                     suppressHydrationWarning
-                    className="bg-[#0a1128] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
+                    className="bg-[#0a1128] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition"
                     defaultValue=""
                   >
                     <option value="" disabled className="bg-[#120e0b] text-slate-400">Component Needed</option>
@@ -187,7 +187,7 @@ export const ContactFormSection = ({ settings }) => {
                     placeholder="Quantity Required"
                     required
                     suppressHydrationWarning
-                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                    className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                   />
                 </div>
 
@@ -197,7 +197,7 @@ export const ContactFormSection = ({ settings }) => {
                   rows="4"
                   required
                   suppressHydrationWarning
-                  className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-3.5 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
+                  className="bg-white/[0.03] border border-white/10 rounded-xl px-5 py-4 text-white text-[0.95rem] outline-none focus:border-brand-orange focus:bg-white/[0.06] transition placeholder:text-text-secondary"
                 />
 
                 <button
@@ -262,7 +262,7 @@ export const ContactFormSection = ({ settings }) => {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps/place/Shiv+Shakti+Elevator+Components+Pvt+Ltd/@21.131094,72.833979,17z"
+                  href="https://maps.app.goo.gl/RVLYcMkzs1y1kKJA7"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[0.78rem] text-text-secondary hover:text-white transition duration-300 flex items-center gap-1.5 mt-1"

@@ -1,17 +1,5 @@
 import React from "react";
-import { products } from "@/features/about/constants";
 import * as Icons from "@/features/about/icons";
-
-const iconMap = {
-  msCabins: Icons.MsCabinsIcon,
-  ssCabins: Icons.SsCabinsIcon,
-  pvcCabins: Icons.PvcCabinsIcon,
-  autoDoors: Icons.AutoDoorsIcon,
-  imperforatedDoors: Icons.ImperforatedDoorsIcon,
-  autoImperforatedDoors: Icons.AutoImperforatedDoorsIcon,
-  elevatorKits: Icons.ElevatorKitsIcon,
-  elevatorComponents: Icons.ElevatorComponentsIcon,
-};
 
 /**
  * ProductPortfolio renders the staggered product grid and the latest innovation highlights.
@@ -34,34 +22,33 @@ export function ProductPortfolio() {
         </p>
       </div>
 
-      {/* Staggered Grid Layout (not uniform) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 items-start">
-        {products.map((product, idx) => {
-          const IconComponent = iconMap[product.iconKey];
-          return (
-            <div
-              key={idx}
-              className={`relative ${product.staggerClass} ${product.bgTint} border-[0.5px] border-slate-100 hover:border-brand-blue/30 rounded-xl p-4 flex flex-col items-center gap-3 text-center transition-all duration-150 ease-out group cursor-pointer hover:shadow-[inset_0_0_8px_rgba(30,58,138,0.02),0_4px_12px_rgba(0,0,0,0.04)] overflow-hidden`}
-            >
-              {/* Subtle 1px accent line (top) on hover in brand color */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-brand-blue scale-x-0 origin-left transition-transform duration-150 ease-out group-hover:scale-x-100" />
-              
-              {/* New badge on index 6 */}
-              {product.isNew && (
-                <span className="absolute top-2 right-2 bg-brand-orange text-white text-[8px] font-bold px-2 py-0.5 rounded-full select-none">
-                  NEW
-                </span>
-              )}
-
-              <div className={`transition-all duration-150 ease-out group-hover:text-brand-orange ${product.rotateIcon ? 'rotate-12' : ''} group-hover:rotate-12`}>
-                {IconComponent ? <IconComponent className="w-8 h-8 transition-colors duration-150" /> : null}
-              </div>
-              <span className="text-[11px] font-bold text-slate-700 leading-tight">
-                {product.name}
-              </span>
-            </div>
-          );
-        })}
+      {/* Product Innovation Video Showcase */}
+      <div className="relative rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-slate-100 group aspect-[16/9] w-full bg-slate-950">
+        <video
+          src="/center-opening-door.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+        />
+        {/* Subtle Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent pointer-events-none" />
+        
+        {/* Video Caption */}
+        <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between z-10">
+          <div>
+            <p className="text-white text-sm font-bold leading-tight">
+              Center Opening Automatic Elevator Door
+            </p>
+            <p className="text-white/80 text-[11px] mt-0.5">
+              Precision engineering • Smooth & silent operation
+            </p>
+          </div>
+          <div className="bg-brand-blue text-white rounded-lg px-2.5 py-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider">Live Demo</span>
+          </div>
+        </div>
       </div>
 
       {/* Latest Innovation Highlight */}

@@ -23,16 +23,16 @@ export const HomeProducts = ({ products }) => {
   };
 
   return (
-    <section id="catalog" className="bg-transparent text-text-light-primary px-6 pb-10 lg:px-20 pt-6">
+    <section id="catalog" className="bg-transparent text-text-light-primary pb-10 pt-6">
 
       {/* Section Header */}
       <div className="text-left mb-16">
         <span className="text-brand-blue text-[0.85rem] font-bold uppercase tracking-[0.2em] block mb-2">Portfolio</span>
-        <h2 className="text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">Featured Products</h2>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">Featured Products</h2>
       </div>
 
       {/* Grid of Rounded Cards with Full Image Backgrounds */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
         {products.map((product) => {
           const categoryLabel = product.category === "in-house"
             ? "IN-HOUSE"
@@ -44,7 +44,7 @@ export const HomeProducts = ({ products }) => {
             <Link
               key={product._id}
               href={`/products/${product.slug}`}
-              className="relative w-full aspect-square rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white"
+              className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[340px] rounded-[1.8rem] md:rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white"
             >
               {/* Product Background Image */}
               <div className="absolute inset-0 z-0">
@@ -67,7 +67,7 @@ export const HomeProducts = ({ products }) => {
 
               {/* Text Content overlay at bottom */}
               <div className="relative z-20 p-8 flex flex-col gap-1 text-left">
-                <h3 className="text-2xl font-extrabold tracking-wide uppercase text-white mb-0.5">
+                <h3 className="text-xl font-extrabold tracking-wide uppercase text-white mb-0.5">
                   {categoryLabel}
                 </h3>
                 <p className="text-[1rem] font-medium text-white/90">

@@ -70,7 +70,7 @@ export function SummaryAndCTA() {
 
           <Link
             href="/products"
-            className="bg-brand-orange text-white text-center px-6 py-3 rounded-full text-xs font-bold transition-all duration-150 ease-out hover:bg-[#d03a02] hover:shadow-[0_4px_12px_rgba(248,69,2,0.2)] active:translate-y-[0.5px] shadow-sm w-fit cursor-pointer select-none"
+            className="bg-brand-orange text-white text-center px-6 py-3 rounded-full text-xs font-bold transition-all duration-150 ease-out hover:bg-[#d03a02] hover:shadow-[0_4px_12px_rgba(248,69,2,0.2)] active:translate-y-[0.5px] shadow-sm w-full sm:w-fit cursor-pointer select-none"
           >
             Explore Our Products
           </Link>

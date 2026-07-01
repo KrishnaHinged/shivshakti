@@ -66,6 +66,12 @@ The system supports five administrative roles with precise boundaries:
 * **Cascading Render Prevention**: Replaced synchronous state updates inside `useEffect` with queued asynchronous checks using `setTimeout(..., 0)` to guarantee single-pass rendering.
 * **Component-Safe Links**: Refactored static `<a>` tag routing to native Next.js `<Link>` components for automatic prefetching and smooth client-side navigation.
 
+### VII. Public Showroom Card Sizing & Mobile Responsiveness Upgrades
+* **Uniform Card Dimensions**: Product cards across the home catalog and products listing catalog have been updated from `aspect-square` to a fixed height of `h-[340px]`, matching the premium portrait size of the Landmark Projects gallery.
+* **4-Column Grid Uniformity**: Changed grid layouts on the home catalog and manufactured products list from `md:grid-cols-3` to a consistent `lg:grid-cols-4 gap-6 w-full` to align with the gallery showcase, creating matching card widths.
+* **Mobile Header Visibility**: Refactored the mobile hamburger menu toggle in the global `Header` component to always use a dark slate design (`text-slate-800 bg-black/5 border-black/10`). This fixes a bug where the icon was invisible (`text-white`) against the light background (`#F9F9FB`) of the pages before scrolling.
+* **Responsive Layout Alignment**: Aligned the container padding across all main home sections to a unified mobile padding standard (`px-4` on mobile scaling to `lg:px-20` on desktop). Card border-radii now fluidly scale (`rounded-[1.8rem] md:rounded-[2.2rem]`) to avoid content clipping on narrow viewports, and heading sizes dynamically resize (`text-3xl lg:text-5xl`).
+
 ---
 
 ## 4. System Architecture

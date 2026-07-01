@@ -43,7 +43,18 @@ function ProductsListingClient({ products, categories, settings }) {
   const inHouseGrouped = useMemo(() => {
     const groups = { door: {}, cabin: {}, frame: {}, "layout-cabin": {} };
 
-    inHouseProducts.forEach((p) => {
+    let list = inHouseProducts;
+    if (debouncedQuery.trim()) {
+      const q = debouncedQuery.toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          p.shortDescription.toLowerCase().includes(q) ||
+          (p.subCategory && p.subCategory.toLowerCase().includes(q))
+      );
+    }
+
+    list.forEach((p) => {
       // Find category key: 'door', 'cabin', 'frame', or 'layout-cabin'
       let catKey = p.category?.toLowerCase() || "door";
       if (!groups[catKey]) {
@@ -62,7 +73,7 @@ function ProductsListingClient({ products, categories, settings }) {
     });
 
     return groups;
-  }, [inHouseProducts]);
+  }, [inHouseProducts, debouncedQuery]);
 
   // Dynamic filter for Dealer Products (based on Brands)
   const dealerBrands = useMemo(() => {
@@ -191,6 +202,21 @@ function ProductsListingClient({ products, categories, settings }) {
     };
   }, [activeMainTab, activeSubTab]);
 
+  // Auto-scroll active tabs into view for mobile swipe experience
+  useEffect(() => {
+    const activeMainEl = mainTabsRef.current[activeMainTab];
+    if (activeMainEl) {
+      activeMainEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [activeMainTab]);
+
+  useEffect(() => {
+    const activeSubEl = subTabsRef.current[activeSubTab];
+    if (activeSubEl) {
+      activeSubEl.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    }
+  }, [activeSubTab]);
+
   // Elevator exit transition states
   const [showExitOverlay, setShowExitOverlay] = useState(false);
   const [exitOverlayOpacity, setExitOverlayOpacity] = useState(1);
@@ -268,6 +294,33 @@ function ProductsListingClient({ products, categories, settings }) {
     });
   };
 
+  const handleResetSearch = () => {
+    setSearchQuery("");
+    if (activeMainTab === "dealer") {
+      setActiveSubTab(dealerBrands[0] || "");
+    }
+  };
+
+  const renderEmptyState = (message) => (
+    <div className="w-full flex flex-col items-center justify-center text-center py-20 px-6 bg-slate-50 rounded-[1.8rem] md:rounded-[2.2rem] border border-slate-200/50 shadow-sm gap-6">
+      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+        <Search className="w-7 h-7" />
+      </div>
+      <div className="flex flex-col gap-2">
+        <h3 className="text-lg font-bold text-slate-800">No Products Found</h3>
+        <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
+          {message || "We couldn't find any products matching your current search query or active category tabs. Try adjusting your filter settings."}
+        </p>
+      </div>
+      <button
+        onClick={handleResetSearch}
+        className="bg-[#0a1128] hover:bg-brand-orange text-white text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-full shadow hover:scale-105 active:scale-100 transition-all cursor-pointer select-none"
+      >
+        Reset Filters & Search
+      </button>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-[#FDFBF9] text-[#1C1511] font-sans selection:bg-brand-orange selection:text-white">
       {/* Navigation Header */}
@@ -307,7 +360,7 @@ function ProductsListingClient({ products, categories, settings }) {
       </section>
 
       {/* ChatGPT-style Pill Navigation Container */}
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-16 pt-10 pb-4 flex flex-col gap-5 items-center w-full">
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 lg:px-12 pt-10 pb-4 flex flex-col gap-5 items-center w-full">
         {/* Main Category Tabs Tray */}
         <div className="relative bg-slate-100 p-1.5 rounded-full flex items-center gap-1 w-fit max-w-full overflow-x-auto scrollbar-none shadow-sm border border-slate-200/20">
           {/* Sliding Background Indicator for Main Tabs */}
@@ -421,10 +474,32 @@ function ProductsListingClient({ products, categories, settings }) {
             )}
           </div>
         )}
+
+        {/* Search Bar Input Block */}
+        <div className="relative w-full max-w-md mt-2 px-4 sm:px-0">
+          <span className="absolute inset-y-0 left-4 sm:left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+            <Search className="w-4 h-4" />
+          </span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={`Search in ${activeMainTab === "manufactured" ? "Manufactured Components" : activeMainTab === "dealer" ? "Authorized Products" : "Elevator Kits"}...`}
+            className="w-full bg-slate-100 hover:bg-slate-200/70 focus:bg-white border border-slate-200/50 focus:border-brand-orange rounded-full py-3 pl-11 pr-10 text-xs font-medium text-slate-800 outline-none transition placeholder:text-slate-400 shadow-sm"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute inset-y-0 right-4 sm:right-0 flex items-center pr-4 text-slate-400 hover:text-slate-600 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Dynamic Products Grid Section */}
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-16 pb-20 lg:pb-28">
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 lg:px-12 pb-20 lg:pb-28">
         <div
           className={`transition-all duration-300 ease-out transform ${fadeState === "in" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
             }`}
@@ -455,7 +530,7 @@ function ProductsListingClient({ products, categories, settings }) {
                         {subcat} ({list.length})
                       </h4>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {list.map((item) => {
                           const subtitleText = item.category === "in-house" ? "IN-HOUSE" : item.category === "trading" ? "TRADING" : "AUTHORIZED";
                           const badgeText = item.badge || "IN-HOUSE MADE";
@@ -464,7 +539,7 @@ function ProductsListingClient({ products, categories, settings }) {
                             <Link
                               key={item._id}
                               href={`/products/${item.slug}`}
-                              className="relative w-full aspect-square rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
+                              className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[340px] rounded-[1.8rem] md:rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
                             >
                               {/* Product Background Image */}
                               <div className="absolute inset-0 z-0">
@@ -500,11 +575,8 @@ function ProductsListingClient({ products, categories, settings }) {
                   );
                 })}
 
-                {Object.keys(inHouseGrouped[displayTab.sub] || {}).length === 0 && (
-                  <div className="text-center py-16 text-slate-400 italic bg-white border border-slate-200 rounded-2xl">
-                    No manufactured products found in this category.
-                  </div>
-                )}
+                {Object.keys(inHouseGrouped[displayTab.sub] || {}).length === 0 &&
+                  renderEmptyState("We couldn't find any manufactured components matching your search or category filter. Try clearing your search query.")}
               </div>
             </div>
           )}
@@ -527,9 +599,7 @@ function ProductsListingClient({ products, categories, settings }) {
 
               {/* Dealer Grid */}
               {filteredDealerProducts.length === 0 ? (
-                <div className="text-center py-16 text-slate-400 italic bg-white border border-slate-200 rounded-2xl">
-                  No authorized dealer products match your criteria.
-                </div>
+                renderEmptyState("We couldn't find any trading or authorized dealer products matching your criteria. Try adjusting your brand or search parameters.")
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {filteredDealerProducts.map((product) => {
@@ -540,7 +610,7 @@ function ProductsListingClient({ products, categories, settings }) {
                       <Link
                         key={product._id}
                         href={`/products/${product.slug}`}
-                        className="relative w-full aspect-square rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
+                        className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[340px] rounded-[1.8rem] md:rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
                       >
                         {/* Product Background Image */}
                         <div className="absolute inset-0 z-0">
@@ -594,9 +664,7 @@ function ProductsListingClient({ products, categories, settings }) {
 
               {/* Kits Grid */}
               {filteredElevatorKits.length === 0 ? (
-                <div className="text-center py-16 text-slate-400 italic bg-white border border-slate-200 rounded-2xl">
-                  No complete elevator kits match your criteria.
-                </div>
+                renderEmptyState("We couldn't find any complete elevator kits matching your search criteria. Try adjusting your search query.")
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
                   {filteredElevatorKits.map((kit) => {
@@ -607,7 +675,7 @@ function ProductsListingClient({ products, categories, settings }) {
                       <div
                         key={kit._id}
                         onClick={(e) => openInquiry(kit, e)}
-                        className="relative w-full aspect-square rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
+                        className="relative w-full aspect-[4/3] lg:aspect-auto lg:h-[340px] rounded-[1.8rem] md:rounded-[2.2rem] overflow-hidden border border-white/10 flex flex-col justify-end transition-all duration-500 shadow-[0_15px_35px_rgba(0,0,0,0.05)] hover:shadow-[0_25px_50px_rgba(0,0,0,0.15)] hover:-translate-y-2 group text-white cursor-pointer"
                       >
                         {/* Product Background Image */}
                         <div className="absolute inset-0 z-0">
@@ -686,13 +754,13 @@ function ProductsListingClient({ products, categories, settings }) {
                     </h4>
 
                     {/* Cards Subgrid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                       {list.map((item) => (
                         <Link
                           key={item._id}
                           href={`/products/${item.slug}`}
                           onClick={() => setActiveCategoryModal(null)}
-                          className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group cursor-pointer text-left"
+                          className="h-full bg-white border border-slate-200/80 rounded-[1.8rem] md:rounded-[2.2rem] overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group cursor-pointer text-left"
                         >
                           <div>
                             {/* Product Thumbnail */}

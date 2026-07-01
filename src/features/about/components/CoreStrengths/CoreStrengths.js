@@ -33,7 +33,7 @@ export function CoreStrengths() {
         </div>
 
         {/* Core Strengths Grid: 1 Featured + 2 Medium + 3 Small card layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-3 gap-4 auto-rows-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-3 gap-4 auto-rows-auto">
           {/* Featured Card (Top-left, spans 2 rows & 2 cols) */}
           <FeaturedStrength strength={featured} delay={0} />
 

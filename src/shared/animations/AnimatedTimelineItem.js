@@ -14,7 +14,7 @@ export function AnimatedTimelineItem({ children, index }) {
   return (
     <div
       ref={ref}
-      className="relative group pl-10 transition-all duration-300"
+      className="relative group pl-10 lg:pl-0 transition-all duration-300"
       style={{
         opacity: inView ? 1 : 0,
         filter: inView ? "blur(0px)" : "blur(4px)",

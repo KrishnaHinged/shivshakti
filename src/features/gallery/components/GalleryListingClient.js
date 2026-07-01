@@ -32,7 +32,7 @@ export default function GalleryListingClient({ gallery }) {
               <h1 className="text-4xl lg:text-[3.2rem] font-extrabold tracking-tight leading-[1.15] text-white font-sans mt-2">
                 Our <span className="italic text-brand-blue font-medium font-serif">Landmark</span> Projects
               </h1>
-              <p className="text-[1rem] lg:text-[1.1rem] text-text-secondary leading-[1.6] mt-1 opacity-90 max-w-2xl">
+              <p className="text-[1rem] lg:text-[1.12rem] text-text-secondary leading-[1.6] mt-1 opacity-90 max-w-2xl">
                 Shivshakti premium components deployed in outstanding residential, commercial, and hospitality projects across India.
               </p>
             </div>
@@ -41,7 +41,7 @@ export default function GalleryListingClient({ gallery }) {
       </section>
 
       {/* Gallery Showcase Content Grid Wrapper */}
-      <div className="max-w-[1300px] mx-auto px-4 lg:px-8 py-12">
+      <div className="max-w-[1300px] mx-auto px-4 md:px-8 lg:px-12 py-12">
         <HomeGallery gallery={gallery} hideHeader={true} />
       </div>
     </main>

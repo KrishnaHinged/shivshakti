@@ -58,7 +58,7 @@ export function ManufacturingExcellence() {
           <div className="relative rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.08)] border-[0.5px] border-slate-200">
             <div className="aspect-[4/3] relative">
               <Image
-                src="/images/factory_cnc.png"
+                src="/images/factory_cnc.jpeg"
                 alt="High precision CNC Laser Cutting & Material Processing inside ShivShakti Surat Factory"
                 fill
                 className="object-cover transition-transform duration-150 ease-out group-hover:scale-[1.02]"

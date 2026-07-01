@@ -18,11 +18,14 @@ export function Timeline() {
           </h3>
         </div>
 
-        <div className="relative ml-3 pl-2 py-2">
-          {/* Timeline left border: Slightly thicker (1.2px), subtle gradient */}
-          <div className="absolute left-[11px] top-2 bottom-2 w-[1.2px] bg-gradient-to-b from-brand-blue to-brand-orange" />
+        <div className="relative ml-3 pl-2 py-2 lg:ml-0 lg:pl-0">
+          {/* Timeline left border: Only for mobile/tablet */}
+          <div className="absolute left-[11px] top-2 bottom-2 w-[1.2px] bg-gradient-to-b from-brand-blue to-brand-orange lg:hidden" />
+          
+          {/* Timeline center border: Only for desktop */}
+          <div className="absolute left-1/2 top-2 bottom-2 w-[1.2px] bg-gradient-to-b from-brand-blue to-brand-orange -translate-x-1/2 hidden lg:block" />
 
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8 lg:gap-12">
             {milestones.map((item, idx) => (
               <TimelineItem key={idx} item={item} index={idx} />
             ))}

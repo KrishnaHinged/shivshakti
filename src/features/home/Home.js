@@ -22,20 +22,22 @@ export function Home({ products, testimonials, gallery, settings }) {
         {/* Hero / Landing Section */}
         <Hero settings={settings} />
 
-        {/* Gallery Section */}
-        <HomeGallery gallery={gallery} />
-        
-        {/* Products Catalog Section */}
-        <HomeProducts products={products.slice(0, 3)} />
+        <div className="flex flex-col gap-6 lg:gap-10 w-full max-w-[1300px] mx-auto px-4 md:px-8 lg:px-12 flex-grow">
+          {/* Gallery Section */}
+          <HomeGallery gallery={gallery} />
+          
+          {/* Products Catalog Section */}
+          <HomeProducts products={products.slice(0, 3)} />
 
-        {/* Why Choose Us Section */}
-        <WhyChooseUs />
+          {/* Why Choose Us Section */}
+          <WhyChooseUs />
 
-        {/* Testimonials Section */}
-        <HomeTestimonials testimonials={testimonials} />
+          {/* Testimonials Section */}
+          <HomeTestimonials testimonials={testimonials} />
 
-        {/* Contact Form Section */}
-        <ContactFormSection settings={settings} />
+          {/* Contact Form Section */}
+          <ContactFormSection settings={settings} />
+        </div>
       </div>
 
       {/* Footer Section */}

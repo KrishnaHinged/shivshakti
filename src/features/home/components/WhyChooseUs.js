@@ -18,11 +18,11 @@ const iconMap = {
  */
 export function WhyChooseUs() {
   return (
-    <section id="why-us" className="bg-transparent text-text-light-primary px-6 pb-12 lg:px-20 pt-8">
+    <section id="why-us" className="bg-transparent text-text-light-primary pb-12 pt-8">
       {/* Centered Section Header */}
       <div className="text-center mb-16 max-w-2xl mx-auto">
         <span className="text-brand-orange text-[0.85rem] font-bold uppercase tracking-[0.2em] block mb-2">Why Choose Us</span>
-        <h2 className="text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">
           Built Different. Delivered Better.
         </h2>
       </div>
@@ -34,7 +34,7 @@ export function WhyChooseUs() {
           return (
             <div
               key={idx}
-              className={`bg-white border border-slate-100 rounded-[2.2rem] p-8 transition-all duration-300 hover:-translate-y-1.5 ${card.shadowClass} group`}
+              className={`bg-white border border-slate-100 rounded-[1.8rem] md:rounded-[2.2rem] p-8 transition-all duration-300 hover:-translate-y-1.5 ${card.shadowClass} group`}
             >
               <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${card.bgClass} group-hover:scale-110 transition-transform duration-300 shrink-0`}>
                 {IconComponent ? <IconComponent /> : null}

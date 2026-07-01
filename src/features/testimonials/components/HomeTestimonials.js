@@ -30,22 +30,22 @@ export const HomeTestimonials = ({ testimonials }) => {
   const items = testimonials?.length ? testimonials : FALLBACK_TESTIMONIALS;
 
   return (
-    <section id="testimonials" className="bg-transparent text-text-light-primary px-6 py-12 lg:py-16 lg:px-20">
+    <section id="testimonials" className="bg-transparent text-text-light-primary py-12 lg:py-16">
       
       {/* Centered Section Header */}
       <div className="text-center mb-16 max-w-2xl mx-auto">
         <span className="text-brand-orange text-[0.85rem] font-bold uppercase tracking-[0.2em] block mb-2">What Clients Say</span>
-        <h2 className="text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-text-light-primary tracking-tight">
           Trusted by Elevator Companies Across India
         </h2>
       </div>
 
       {/* Grid of Testimonial Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+      <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-none gap-6 pb-6 w-full md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8">
         {items.map((item) => (
           <div
             key={item._id}
-            className="bg-white border border-slate-100 rounded-[2.2rem] p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(30,58,138,0.04)] flex flex-col justify-between"
+            className="bg-white border border-slate-100 rounded-[1.8rem] md:rounded-[2.2rem] p-8 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_45px_rgba(30,58,138,0.04)] flex flex-col justify-between shrink-0 w-[85%] sm:w-[48%] snap-center md:w-auto md:shrink"
           >
             <div>
               {/* Star Ratings */}
