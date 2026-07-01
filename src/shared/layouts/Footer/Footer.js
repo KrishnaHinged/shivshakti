@@ -93,20 +93,21 @@ export function Footer({ products, settings }) {
         <div>
           <h4 className="text-base font-bold uppercase tracking-[0.1em] text-white mb-7 border-l-2 border-brand-orange pl-3">Products</h4>
           <ul className="flex flex-col gap-4">
-            {products.filter(p => p.featured).slice(0, 6).map(p => (
-              <li key={p._id}>
-                <Link href={`/products/${p.slug}`} className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
-                  {p.title}
-                </Link>
-              </li>
-            ))}
-            {products.filter(p => p.featured).length === 0 && (
-              <>
-                <li><Link href="/products/manual-door" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Manual Door</Link></li>
-                <li><Link href="/products/automatic-door" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Automatic Door</Link></li>
-                <li><Link href="/products/ss-ms-cabin" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">SS / MS Cabin</Link></li>
-              </>
-            )}
+            <li>
+              <Link href="/products?tab=manufactured" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
+                Our Manufactured Products
+              </Link>
+            </li>
+            <li>
+              <Link href="/products?tab=dealer" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
+                Authorized Dealer Products
+              </Link>
+            </li>
+            <li>
+              <Link href="/products?tab=kits" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
+                Complete Elevator Kits
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -116,10 +117,10 @@ export function Footer({ products, settings }) {
           <ul className="flex flex-col gap-4">
             <li><Link href="/about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">About Us</Link></li>
             <li><Link href="/gallery" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Gallery</Link></li>
-            <li><Link href="/#why-us" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</Link></li>
+            {/* <li><Link href="/#why-us" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</Link></li> */}
             <li><Link href="/blog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Blog</Link></li>
-            <li><Link href="/#contact" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</Link></li>
-            <li><Link href="/about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</Link></li>
+            {/* <li><Link href="/#contact" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</Link></li> */}
+            {/* <li><Link href="/about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</Link></li> */}
           </ul>
         </div>
 

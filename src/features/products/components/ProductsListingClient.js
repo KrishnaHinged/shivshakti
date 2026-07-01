@@ -244,6 +244,14 @@ function ProductsListingClient({ products, categories, settings }) {
     }
   }, [searchParams, products]);
 
+  // Sync active main tab from URL search parameters (for cross-page footer links)
+  useEffect(() => {
+    const tabParam = searchParams?.get("tab");
+    if (tabParam && ["manufactured", "dealer", "kits"].includes(tabParam)) {
+      handleMainTabChange(tabParam);
+    }
+  }, [searchParams]);
+
   // Entrance transition
   useEffect(() => {
     const active = sessionStorage.getItem("elevator-transition-active") === "true";
