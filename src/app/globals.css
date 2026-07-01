@@ -18,6 +18,18 @@
 
   --font-main: var(--font-outfit), system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-outfit), system-ui, -apple-system, sans-serif;
+
+  --color-brand-blue: #1E3A8A;
+  --color-brand-blue-light: #3B5FBB;
+  --color-brand-blue-pale: rgba(30, 58, 138, 0.08);
+  --color-brand-orange: #F97316;
+  --color-brand-orange-light: #FB923C;
+  --color-brand-orange-pale: rgba(249, 115, 22, 0.10);
+}
+
+::selection {
+  background-color: #F97316 !important;
+  color: #ffffff !important;
 }
 
 html {
