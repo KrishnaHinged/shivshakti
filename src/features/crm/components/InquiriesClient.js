@@ -335,124 +335,130 @@ export default function InquiriesClient({ inquiries: initialInquiries, adminsLis
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8 items-start">
         
         {viewMode === "pipeline" ? (
-          /* Kanban Board View */
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-5 min-h-[600px] items-stretch">
-            {columns.map((col) => {
-              const laneLeads = filteredInquiries.filter(item => 
-                col.dbStatus.map(s => s.toLowerCase()).includes(item.status.toLowerCase())
-              );
-              
-              // Map colors
-              let accentColorClass = "bg-brand-orange";
-              let colBadgeColor = "bg-orange-500/10 text-brand-orange border-brand-orange/10";
-              if (col.id === "Contacted") {
-                accentColorClass = "bg-brand-blue";
-                colBadgeColor = "bg-blue-500/10 text-brand-blue border-brand-blue/10";
-              } else if (col.id === "Qualified") {
-                accentColorClass = "bg-violet-500";
-                colBadgeColor = "bg-violet-500/10 text-violet-600 border-violet-150/10";
-              } else if (col.id === "Closed") {
-                accentColorClass = "bg-emerald-500";
-                colBadgeColor = "bg-emerald-500/10 text-emerald-600 border-emerald-150/10";
-              } else if (col.id === "Rejected") {
-                accentColorClass = "bg-rose-500";
-                colBadgeColor = "bg-rose-500/10 text-rose-600 border-rose-150/10";
-              }
+          /* Kanban Board View - Scrollable Horizontal Board */
+          <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent min-h-[600px] -mx-2 px-2">
+            <div className="flex gap-4 items-stretch min-w-max pr-2">
+              {columns.map((col) => {
+                const laneLeads = filteredInquiries.filter(item => 
+                  col.dbStatus.map(s => s.toLowerCase()).includes(item.status.toLowerCase())
+                );
+                
+                // Map colors
+                let accentColorClass = "bg-brand-orange";
+                let colBadgeColor = "bg-orange-500/10 text-brand-orange border-brand-orange/10";
+                if (col.id === "Contacted") {
+                  accentColorClass = "bg-brand-blue";
+                  colBadgeColor = "bg-blue-500/10 text-brand-blue border-brand-blue/10";
+                } else if (col.id === "Qualified") {
+                  accentColorClass = "bg-violet-500";
+                  colBadgeColor = "bg-violet-500/10 text-violet-600 border-violet-150/10";
+                } else if (col.id === "Closed") {
+                  accentColorClass = "bg-emerald-500";
+                  colBadgeColor = "bg-emerald-500/10 text-emerald-600 border-emerald-150/10";
+                } else if (col.id === "Rejected") {
+                  accentColorClass = "bg-rose-500";
+                  colBadgeColor = "bg-rose-500/10 text-rose-600 border-rose-150/10";
+                }
 
-              return (
-                <div
-                  key={col.id}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, col.id)}
-                  className="flex flex-col gap-4 p-4 bg-slate-50/40 rounded-2xl border border-slate-200/50 min-h-[500px] flex-grow shadow-[0_2px_12px_rgba(0,0,0,0.005)]"
-                >
-                  {/* Column Header */}
-                  <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2.5 h-2.5 rounded-full ${accentColorClass}`} />
-                      <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700">{col.title}</h3>
-                    </div>
-                    <span className={`border text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm ${colBadgeColor}`}>
-                      {laneLeads.length}
-                    </span>
-                  </div>
-
-                  {/* Column Drag Lane */}
-                  <div className="flex-1 flex flex-col gap-3 overflow-y-auto max-h-[650px] custom-scrollbar pr-0.5 min-h-[300px]">
-                    {laneLeads.length === 0 ? (
-                      <div className="flex-1 border border-dashed border-slate-200/80 rounded-2xl flex items-center justify-center p-6 text-center bg-slate-50/20">
-                        <span className="text-[11px] text-slate-400 font-medium italic">Drop leads here</span>
+                return (
+                  <div
+                    key={col.id}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, col.id)}
+                    className="flex flex-col gap-4 p-4 bg-slate-50/40 rounded-2xl border border-slate-200/50 min-h-[500px] w-[280px] md:w-[300px] shrink-0 shadow-[0_2px_12px_rgba(0,0,0,0.005)]"
+                  >
+                    {/* Column Header */}
+                    <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2.5 h-2.5 rounded-full ${accentColorClass}`} />
+                        <h3 className="font-bold text-xs uppercase tracking-wider text-slate-700">{col.title}</h3>
                       </div>
-                    ) : (
-                      laneLeads.map((lead) => {
-                        const isSelected = selectedLead && selectedLead._id === lead._id;
-                        
-                        // Extract initials
-                        const initials = lead.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .slice(0, 2)
-                          .join("")
-                          .toUpperCase();
+                      <span className={`border text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm ${colBadgeColor}`}>
+                        {laneLeads.length}
+                      </span>
+                    </div>
 
-                        return (
-                          <div
-                            key={lead._id}
-                            draggable="true"
-                            onDragStart={(e) => handleDragStart(e, lead._id)}
-                            onDragEnd={handleDragEnd}
-                            onClick={() => handleSelectLead(lead)}
-                            className={`bg-white border p-4 rounded-xl shadow-[0_3px_12px_rgba(0,0,0,0.01)] hover:shadow-md cursor-grab active:cursor-grabbing hover:border-slate-300 transition-all duration-200 flex flex-col gap-3 relative overflow-hidden select-none ${
-                              isSelected 
-                                ? "border-brand-orange ring-1 ring-brand-orange/20 shadow-[0_6px_16px_rgba(248,69,2,0.05)]" 
-                                : "border-slate-200/80"
-                            }`}
-                          >
-                            {/* Card Accent Color side indicator */}
-                            <div className={`absolute left-0 top-0 bottom-0 w-[4.5px] ${accentColorClass}`} />
+                    {/* Column Drag Lane */}
+                    <div className="flex-1 flex flex-col gap-3 overflow-y-auto max-h-[650px] custom-scrollbar pr-0.5 min-h-[300px]">
+                      {laneLeads.length === 0 ? (
+                        <div className="flex-1 border border-dashed border-slate-200/80 rounded-2xl flex items-center justify-center p-6 text-center bg-slate-50/20">
+                          <span className="text-[11px] text-slate-400 font-medium italic">Drop leads here</span>
+                        </div>
+                      ) : (
+                        laneLeads.map((lead) => {
+                          const isSelected = selectedLead && selectedLead._id === lead._id;
+                          
+                          // Extract initials
+                          const initials = lead.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .slice(0, 2)
+                            .join("")
+                            .toUpperCase();
 
-                            <div className="pl-1 flex flex-col gap-2">
-                              <div className="flex justify-between items-start gap-2">
-                                <div className="flex items-center gap-2 truncate flex-1">
-                                  <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-600 shrink-0">
-                                    {initials}
+                          const companyNameClean = lead.company && lead.company !== ".." && lead.company !== "."
+                            ? lead.company
+                            : "Individual Client";
+
+                          return (
+                            <div
+                              key={lead._id}
+                              draggable="true"
+                              onDragStart={(e) => handleDragStart(e, lead._id)}
+                              onDragEnd={handleDragEnd}
+                              onClick={() => handleSelectLead(lead)}
+                              className={`bg-white border p-4 rounded-xl shadow-[0_3px_12px_rgba(0,0,0,0.01)] hover:shadow-md cursor-grab active:cursor-grabbing hover:border-slate-300 transition-all duration-200 flex flex-col gap-3 relative overflow-hidden select-none ${
+                                isSelected 
+                                  ? "border-brand-orange ring-1 ring-brand-orange/20 shadow-[0_6px_16px_rgba(248,69,2,0.05)]" 
+                                  : "border-slate-200/80"
+                              }`}
+                            >
+                              {/* Card Accent Color side indicator */}
+                              <div className={`absolute left-0 top-0 bottom-0 w-[4.5px] ${accentColorClass}`} />
+
+                              <div className="pl-1 flex flex-col gap-2">
+                                <div className="flex justify-between items-start gap-2">
+                                  <div className="flex items-center gap-2 truncate flex-1">
+                                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[9px] font-bold text-slate-600 shrink-0">
+                                      {initials}
+                                    </div>
+                                    <h4 className="font-extrabold text-slate-800 text-xs truncate leading-tight">{lead.name}</h4>
                                   </div>
-                                  <h4 className="font-extrabold text-slate-800 text-xs truncate leading-tight">{lead.name}</h4>
+                                  {lead.elevatorType && (
+                                    <Sparkles className="w-3.5 h-3.5 text-brand-orange shrink-0 animate-pulse" title="Smart Lead (360 Configurator)" />
+                                  )}
                                 </div>
-                                {lead.elevatorType && (
-                                  <Sparkles className="w-3.5 h-3.5 text-brand-orange shrink-0 animate-pulse" title="Smart Lead (360 Configurator)" />
-                                )}
-                              </div>
-                              
-                              <p className="text-[10px] text-slate-500 font-semibold flex items-center gap-1.5 leading-none">
-                                <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                <span className="truncate">{lead.company || "Individual"}</span>
-                              </p>
-                              
-                              {lead.assignedTo && (
-                                <p className="text-[9px] text-slate-400 font-medium leading-none flex items-center gap-1">
-                                  <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
-                                  <span>Owner: <span className="font-bold text-slate-600">{lead.assignedTo.name || lead.assignedTo.email || lead.assignedTo}</span></span>
+                                
+                                <p className="text-[10px] text-slate-500 font-semibold flex items-center gap-1.5 leading-none">
+                                  <Building className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                  <span className="truncate">{companyNameClean}</span>
                                 </p>
-                              )}
-                              
-                              <div className="flex items-center justify-between gap-1.5 mt-1 border-t border-slate-100/60 pt-3">
-                                <span className="text-[9px] font-bold text-brand-blue bg-brand-blue-pale/80 px-2 py-0.5 rounded border border-brand-blue/5 truncate max-w-[95px]">
-                                  {productOptions.find(p => p.value === lead.productInterest || p.value === lead.componentNeeded)?.label || lead.productInterest || lead.componentNeeded || "Inquiry"}
-                                </span>
-                                <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-0.5">
-                                  <MapPin className="w-2.5 h-2.5" /> {lead.city || "Online"}
-                                </span>
+                                
+                                {lead.assignedTo && (
+                                  <p className="text-[9px] text-slate-400 font-medium leading-none flex items-center gap-1">
+                                    <UserCheck className="w-3 h-3 text-slate-400 shrink-0" />
+                                    <span>Owner: <span className="font-bold text-slate-600">{lead.assignedTo.name || lead.assignedTo.email || lead.assignedTo}</span></span>
+                                  </p>
+                                )}
+                                
+                                <div className="flex items-center justify-between gap-1.5 mt-1 border-t border-slate-100/60 pt-3">
+                                  <span className="text-[9px] font-bold text-brand-blue bg-brand-blue-pale/80 px-2 py-0.5 rounded border border-brand-blue/5 truncate max-w-[130px]" title={productOptions.find(p => p.value === lead.productInterest || p.value === lead.componentNeeded)?.label || lead.productInterest || lead.componentNeeded || "Inquiry"}>
+                                    {productOptions.find(p => p.value === lead.productInterest || p.value === lead.componentNeeded)?.label || lead.productInterest || lead.componentNeeded || "Inquiry"}
+                                  </span>
+                                  <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-0.5">
+                                    <MapPin className="w-2.5 h-2.5" /> {lead.city || "Online"}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      })
-                    )}
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         ) : (
           /* List View (Database Table) */

@@ -58,9 +58,12 @@ export function Directors() {
                 delay={index * 0.1}
                 className="w-full"
               >
-                <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} gap-8 lg:gap-16 items-center w-full`}>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
                   {/* Image Column */}
-                  <div className="w-full lg:w-[33%] flex justify-center shrink-0">
+                  <div
+                    className={`lg:col-span-4 ${isEven ? "lg:order-1" : "lg:order-2"
+                      } flex justify-center`}
+                  >
                     <div className="relative rounded-2xl overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.06)] group border border-slate-100 hover:border-brand-blue/30 transition-all duration-300 w-full max-w-[280px] sm:max-w-[320px] lg:max-w-none">
                       <Image
                         src={director.image}
@@ -75,7 +78,10 @@ export function Directors() {
                   </div>
 
                   {/* Text/Description Column */}
-                  <div className="w-full lg:w-[67%] flex flex-col gap-4">
+                  <div
+                    className={`lg:col-span-8 flex flex-col gap-4 ${isEven ? "lg:order-2" : "lg:order-1"
+                      }`}
+                  >
                     <div className="flex flex-col gap-1">
                       <h4 className="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">
                         {director.name}
@@ -100,4 +106,3 @@ export function Directors() {
 }
 
 export default Directors;
-
