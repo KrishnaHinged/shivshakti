@@ -3,10 +3,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Search, Clock, Mail, BookOpen, Tag } from "lucide-react";
+import { subscribeNewsletterAction } from "@/features/admin/services/newsletterActions";
 
 export default function BlogListingClient({ posts, categories, activeCategory, query }) {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const categoryTabRefs = useRef({});
 
   // Read time calculator
@@ -27,11 +29,21 @@ export default function BlogListingClient({ posts, categories, activeCategory, q
     }
   }, [activeCategory]);
 
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    
     if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
+      const formData = new FormData();
+      formData.append("email", email.trim().toLowerCase());
+      
+      const res = await subscribeNewsletterAction(formData);
+      if (res.success) {
+        setSubscribed(true);
+        setEmail("");
+      } else {
+        setErrorMsg(res.error || "Subscription failed. Please try again.");
+      }
     }
   };
 
@@ -285,6 +297,11 @@ export default function BlogListingClient({ posts, categories, activeCategory, q
                     placeholder="Enter business email"
                     className="w-full bg-white/10 hover:bg-white/15 focus:bg-white border border-white/15 focus:border-brand-orange rounded-full px-5 py-3 text-white focus:text-slate-800 text-xs outline-none transition placeholder:text-slate-400"
                   />
+                  {errorMsg && (
+                    <span className="text-rose-400 text-[10px] px-2 font-semibold">
+                      {errorMsg}
+                    </span>
+                  )}
                   <button
                     type="submit"
                     className="w-full bg-brand-orange hover:bg-brand-orange-light text-white text-xs font-extrabold uppercase tracking-wider py-3 rounded-full shadow cursor-pointer transition select-none"
