@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
           <img
             src="/images/logo.png"
             alt="SHIVSHAKTI Logo"
-            className="h-14 w-auto object-contain mx-auto mb-4"
+            className="h-14 w-auto object-contain mx-auto mb-4 p-2 bg-white/80 rounded-xl"
           />
           <h1 className="text-2xl font-bold tracking-tight">Shivshakti Control Panel</h1>
           <p className="text-xs text-slate-400 mt-1.5">Super Admin Authorization Gate</p>

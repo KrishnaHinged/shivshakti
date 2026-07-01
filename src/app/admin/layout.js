@@ -76,7 +76,7 @@ export default function AdminLayout({ children }) {
         {/* Pinned Header */}
         <div className="mb-6 text-center lg:text-left shrink-0">
           <Link href="/" className="inline-block mb-3">
-            <img src="/images/logo.png" alt="SHIVSHAKTI Logo" className="h-10 w-auto object-contain" />
+            <img src="/images/logo.png" alt="SHIVSHAKTI Logo" className="h-10 w-auto object-contain p-1.5 bg-white/80 rounded-xl" />
           </Link>
           <p className="text-xs text-slate-400 font-medium tracking-widest uppercase mt-1">
             Control Panel
