@@ -41,13 +41,13 @@ export function Footer({ products, settings }) {
 
         {/* Column 1: Brand details */}
         <div className="flex flex-col gap-6">
-          <a href="#home" className="inline-block hover:scale-105 transition-transform duration-300">
+          <Link href="/" className="inline-block hover:scale-105 transition-transform duration-300">
             <img
               src={settings.logoUrl || "/images/logo.png"}
               alt="SHIVSHAKTI Logo"
               className="h-14 md:h-16 w-auto object-contain p-2 bg-white/50 rounded-xl "
             />
-          </a>
+          </Link>
           <p className="text-[0.95rem] text-text-secondary leading-[1.6] max-w-[20rem]">
             {settings.footerDescription || "Manufacturer of premium elevator cabins, automatic doors, car frames and components."}
           </p>
@@ -95,16 +95,16 @@ export function Footer({ products, settings }) {
           <ul className="flex flex-col gap-4">
             {products.filter(p => p.featured).slice(0, 6).map(p => (
               <li key={p._id}>
-                <a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
+                <Link href={`/products/${p.slug}`} className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">
                   {p.title}
-                </a>
+                </Link>
               </li>
             ))}
             {products.filter(p => p.featured).length === 0 && (
               <>
-                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Manual Door</a></li>
-                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Automatic Door</a></li>
-                <li><a href="#catalog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">SS / MS Cabin</a></li>
+                <li><Link href="/products/manual-door" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Manual Door</Link></li>
+                <li><Link href="/products/automatic-door" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">Automatic Door</Link></li>
+                <li><Link href="/products/ss-ms-cabin" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-orange hover:pl-1">SS / MS Cabin</Link></li>
               </>
             )}
           </ul>
@@ -114,12 +114,12 @@ export function Footer({ products, settings }) {
         <div>
           <h4 className="text-base font-bold uppercase tracking-[0.1em] text-white mb-7 border-l-2 border-brand-blue pl-3">Company</h4>
           <ul className="flex flex-col gap-4">
-            <li><a href="#about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">About Us</a></li>
-            <li><a href="#gallery" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Gallery</a></li>
-            <li><a href="#why-us" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</a></li>
+            <li><Link href="/about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">About Us</Link></li>
+            <li><Link href="/gallery" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Gallery</Link></li>
+            <li><Link href="/#why-us" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Certificates</Link></li>
             <li><Link href="/blog" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Blog</Link></li>
-            <li><a href="#contact" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</a></li>
-            <li><a href="#about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</a></li>
+            <li><Link href="/#contact" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">Career</Link></li>
+            <li><Link href="/about" className="inline-block py-1 text-text-secondary text-[0.95rem] transition-all duration-300 hover:text-brand-blue hover:pl-1">CSR</Link></li>
           </ul>
         </div>
 
