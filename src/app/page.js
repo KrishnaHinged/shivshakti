@@ -8,11 +8,11 @@ export const revalidate = 300; // Cache on edge CDN for 5 minutes, ensuring inst
 export async function generateMetadata() {
   await dbConnect();
   const settings = await Setting.findOne();
-  
-  const title = settings?.companyName 
+
+  const title = settings?.companyName
     ? `${settings.companyName} | Touch The Sky`
     : "Shivshakti Elevator Components Pvt. Ltd. | Touch The Sky With Shivshakti";
-    
+
   const desc = settings?.footerDescription || "Manufacturer of premium elevator cabins, automatic doors, car frames, and elevator components headquartered in Surat, India.";
 
   return {
